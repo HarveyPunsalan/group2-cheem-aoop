@@ -1,0 +1,2 @@
+-- Adds indexes to improve performance
+-- Example: CREATE INDEX idx_employee_name ON employee_personal_information(last_name);
