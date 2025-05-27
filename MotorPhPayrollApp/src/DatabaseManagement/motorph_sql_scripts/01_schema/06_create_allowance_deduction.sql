@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS deduction_chart_type (
     updated_at    TIMESTAMP
 ) AUTO_INCREMENT = 1;
 /*
+-- Discontinued Table
 -- Table: government_deduction_chart
 CREATE TABLE IF NOT EXISTS government_deduction_chart (
     gov_deduction_chart_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -67,6 +68,7 @@ CREATE TABLE IF NOT EXISTS employee_government_deduction (
 ) AUTO_INCREMENT = 10000;
 
 /*
+-- Discontinued Tables
 CREATE TABLE IF NOT EXISTS deduction_chart (
   deduction_chart_id INT AUTO_INCREMENT PRIMARY KEY,
   chart_type         INT            NOT NULL,

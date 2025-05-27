@@ -2,24 +2,29 @@
 
 -- EmployeeAddress → EmployeePersonalInformation
 ALTER TABLE employee_address
-ADD CONSTRAINT fk_address_employee
-FOREIGN KEY (employee_id)
-REFERENCES employee_personal_information(employee_id)
-ON DELETE CASCADE;
+  ADD CONSTRAINT fk_address_employee
+    FOREIGN KEY (employee_id)
+      REFERENCES employee_personal_information(employee_id)
+      ON DELETE CASCADE;
+
+ALTER TABLE employee_address
+  ADD CONSTRAINT fk_address_type
+    FOREIGN KEY (address_type)
+      REFERENCES address_type(address_type_id);
 
 -- EmployeeGovernmentInformation → EmployeePersonalInformation
 ALTER TABLE employee_government_information
-ADD CONSTRAINT fk_government_info_employee
-FOREIGN KEY (employee_id)
-REFERENCES employee_personal_information(employee_id)
-ON DELETE CASCADE;
+  ADD CONSTRAINT fk_government_info_employee
+    FOREIGN KEY (employee_id)
+      REFERENCES employee_personal_information(employee_id)
+      ON DELETE CASCADE;
 
 -- EmployeeEmploymentInformation → EmployeePersonalInformation, Job, Salary
 ALTER TABLE employee_employment_information
-ADD CONSTRAINT fk_employment_employee
-FOREIGN KEY (employee_id) 
-REFERENCES employee_personal_information(employee_id) 
-ON DELETE CASCADE;
+  ADD CONSTRAINT fk_employment_employee
+    FOREIGN KEY (employee_id) 
+      REFERENCES employee_personal_information(employee_id) 
+      ON DELETE CASCADE;
 
 ALTER TABLE employee_employment_information
 ADD CONSTRAINT fk_employment_job
@@ -118,8 +123,8 @@ ALTER TABLE request
     ON DELETE CASCADE;
 
 ALTER TABLE request
-  ADD CONSTRAINT fk_request_approver
-    FOREIGN KEY (approved_by)
+  ADD CONSTRAINT fk_processed_by
+    FOREIGN KEY (processed_by)
     REFERENCES employee_personal_information(employee_id);
     
 -- Overtime → EmployeePersonalInformation, Request, DailyTimeRecord

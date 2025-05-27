@@ -13,6 +13,12 @@ CREATE TABLE IF NOT EXISTS employee_personal_information (
 ) AUTO_INCREMENT = 10000;
 
 -- Table: employee_address
+CREATE TABLE IF NOT EXISTS address_type (
+  address_type_id INT AUTO_INCREMENT PRIMARY KEY,
+  address_type_name VARCHAR(50) NOT NULL,
+  address_type_description VARCHAR(255)
+) AUTO_INCREMENT = 1;
+
 CREATE TABLE IF NOT EXISTS employee_address (
     address_id INT AUTO_INCREMENT PRIMARY KEY,
     employee_id INT,

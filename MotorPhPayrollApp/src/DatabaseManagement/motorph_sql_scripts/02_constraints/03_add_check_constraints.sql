@@ -11,10 +11,6 @@ ALTER TABLE employee_personal_information
 
 -- 2. EmployeeAddress
 ALTER TABLE employee_address
-  ADD CONSTRAINT chk_address_type
-    CHECK (address_type IN ('Permanent', 'Current', 'Work'));  -- predefined address types 
-
-ALTER TABLE employee_address
   ADD CONSTRAINT chk_postal_code_format
     CHECK (postal_code REGEXP '^[0-9]{4}$');  -- 4-digit postal codes 
 
@@ -105,7 +101,7 @@ ALTER TABLE government_deduction_chart
     CHECK (employee_deduction_rate BETWEEN 0 AND 100),  -- percent in 0–100
   ADD CONSTRAINT chk_employer_contribution_rate_maximum
     CHECK (employer_contribution_share <= 100);   -- percent in 0–100
-    
+/*
 -- 12. DeductionChart
 ALTER TABLE deduction_chart
   ADD CONSTRAINT chk_sss_only_rates
@@ -166,7 +162,7 @@ ALTER TABLE deduction_chart
        AND tax_rate        IS NULL
       )
     );
-/*    
+
 -- Add data‐integrity constraints to sss_contribution_chart
 ALTER TABLE sss_contribution_chart
   ADD CONSTRAINT chk_sss_min_salary_non_negative

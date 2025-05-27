@@ -33,7 +33,8 @@ CREATE TABLE IF NOT EXISTS role_access (
 
 -- Table: user
 CREATE TABLE IF NOT EXISTS system_user (
-    username VARCHAR(100) PRIMARY KEY,
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100), 
     password_hashed CHAR(60),
     employee_id INT,
     role_id INT,
