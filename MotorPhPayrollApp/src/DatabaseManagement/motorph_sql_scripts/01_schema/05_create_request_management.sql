@@ -10,7 +10,10 @@ CREATE TABLE IF NOT EXISTS request (
     reason VARCHAR(255),
     request_status VARCHAR(50),
     approved_by INT,
-    created_date TIMESTAMP
+    created_date TIMESTAMP,
+    processed_by INT,
+    processed_date DATE,
+    remarks VARCHAR(255)
 ) AUTO_INCREMENT = 10000;
 
 -- Table: overtime

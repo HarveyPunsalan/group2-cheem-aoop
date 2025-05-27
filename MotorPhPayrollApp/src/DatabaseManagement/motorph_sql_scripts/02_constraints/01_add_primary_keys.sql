@@ -38,7 +38,7 @@ ALTER TABLE department
 -- 4. User & Access Control
 ALTER TABLE system_user
   ADD CONSTRAINT pk_system_user
-    PRIMARY KEY (username);  -- or user_id if you have a numeric PK
+    PRIMARY KEY (user_id);
 
 ALTER TABLE user_role
   ADD CONSTRAINT pk_user_role

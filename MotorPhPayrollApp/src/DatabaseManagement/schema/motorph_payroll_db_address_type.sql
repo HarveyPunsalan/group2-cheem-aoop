@@ -18,36 +18,28 @@ USE `motorph_payroll_db`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `employee_leave`
+-- Table structure for table `address_type`
 --
 
-DROP TABLE IF EXISTS `employee_leave`;
+DROP TABLE IF EXISTS `address_type`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `employee_leave` (
-  `leave_id` int NOT NULL AUTO_INCREMENT,
-  `employee_id` int DEFAULT NULL,
-  `leave_type` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `start_date` date DEFAULT NULL,
-  `end_date` date DEFAULT NULL,
-  `total_days` decimal(5,2) DEFAULT NULL,
-  `request_id` int DEFAULT NULL,
-  PRIMARY KEY (`leave_id`),
-  KEY `fk_leave_employee` (`employee_id`),
-  KEY `fk_leave_request` (`request_id`),
-  CONSTRAINT `fk_leave_employee` FOREIGN KEY (`employee_id`) REFERENCES `employee_personal_information` (`employee_id`),
-  CONSTRAINT `fk_leave_request` FOREIGN KEY (`request_id`) REFERENCES `request` (`request_id`) ON DELETE CASCADE,
-  CONSTRAINT `chk_total_days_non_negative` CHECK ((`total_days` >= 0))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE `address_type` (
+  `address_type_id` int NOT NULL AUTO_INCREMENT,
+  `address_type_name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `address_type_description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`address_type_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `employee_leave`
+-- Dumping data for table `address_type`
 --
 
-LOCK TABLES `employee_leave` WRITE;
-/*!40000 ALTER TABLE `employee_leave` DISABLE KEYS */;
-/*!40000 ALTER TABLE `employee_leave` ENABLE KEYS */;
+LOCK TABLES `address_type` WRITE;
+/*!40000 ALTER TABLE `address_type` DISABLE KEYS */;
+INSERT INTO `address_type` VALUES (1,'permanent','Permanent/Home'),(2,'current','Current Residence'),(3,'billing','Billing Address'),(4,'mailing','Mailing Address'),(5,'office','Office Location'),(6,'temporary','Temporary Stay'),(7,'other','Other');
+/*!40000 ALTER TABLE `address_type` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -59,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-27 14:46:32
+-- Dump completed on 2025-05-27 14:46:34

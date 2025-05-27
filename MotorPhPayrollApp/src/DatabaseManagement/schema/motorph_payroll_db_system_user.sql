@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `motorph_payroll_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `motorph_payroll_db`;
 -- MySQL dump 10.13  Distrib 8.0.42, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: motorph_payroll_db
@@ -23,14 +25,15 @@ DROP TABLE IF EXISTS `system_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `system_user` (
-  `username` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` int NOT NULL AUTO_INCREMENT,
+  `username` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `password_hashed` char(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `employee_id` int DEFAULT NULL,
   `role_id` int DEFAULT NULL,
   `account_created` timestamp NULL DEFAULT NULL,
   `last_login` timestamp NULL DEFAULT NULL,
   `is_active` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`username`),
+  PRIMARY KEY (`user_id`),
   KEY `fk_system_user_employee` (`employee_id`),
   KEY `fk_system_user_role` (`role_id`),
   CONSTRAINT `fk_system_user_employee` FOREIGN KEY (`employee_id`) REFERENCES `employee_personal_information` (`employee_id`) ON DELETE CASCADE,
@@ -56,4 +59,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-24 20:01:00
+-- Dump completed on 2025-05-27 14:46:34

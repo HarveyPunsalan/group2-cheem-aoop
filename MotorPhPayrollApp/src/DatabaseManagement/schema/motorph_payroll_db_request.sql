@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `motorph_payroll_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `motorph_payroll_db`;
 -- MySQL dump 10.13  Distrib 8.0.42, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: motorph_payroll_db
@@ -28,12 +30,14 @@ CREATE TABLE `request` (
   `request_date` date DEFAULT NULL,
   `reason` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `request_status` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT 'Pending',
-  `approved_by` int DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
+  `processed_by` int DEFAULT NULL,
+  `processed_date` date DEFAULT NULL,
+  `remarks` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`request_id`),
   KEY `fk_request_employee` (`employee_id`),
-  KEY `fk_request_approver` (`approved_by`),
-  CONSTRAINT `fk_request_approver` FOREIGN KEY (`approved_by`) REFERENCES `employee_personal_information` (`employee_id`),
+  KEY `fk_processed_by` (`processed_by`),
+  CONSTRAINT `fk_processed_by` FOREIGN KEY (`processed_by`) REFERENCES `employee_personal_information` (`employee_id`),
   CONSTRAINT `fk_request_employee` FOREIGN KEY (`employee_id`) REFERENCES `employee_personal_information` (`employee_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -56,4 +60,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-24 20:01:03
+-- Dump completed on 2025-05-27 14:46:32
