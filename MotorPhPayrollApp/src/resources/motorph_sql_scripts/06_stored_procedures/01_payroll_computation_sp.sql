@@ -1,0 +1,4 @@
+-- Stored procedure for payroll computation
+-- DELIMITER $$
+-- CREATE PROCEDURE calculate_payroll() BEGIN ... END $$
+-- DELIMITER ;

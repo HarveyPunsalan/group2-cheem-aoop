@@ -1,0 +1,2 @@
+-- Creates views for simplified reporting
+-- Example: CREATE VIEW payroll_summary AS SELECT * FROM payroll_record;
