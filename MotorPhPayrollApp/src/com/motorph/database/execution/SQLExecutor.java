@@ -53,7 +53,7 @@ public class SQLExecutor {
         try (PreparedStatement preparedStatement = connection.prepareStatement(script.toString())) {
             // ✅ Only set parameters if there are any
             if (!params.isEmpty()) {
-                setParameters(preparedStatement, params);
+                setParameters(preparedStatement, params.toArray());
             }
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
