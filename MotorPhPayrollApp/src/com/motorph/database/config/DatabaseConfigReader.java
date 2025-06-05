@@ -4,6 +4,8 @@
  */
 package com.motorph.database.config;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -18,7 +20,7 @@ import java.util.Properties;
  * Ensures the configuration is loaded once and reused throughout the application.
  */
 public class DatabaseConfigReader {
-
+    private static final Logger logger = Logger.getLogger(DatabaseConfigReader.class.getName());
     private static DatabaseConfigReader instance;
     private final Properties properties;
 
@@ -28,15 +30,21 @@ public class DatabaseConfigReader {
      */
     private DatabaseConfigReader() {
         properties = new Properties();
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream(DatabaseConfigFile.MOTORPH_DB_CONFIG_FILE)) {
+
+        String configFileName = DatabaseConfigFile.MOTORPH_DB_CONFIG_FILE;
+
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream(configFileName)) {
 
             if (input != null) {
                 properties.load(input);
+                logger.info("Successfully loaded DB configuration from: " + configFileName);
             } else {
-                throw new IOException("Config file not found: " + DatabaseConfigFile.MOTORPH_DB_CONFIG_FILE);
+                logger.severe("Configuration file not found in classpath: " + configFileName);
+                throw new IOException("Config file not found: " + configFileName);
             }
 
         } catch (IOException e) {
+            logger.log(Level.SEVERE, "Error loading database configuration from: " + configFileName, e);
             throw new RuntimeException("Failed to load DB config: " + e.getMessage(), e);
         }
     }
