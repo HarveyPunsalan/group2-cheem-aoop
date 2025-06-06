@@ -332,7 +332,7 @@ public class InformationService {
                 personal.getLastName(),
                 personal.getFirstName(),
                 personal.getBirthday(), 
-                personal.getAddress(),
+                personal.getEmail(),
                 personal.getPhoneNumber()
             };
 
