@@ -4,7 +4,7 @@
  */
 package Frame.Admin;
 
-import Class.UMS.User;
+import com.motorph.usermanagement.model.User;
 
 /**
  *
