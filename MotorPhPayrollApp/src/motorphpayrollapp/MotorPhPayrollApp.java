@@ -10,7 +10,7 @@ package motorphpayrollapp;
  */
 
 
-import Frame.LoginPage;
+import com.motorph.usermanagement.view.LoginPage;
 
 public class MotorPhPayrollApp {
 

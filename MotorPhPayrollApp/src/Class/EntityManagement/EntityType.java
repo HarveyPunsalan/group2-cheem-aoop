@@ -5,15 +5,15 @@
 package Class.EntityManagement;
 
 import CSVFileManager.CsvFile;
-import Class.EMS.Employee;
+import com.motorph.employeemanagement.model.Employee;
 import Class.IDManagement.IDPrefix;
-import Class.PPS.PayPeriod;
-import Class.TAT.DailyAttendance;
-import Class.TAT.Leave;
-import Class.TAT.LeaveType;
-import Class.TAT.Overtime;
-import Class.TAT.Request;
-import Class.UMS.User;
+import com.motorph.payrollprocessing.model.PayPeriod;
+import com.motorph.attendancemanagement.model.DailyAttendance;
+import com.motorph.attendancemanagement.model.Leave;
+import com.motorph.attendancemanagement.model.LeaveType;
+import com.motorph.attendancemanagement.model.Overtime;
+import com.motorph.attendancemanagement.model.Request;
+import com.motorph.usermanagement.model.User;
 
 /**
  *

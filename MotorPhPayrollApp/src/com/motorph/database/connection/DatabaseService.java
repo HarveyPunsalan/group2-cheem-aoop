@@ -6,6 +6,8 @@ package com.motorph.database.connection;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 /**
  *
@@ -18,16 +20,32 @@ import java.sql.SQLException;
  * access to database connections and testing functionality.
  */
 public class DatabaseService {
+    
+    private static final Logger LOGGER = Logger.getLogger(DatabaseService.class.getName());
 
     /**
      * Establishes a JDBC connection to the MotorPH Payroll database.
      * Delegates the actual connection logic to {@link DatabaseConnector}.
      *
-     * @return a valid {@code Connection} object
-     * @throws SQLException if the connection cannot be established
+     * @return a live Connection instance
+     * @throws RuntimeException if connection fails
      */    
-    public static Connection connectToMotorPH() throws SQLException {
-        return DatabaseConnector.connect();
+    public static Connection connectToMotorPH() {
+        try {
+            return DatabaseConnector.connect();
+        } catch (SQLException e) {
+            logConnectionFailure(e);
+            throw new RuntimeException("Database connection failed: " + e.getMessage(), e);
+        }
+    }
+    
+    /**
+     * Logs database connection failures using java.util.logging.
+     *
+     * @param e SQLException to be logged
+     */
+    public static void logConnectionFailure(SQLException e) {
+        LOGGER.log(Level.SEVERE, "Failed to connect to the database", e);
     }
 
     /**
@@ -39,6 +57,39 @@ public class DatabaseService {
             System.out.println("Connected to MotorPH Payroll DB.");
         } catch (SQLException e) {
             System.err.println("Connection failed: " + e.getMessage());
+        }
+    }
+    
+    // ================================================================
+    // 🔁 TRANSACTION MANAGEMENT METHODS
+    // ================================================================
+
+    /**
+     * Begins a manual transaction by disabling auto-commit mode.
+     */
+    public static void beginTransaction(Connection connection) throws SQLException {
+        if (connection != null) {
+            connection.setAutoCommit(false);
+        }
+    }
+
+    /**
+     * Commits all statements executed since the last beginTransaction.
+     */
+    public static void commitTransaction(Connection connection) throws SQLException {
+        if (connection != null) {
+            connection.commit();
+            connection.setAutoCommit(true); // restore default behavior
+        }
+    }
+
+    /**
+     * Rolls back all statements executed since the last beginTransaction.
+     */
+    public static void rollbackTransaction(Connection connection) throws SQLException {
+        if (connection != null) {
+            connection.rollback();
+            connection.setAutoCommit(true); // restore default behavior
         }
     }
 }
