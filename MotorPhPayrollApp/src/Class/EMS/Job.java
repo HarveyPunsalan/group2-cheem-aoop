@@ -4,6 +4,9 @@
  */
 package Class.EMS;
 
+import com.motorph.employeemanagement.Employee;
+import com.motorph.employeemanagement.Department;
+
 /**
  * Represents a job position.
  *
@@ -13,7 +16,6 @@ package Class.EMS;
 public class Job {
     private String jobID; 
     private String jobName;
-    private Salary salary; 
     private Department department;
     private Employee immediateSupervisor;
 
@@ -22,12 +24,10 @@ public class Job {
      *
      * @param jobID the unique identifier for the job.
      * @param jobName the name of the job.
-     * @param salary the Salary object associated with the job.
      */
-    public Job(String jobID, String jobName, Salary salary) {
+    public Job(String jobID, String jobName) {
         this.jobID = jobID;
         this.jobName = jobName;
-        this.salary = salary;
     }
     
     /**
@@ -45,10 +45,6 @@ public class Job {
 
     public String getJobName() {
         return jobName;
-    }
-
-    public Salary getSalary() {
-        return salary;
     }
 
     public Department getDepartment() {
