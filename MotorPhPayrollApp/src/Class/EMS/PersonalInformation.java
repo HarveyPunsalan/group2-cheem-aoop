@@ -4,8 +4,9 @@
  */
 package Class.EMS;
 
-import Class.Parser;
-import java.util.Date;
+import com.motorph.employeemanagement.Information;
+import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Represents personal information for an employee.
@@ -17,9 +18,10 @@ import java.util.Date;
 public class PersonalInformation extends Information {
     private String firstName;
     private String lastName;
-    private Date birthday;
+    private LocalDate birthday;
     private String address;
     private String phoneNumber;
+    private String email;
 
     /**
      * Constructs a PersonalInformation object using the provided personal data.
@@ -53,10 +55,43 @@ public class PersonalInformation extends Information {
         this.firstName = personalData[2];               
         this.address = personalData[4];
         this.phoneNumber = personalData[5];
-        this.birthday = Parser.parseDate(personalData[3], null);
+//        this.birthday = Parser.parseDate(personalData[3], null);
  
-    }  
+    }
     
+    public PersonalInformation(String employeeID, String firstName, String lastName, LocalDate birthday, String phoneNumber, String email) {
+        super(employeeID); // Initialize the superclass with the employee ID.
+        
+        // Assign first name and last name from the personalData array.
+         
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthday = birthday;
+        this.phoneNumber = phoneNumber;        
+        this.email = email; 
+    }
+    
+    public List<Object> toInsertParams() {
+        return List.of(
+            firstName,
+            lastName, 
+            java.sql.Date.valueOf(birthday),
+            phoneNumber,
+            email            
+        );
+    }
+
+    public List<Object> toUpdateParams() {
+        return List.of(
+            firstName,
+            lastName, 
+            java.sql.Date.valueOf(birthday),
+            phoneNumber,
+            email,            
+            employeeID
+        );
+    }
+   
     /**
      * Retrieves the personal information as an array of strings.
      *
@@ -83,7 +118,7 @@ public class PersonalInformation extends Information {
         return lastName;
     }
 
-    public Date getBirthday() {
+    public LocalDate getBirthday() {
         return birthday;
     }
 
@@ -93,6 +128,10 @@ public class PersonalInformation extends Information {
 
     public String getPhoneNumber() {
         return phoneNumber;
+    }
+
+    public String getEmail() {
+        return email;
     }
     
 }
