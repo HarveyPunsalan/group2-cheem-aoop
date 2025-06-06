@@ -4,9 +4,11 @@
  */
 package Class.EMS;
 
-import Class.Parser;
+import com.motorph.common.Parser;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Represents employment-related information for an employee.
@@ -22,13 +24,13 @@ public class EmploymentInformation extends Information {
     private Job jobTitle; 
     private String employmentType; 
     private String employmentStatus;
-    private Date dateHired; 
+    private LocalDate dateHired; 
     private String immediateSupervisor;
     
     // Salary and allowances
-    private String basicSalary;
+    private Salary salary;
+    private String basicSalary, grossSemiMonthlyRate, hourlyRate;
     private String riceSubsidy, phoneAllowance, clothingAllowance;
-    private String grossSemiMonthlyRate, hourlyRate;
     
     /**
      * Constructs an EmploymentInformation object using the provided employment data.
@@ -54,7 +56,7 @@ public class EmploymentInformation extends Information {
         this.jobTitle = new Job(employmentData[1]);
         this.employmentType = employmentData[2];
         this.employmentStatus = employmentData[3];
-        this.dateHired = Parser.parseDate(employmentData[4], null);
+//        this.dateHired = Parser.parseDate(employmentData[4], null);
         this.immediateSupervisor = employmentData[5];
         this.basicSalary = employmentData[6];
         this.riceSubsidy = employmentData[7];
@@ -63,6 +65,51 @@ public class EmploymentInformation extends Information {
         this.grossSemiMonthlyRate = employmentData[10];
         this.hourlyRate = employmentData[11];
     }
+    
+        public EmploymentInformation(String employeeID, String jobTitle, String employmentType, String employmentStatus, LocalDate dateHired, 
+                                        String immediateSupervisor, String basicSalary, String grossSemiMonthlyRate, String hourlyRate,
+                                        String riceSubsidy, String phoneAllowance, String clothingAllowance) {
+        super(employeeID); // Initialize superclass with employeeID
+        
+        // Initialize employment-related fields using the data array.
+        this.jobTitle = new Job(jobTitle);
+        this.employmentType = employmentType;
+        this.employmentStatus = employmentStatus;
+        this.dateHired = dateHired;
+        this.immediateSupervisor = immediateSupervisor;
+        
+        this.basicSalary = basicSalary;
+        this.grossSemiMonthlyRate = grossSemiMonthlyRate;
+        this.hourlyRate = hourlyRate;
+        
+        this.riceSubsidy = riceSubsidy;
+        this.phoneAllowance = phoneAllowance;
+        this.clothingAllowance = clothingAllowance;
+        
+    }
+        
+    public List<Object> toInsertParams() {
+        return List.of(
+            employeeID,
+            jobTitle.getJobID(),
+            salary.getSalaryID(),
+            employmentType,
+            employmentStatus,
+            java.sql.Date.valueOf(dateHired)        
+        );
+    }
+
+    public List<Object> toUpdateParams() {
+        return List.of(
+            employeeID,
+            jobTitle.getJobID(),
+            salary.getSalaryID(),
+            employmentType,
+            employmentStatus,
+            java.sql.Date.valueOf(dateHired),    
+            employeeID
+        );
+    }    
     
     /**
      * Retrieves key employment information as an array of strings.
@@ -105,7 +152,7 @@ public class EmploymentInformation extends Information {
         return employmentStatus;
     }
 
-    public Date getDateHired() {
+    public LocalDate getDateHired() {
         return dateHired;
     }
 
