@@ -4,12 +4,20 @@
  */
 package Class.EMS;
 
+import com.motorph.employeemanagement.GovernmentInformation;
+import com.motorph.employeemanagement.EmploymentInformation;
 import CSVFileManager.CsvFile;
-import Class.CollectionUtils;
-import Class.Formatter;
+import com.motorph.common.CollectionUtils;
+import com.motorph.database.connection.DatabaseService;
+import com.motorph.database.execution.SQLExecutor;
+import com.motorph.database.execution.Script;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -26,14 +34,34 @@ public class InformationService {
     private Map<String, EmploymentInformation> employmentRecordMapByEmployeeID;
     private Map<String, GovernmentInformation> gorvernmentRecordMapByEmployeeID;
     
+    private SQLExecutor executor;
+    
     /**
      * Constructs an InformationService instance.
      *
      * <p>This constructor loads personal, employment, and government records from their respective CSV files.
      * It then creates lookup maps keyed by employee ID for quick access to these records.</p>
+     * 
      */  
-    public InformationService(){
-        personalRecord = CsvFile.PERSONAL_RECORD.readFile(row -> new PersonalInformation(row[0], row));
+    public InformationService() {
+        this.executor = new SQLExecutor(DatabaseService.connectToMotorPH());
+        try {          
+            this.personalRecord = executor.executeQuery(
+                Script.SELECT_ALL_EMPLOYEES,
+                resultSet -> new PersonalInformation(
+                    resultSet.getString("employee_id"),                    
+                    resultSet.getString("first_name"),
+                    resultSet.getString("last_name"),
+                    resultSet.getObject("birthday", LocalDate.class),
+                    resultSet.getString("phone_number"),                    
+                    resultSet.getString("email")
+                )
+            );
+        } catch (SQLException ex) {
+            Logger.getLogger(InformationService.class.getName()).log(Level.SEVERE, "Initialization failed", ex);
+            throw new RuntimeException("Failed to initialize InformationService", ex);
+        }
+//        personalRecord = CsvFile.PERSONAL_RECORD.readFile(row -> new PersonalInformation(row[0], row));
         employmentRecord = CsvFile.EMPLOYMENT_RECORD.readFile(row -> new EmploymentInformation(row[0], row));     
         governmentRecord = CsvFile.GOVERNMENT_RECORD.readFile(row -> new GovernmentInformation(row[0], row));
         
@@ -43,8 +71,9 @@ public class InformationService {
     }
 
     public void addPersonalInformation(PersonalInformation newPersonalInformation){
-            
-        CsvFile.PERSONAL_RECORD.appendFile(newPersonalInformation.getInformation()); // Append the employee's information to the CSV file.
+        // ✅ Run the method
+        int rowsAffected = executor.executeUpdate(Script.ADD_PERSONAL_RECORD, newPersonalInformation.toInsertParams());
+//        CsvFile.PERSONAL_RECORD.appendFile(newPersonalInformation.getInformation()); // Append the employee's information to the CSV file.
 
         // Update in-memory structures
         personalRecord.add(newPersonalInformation);
@@ -301,7 +330,7 @@ public class InformationService {
                 personal.getEmployeeID(),
                 personal.getLastName(),
                 personal.getFirstName(),
-                Formatter.formatDate(personal.getBirthday(), outputFormat),
+                personal.getBirthday(), 
                 personal.getAddress(),
                 personal.getPhoneNumber()
             };
