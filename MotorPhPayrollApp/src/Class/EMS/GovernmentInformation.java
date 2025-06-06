@@ -4,6 +4,9 @@
  */
 package Class.EMS;
 
+import com.motorph.employeemanagement.Information;
+import java.util.List;
+
 /**
  * Represents government-related information for an employee.
  *
@@ -15,7 +18,7 @@ public class GovernmentInformation extends Information {
     private String philhealthNumber;
     private String pagibigNumber;
     private String taxIdentificationNumber;
-//    private String withholdingTaxStatus;
+    private String withholdingTaxStatus;
 
     /**
      * Constructs a GovernmentInformation object using the provided government data.
@@ -44,7 +47,40 @@ public class GovernmentInformation extends Information {
         this.taxIdentificationNumber = governmentData[4];
 //        this.withholdingTaxStatus = governmentData[5];
     }
+    
+    public GovernmentInformation(String employeeID, String sssNumber, String philhealthNumber, String pagibigNumber, String taxIdentificationNumber, String withholdingTaxStatus) {
+        super(employeeID); // Initialize the superclass with the employee ID.
 
+        // Assign government-related fields from the provided data array.
+        this.sssNumber = sssNumber;
+        this.philhealthNumber = philhealthNumber;
+        this.pagibigNumber = pagibigNumber;
+        this.taxIdentificationNumber = taxIdentificationNumber;
+        this.withholdingTaxStatus = withholdingTaxStatus;
+    }    
+
+    public List<Object> toInsertParams() {
+        return List.of(
+            employeeID,
+            sssNumber,
+            philhealthNumber,
+            pagibigNumber,
+            taxIdentificationNumber,
+            withholdingTaxStatus
+        );
+    }
+
+    public List<Object> toUpdateParams() {
+        return List.of(
+            sssNumber,
+            philhealthNumber,
+            pagibigNumber,
+            taxIdentificationNumber,
+            withholdingTaxStatus,
+            employeeID
+        );
+    }
+    
     /**
      * Retrieves the government-related information as an array of strings.
      *
@@ -78,5 +114,9 @@ public class GovernmentInformation extends Information {
     public String getTaxIdentificationNumber() {
         return taxIdentificationNumber;
     }
-    
+
+    public String getWithholdingTaxStatus() {
+        return withholdingTaxStatus;
+    }
+       
 }
