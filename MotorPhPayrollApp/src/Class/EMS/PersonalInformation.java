@@ -4,95 +4,88 @@
  */
 package Class.EMS;
 
-import Class.Parser;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
- * Represents personal information for an employee.
- *
- * <p>This class extends the Information class and serves as a placeholder for storing
- * personal details such as name, birthday, address, and phone number. Extend this class
- * with additional fields and methods as needed.</p>
+ * Represents personal information of an employee.
+ * 
  */
 public class PersonalInformation extends Information {
     private String firstName;
     private String lastName;
-    private Date birthday;
-    private String address;
+    private LocalDate birthday;
     private String phoneNumber;
+    private String email;
 
-    /**
-     * Constructs a PersonalInformation object using the provided personal data.
-     *
-     * <p>This constructor initializes personal information for an employee based on an array of strings.
-     * The array is expected to contain at least 6 elements:
-     * <ul>
-     *   <li>Index 1: Last Name</li>
-     *   <li>Index 2: First Name</li>
-     *   <li>Index 3: Birthday (to be parsed)</li>
-     *   <li>Index 4: Address</li>
-     *   <li>Index 5: Phone Number</li>
-     * </ul>
-     * The employee ID is passed to the superclass. If the array has fewer than 6 elements, an exception is thrown.
-     * </p>
-     *
-     * @param employeeID the employee's unique identifier.
-     * @param personalData an array of strings representing personal information.
-     * @throws IllegalArgumentException if the personalData array has fewer than 6 elements.
-     */
-    public PersonalInformation(String employeeID, String[] personalData) {
-        super(employeeID); // Initialize the superclass with the employee ID.
-        
-        // Validate that the personalData array contains the expected number of elements.
-        if (personalData.length < 6) {
-            throw new IllegalArgumentException("Invalid data: Employee information must have 6 elements.");
-        }
-        
-        // Assign first name and last name from the personalData array.
-        this.lastName = personalData[1]; 
-        this.firstName = personalData[2];               
-        this.address = personalData[4];
-        this.phoneNumber = personalData[5];
-        this.birthday = Parser.parseDate(personalData[3], null);
- 
-    }  
-    
-    /**
-     * Retrieves the personal information as an array of strings.
-     *
-     * @return an array containing the employee ID, first name, last name, formatted birthday,
-     * address, and phone number.
-     */
-    @Override
-    public String[] getInformation() {
-        // Return an array with the personal details.
-        return new String[] {employeeID,                            
-                            lastName,
-                            firstName,
-                            birthday.toString(),
-                            address,
-                            phoneNumber
-                            };
+    public PersonalInformation() {
+        super(0); 
     }
 
+    // Constructor for insert
+    public PersonalInformation(String firstName, String lastName, LocalDate birthday,
+                               String phoneNumber, String email) {
+        super(0); 
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthday = birthday;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+    }
+
+    // Constructor for retrieval
+    public PersonalInformation(int employeeID, String firstName, String lastName,
+                               LocalDate birthday, String phoneNumber, String email) {
+        super(employeeID);
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthday = birthday;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+    }
+
+    // Getters and setters
     public String getFirstName() {
         return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getLastName() {
         return lastName;
     }
 
-    public Date getBirthday() {
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public LocalDate getBirthday() {
         return birthday;
     }
 
-    public String getAddress() {
-        return address;
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
     }
 
     public String getPhoneNumber() {
         return phoneNumber;
     }
-    
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Employee #%d: %s %s", employeeID, firstName, lastName);
+    }
 }

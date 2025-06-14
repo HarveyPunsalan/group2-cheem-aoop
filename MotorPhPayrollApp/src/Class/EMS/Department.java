@@ -5,31 +5,47 @@
 package Class.EMS;
 
 /**
- *
- * @author 63909
+ * Represents a department in the organization.
+ * 
  */
 public class Department {
-    private String departmentID; 
-    private String departmentName;
-    private Employee departmentHead; 
 
-    public Department(String departmentID, String departmentName, Employee departmentHead) {
-        this.departmentID = departmentID;
-        this.departmentName = departmentName;
-        this.departmentHead = departmentHead;
+    private int departmentID;         
+    private String departmentName;    
+
+    public Department() {
     }
 
-    public String getDepartmentID() {
+    // Constructor for insert
+    public Department(String departmentName) {
+        this.departmentName = departmentName;
+    }
+
+    // Constructor for retrieval
+    public Department(int departmentID, String departmentName) {
+        this.departmentID = departmentID;
+        this.departmentName = departmentName;
+    }
+
+    // Getters and setters
+    public int getDepartmentID() {
         return departmentID;
+    }
+
+    public void setDepartmentID(int departmentID) {
+        this.departmentID = departmentID;
     }
 
     public String getDepartmentName() {
         return departmentName;
     }
 
-    public Employee getDepartmentHead() {
-        return departmentHead;
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return String.format("Department [ID: %d, Name: %s]", departmentID, departmentName);
+    }
 }

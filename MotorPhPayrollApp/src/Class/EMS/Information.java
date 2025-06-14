@@ -5,40 +5,46 @@
 package Class.EMS;
 
 /**
- * Abstract base class for employee-related information.
+ * Abstract class for employee-related information.
  *
- * <p>This class serves as a common superclass for different types of information
- * (e.g., personal, government, employment) associated with an employee.
- * Extend this class to implement specific information structures as needed.</p>
+ * This class serves as a superclass for different types of employee-related
+ * data such as personal, government, and employment details.
  */
 public abstract class Information {
-    protected String employeeID; // Employee's unique identifier.
+    protected int employeeID;
 
     /**
      * Constructs an Information object with the specified employee ID.
      *
      * @param employeeID the unique identifier of the employee.
      */
-    public Information(String employeeID) {
-        this.employeeID = employeeID; // Initialize the employee ID field.
+    public Information(int employeeID) {
+        this.employeeID = employeeID;
     }
 
     /**
-     * Retrieves the employee's unique identifier.
+     * Gets the employee's ID.
      *
-     * @return the employeeID.
+     * @return the employee ID.
      */
-    public String getEmployeeID() {
-        return employeeID; // Return the stored employee ID.
-    }  
-        
+    public int getEmployeeID() {
+        return employeeID;
+    }
+
     /**
-     * Retrieves the object's information as an array of strings.
+     * Sets the employee's ID.
      *
-     * <p>Subclasses must implement this method to provide a formatted array of strings
-     * representing the object's details.</p>
-     *
-     * @return an array of strings containing the object's information.
-     */ 
-    public abstract String[] getInformation();
+     * @param employeeID the new employee ID
+     */
+    public void setEmployeeID(int employeeID) {
+        this.employeeID = employeeID;
+    }
+
+    /**
+     * Override for customized display (optional).
+     */
+    @Override
+    public String toString() {
+        return "Employee ID: " + employeeID;
+    }
 }

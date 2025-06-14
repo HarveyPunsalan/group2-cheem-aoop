@@ -5,57 +5,60 @@
 package Class.EMS;
 
 /**
- * Represents a job position.
- *
- * <p>This class encapsulates job-related details such as the job name.
- * Additional job-related properties and methods can be added as needed.</p>
+ * Represents a job or position in the organization.
+ * 
  */
 public class Job {
-    private String jobID; 
-    private String jobName;
-    private Salary salary; 
-    private Department department;
-    private Employee immediateSupervisor;
 
-    /**
-     * Constructs a Job with the specified job ID, job name, and salary.
-     *
-     * @param jobID the unique identifier for the job.
-     * @param jobName the name of the job.
-     * @param salary the Salary object associated with the job.
-     */
-    public Job(String jobID, String jobName, Salary salary) {
+    private int jobID;           
+    private String jobTitle;   
+    private Department department;   
+
+    public Job() {
+    }
+
+    // Constructor for insert
+    public Job(String jobTitle, Department department) {
+        this.jobTitle = jobTitle;
+        this.department = department;
+    }
+
+    // Constructor for retrieval
+    public Job(int jobID, String jobTitle, Department department) {
         this.jobID = jobID;
-        this.jobName = jobName;
-        this.salary = salary;
-    }
-    
-    /**
-     * Constructs a Job with the specified job name.
-     *
-     * @param jobName the name of the job.
-     */    
-    public Job(String jobName) {
-        this.jobName = jobName;
+        this.jobTitle = jobTitle;
+        this.department = department;
     }
 
-    public String getJobID() {
+    // Getters and setters
+    public int getJobID() {
         return jobID;
     }
 
-    public String getJobName() {
-        return jobName;
+    public void setJobID(int jobID) {
+        this.jobID = jobID;
     }
 
-    public Salary getSalary() {
-        return salary;
+    public String getJobTitle() {
+        return jobTitle;
+    }
+
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
     }
 
     public Department getDepartment() {
         return department;
     }
 
-    public Employee getImmediateSupervisor() {
-        return immediateSupervisor;
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Job [ID: %d, Title: %s, Department: %s]",
+                jobID, jobTitle,
+                (department != null ? department.getDepartmentName() : "N/A"));
     }
 }
