@@ -1229,3 +1229,4 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
     }
      
 }
+

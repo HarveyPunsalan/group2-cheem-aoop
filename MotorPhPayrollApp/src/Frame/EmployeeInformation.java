@@ -6,7 +6,7 @@ package Frame;
 
 /**
  * Frame for Admin users to view and manage employee information.
- * Allows retrieval of active employees and populates a JTable with their details.
+ * Allows retrieval of active employees and populates a JTable with their details. 
  */
 
 import Class.EMS.*;
@@ -511,3 +511,4 @@ public class EmployeeInformation extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
 }    
+
