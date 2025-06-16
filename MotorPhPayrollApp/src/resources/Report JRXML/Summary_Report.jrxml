@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 9.0.0.final using JasperReports Library version 6.21.0-4f56c4f36cd19e17675219a9ac4692d5f0f13b06  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Payroll Summary" pageWidth="1500" pageHeight="842" columnWidth="1460" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="216dbc49-ca70-4183-afb4-c0cccf228589">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Payroll Summary" pageWidth="1530" pageHeight="842" columnWidth="1490" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="216dbc49-ca70-4183-afb4-c0cccf228589">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<parameter name="P_START_DATE" class="java.sql.Date"/>
-	<parameter name="P_END_DATE" class="java.sql.Date"/>
-	<parameter name="GeneratedOn" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT
             p.employee_id                                            AS EmployeeNumber,
@@ -28,8 +25,6 @@
               ON p.employee_id = e.employee_id
             INNER JOIN employee_government_information gi
               ON e.employee_id = gi.employee_id
-          WHERE
-            p.generated_date BETWEEN $P{P_START_DATE} AND $P{P_END_DATE}
           GROUP BY
             p.employee_id,
             e.first_name,
@@ -57,11 +52,8 @@
 	<field name="PhilHealthContribution" class="java.math.BigDecimal"/>
 	<field name="TIN" class="java.lang.String"/>
 	<field name="WithholdingTax" class="java.math.BigDecimal"/>
-	<background>
-		<band splitType="Stretch"/>
-	</background>
 	<title>
-		<band height="79" splitType="Stretch">
+		<band height="80" splitType="Stretch">
 			<staticText>
 				<reportElement mode="Opaque" x="135" y="12" width="453" height="55" forecolor="#FFFFFF" backcolor="#1D344C" uuid="eea4639d-126e-4f68-bfb4-c50f26fb3d44"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -70,188 +62,173 @@
 				<text><![CDATA[MotorPH Payroll Summary Report]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="840" y="12" width="100" height="20" forecolor="#FFFFFF" backcolor="#1D344C" uuid="f2059b9a-7db5-48ac-ba2b-80fa96b6c5d9"/>
+				<reportElement mode="Opaque" x="640" y="30" width="100" height="20" forecolor="#FFFFFF" backcolor="#1D344C" uuid="f2059b9a-7db5-48ac-ba2b-80fa96b6c5d9"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Period Start:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="840" y="47" width="100" height="20" forecolor="#FFFFFF" backcolor="#1D344C" uuid="2f529187-3fef-4f04-a137-a8a81867e00d"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Period End:]]></text>
+				<text><![CDATA[Pay Period:]]></text>
 			</staticText>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="89" splitType="Stretch">
+		<band height="51">
 			<rectangle>
-				<reportElement x="0" y="0" width="1460" height="49" forecolor="#FFFFFF" backcolor="#1D344C" uuid="13f70e26-8f0d-491e-9808-54e69e0c39df"/>
+				<reportElement x="0" y="0" width="1490" height="49" forecolor="#FFFFFF" backcolor="#1D344C" uuid="13f70e26-8f0d-491e-9808-54e69e0c39df"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="0" y="20" width="100" height="28" forecolor="#FFFFFF" uuid="5915c7f3-7145-4bcb-8fc2-a9b9c2884536"/>
+				<reportElement x="0" y="21" width="100" height="28" forecolor="#FFFFFF" uuid="5915c7f3-7145-4bcb-8fc2-a9b9c2884536"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Employee Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="110" y="20" width="104" height="28" forecolor="#FFFFFF" uuid="9215f502-ebb1-468d-b080-7089ce18b76b"/>
+				<reportElement x="98" y="21" width="104" height="28" forecolor="#FFFFFF" uuid="9215f502-ebb1-468d-b080-7089ce18b76b"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Employee Full Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="220" y="20" width="100" height="28" forecolor="#FFFFFF" uuid="73b6efcc-8340-4531-9619-ec2d9c2beb40"/>
+				<reportElement x="200" y="21" width="100" height="28" forecolor="#FFFFFF" uuid="73b6efcc-8340-4531-9619-ec2d9c2beb40"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Position]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="320" y="20" width="100" height="28" forecolor="#FFFFFF" uuid="22858ee5-df74-4fc6-b4e9-fae704d3d888"/>
+				<reportElement x="300" y="21" width="100" height="28" forecolor="#FFFFFF" uuid="22858ee5-df74-4fc6-b4e9-fae704d3d888"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Department]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="420" y="20" width="100" height="28" forecolor="#FFFFFF" uuid="67a7468e-370f-45d0-aa3f-efd48980f772"/>
+				<reportElement x="400" y="20" width="100" height="28" forecolor="#FFFFFF" uuid="67a7468e-370f-45d0-aa3f-efd48980f772"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Gross Income]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="520" y="20" width="100" height="28" forecolor="#FFFFFF" uuid="8f8a21c6-5ff5-4dfd-b0e5-5fd23adecc96"/>
+				<reportElement x="500" y="21" width="100" height="28" forecolor="#FFFFFF" uuid="8f8a21c6-5ff5-4dfd-b0e5-5fd23adecc96"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Social Security Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="630" y="20" width="100" height="28" forecolor="#FFFFFF" uuid="ee7e6367-a671-47f8-a5fc-ae4636b9645e"/>
+				<reportElement x="600" y="20" width="100" height="28" forecolor="#FFFFFF" uuid="ee7e6367-a671-47f8-a5fc-ae4636b9645e"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Social Security Contribution]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="730" y="20" width="100" height="28" forecolor="#FFFFFF" uuid="4817d977-b854-4065-b92a-61c220bf340c"/>
+				<reportElement x="700" y="22" width="100" height="28" forecolor="#FFFFFF" uuid="4817d977-b854-4065-b92a-61c220bf340c"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Pag-ibig Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="840" y="20" width="100" height="28" forecolor="#FFFFFF" uuid="277a06b9-a300-4b4d-b3c1-90ba6076c3fe"/>
+				<reportElement x="800" y="22" width="100" height="28" forecolor="#FFFFFF" uuid="277a06b9-a300-4b4d-b3c1-90ba6076c3fe"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Pag-ibig Contribution]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="950" y="20" width="100" height="28" forecolor="#FFFFFF" uuid="3a6c9749-2a7d-40d0-80ae-213a73f88415"/>
+				<reportElement x="900" y="22" width="100" height="28" forecolor="#FFFFFF" uuid="3a6c9749-2a7d-40d0-80ae-213a73f88415"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Philhealth Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1060" y="20" width="100" height="28" forecolor="#FFFFFF" uuid="fc6099ab-d781-4b6a-b9b9-91c4f06fe5e9"/>
+				<reportElement x="1000" y="21" width="100" height="28" forecolor="#FFFFFF" uuid="fc6099ab-d781-4b6a-b9b9-91c4f06fe5e9"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[PhilHealth Contribution]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1170" y="20" width="100" height="28" forecolor="#FFFFFF" uuid="466a6480-b397-43ac-9f06-a90e53195ca0"/>
+				<reportElement x="1100" y="21" width="100" height="28" forecolor="#FFFFFF" uuid="466a6480-b397-43ac-9f06-a90e53195ca0"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[TIN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1280" y="20" width="100" height="28" forecolor="#FFFFFF" uuid="b4e273da-e233-4ffe-8717-256e6f488460"/>
+				<reportElement x="1200" y="20" width="100" height="28" forecolor="#FFFFFF" uuid="b4e273da-e233-4ffe-8717-256e6f488460"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Withholding Tax]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="1300" y="20" width="90" height="30" forecolor="#FFFFFF" uuid="bcc91f7a-f485-48b1-9476-4d4448261013"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Net Pay]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="90" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.spreadsheet.SpreadsheetLayout"/>
 			<textField>
-				<reportElement x="112" y="49" width="100" height="30" uuid="97da9589-326f-4f02-8ad1-7023d4e8f525"/>
-				<textFieldExpression><![CDATA[$F{EmployeeFullName}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="0" y="49" width="100" height="30" uuid="d50099ea-f78e-460d-aa47-c822e1e50661"/>
+				<reportElement x="0" y="0" width="100" height="90" uuid="f7349224-4d3c-41cb-a6b4-8d83acc8b76c"/>
 				<textFieldExpression><![CDATA[$F{EmployeeNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="220" y="50" width="100" height="30" uuid="570816ac-d228-4405-886a-84895aec37c7"/>
+				<reportElement x="100" y="0" width="100" height="90" uuid="bfaf5527-a756-44ad-809a-081ddd0b6c44"/>
+				<textFieldExpression><![CDATA[$F{EmployeeFullName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="0" width="100" height="90" uuid="7594eb4b-83e4-4543-81fb-f29b60bf2b76"/>
 				<textFieldExpression><![CDATA[$F{Position}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="320" y="49" width="100" height="30" uuid="10dc55df-1965-4a9f-9f8b-7beaa7865596"/>
+				<reportElement x="300" y="0" width="100" height="90" uuid="971855e5-51c7-4aed-8261-6fa9b4a1fe20"/>
 				<textFieldExpression><![CDATA[$F{Department}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="420" y="50" width="100" height="30" uuid="71f44d57-f3da-4ccc-b54a-c43a186f9ac0"/>
+				<reportElement x="400" y="0" width="100" height="90" uuid="77188dd2-2885-4aaa-8d95-6fe7eef1beaf"/>
 				<textFieldExpression><![CDATA[$F{GrossIncome}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="530" y="50" width="100" height="30" uuid="67a2de04-efd3-4ac2-ad94-91681b977c9b"/>
-				<textElement>
-					<font size="9"/>
-				</textElement>
+				<reportElement x="500" y="0" width="100" height="90" uuid="f65fec47-8d52-446a-b40d-d6f5a716daeb"/>
 				<textFieldExpression><![CDATA[$F{SocialSecurityNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="630" y="50" width="100" height="30" uuid="004072e0-b600-43ba-896c-6042c496f549"/>
-				<textElement>
-					<font size="9"/>
-				</textElement>
+				<reportElement x="600" y="0" width="100" height="90" uuid="d6f0d6cf-65f5-481a-a9b3-a23cc41c8709"/>
 				<textFieldExpression><![CDATA[$F{SocialSecurityContribution}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="730" y="50" width="100" height="30" uuid="e1a3d402-36c8-4266-913c-5190b09835aa"/>
+				<reportElement x="700" y="0" width="100" height="90" uuid="4e1c52f1-3f5c-4b17-af6c-bb25e48efd1b"/>
 				<textFieldExpression><![CDATA[$F{PagibigNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="840" y="50" width="100" height="30" uuid="714c7a7b-88f5-45ae-a81b-0159ed272de9"/>
+				<reportElement x="800" y="0" width="100" height="90" uuid="3514de87-1335-4525-ac84-4c58913014e2"/>
 				<textFieldExpression><![CDATA[$F{PagibigContribution}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="950" y="50" width="100" height="30" uuid="9235c33a-c720-4a88-b288-f83bdebf2be5"/>
+				<reportElement x="900" y="0" width="100" height="90" uuid="e06ab4bf-057f-4796-acd6-3c902a829527"/>
 				<textFieldExpression><![CDATA[$F{PhilHealthNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="1060" y="50" width="100" height="30" uuid="b6c682b9-8744-4748-ad97-1a6611523812"/>
+				<reportElement x="1000" y="0" width="100" height="90" uuid="4ac0372d-0776-4337-aee0-47e6a8135bdf"/>
 				<textFieldExpression><![CDATA[$F{PhilHealthContribution}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="1170" y="50" width="100" height="30" uuid="bc9191b0-0715-493f-bf0b-fbbccc259f07"/>
+				<reportElement x="1100" y="0" width="100" height="90" uuid="bcd90cd1-5951-4820-a4a2-a85e3c2d1f93"/>
 				<textFieldExpression><![CDATA[$F{TIN}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="1280" y="50" width="100" height="30" uuid="82505911-1d82-46b3-a4cb-6a460734dac2"/>
+				<reportElement x="1200" y="0" width="100" height="90" uuid="9e90b62f-fc39-4080-b8e2-8231ccd86a04"/>
 				<textFieldExpression><![CDATA[$F{WithholdingTax}]]></textFieldExpression>
 			</textField>
 		</band>
-	</pageHeader>
-	<columnHeader>
-		<band height="61" splitType="Stretch"/>
-	</columnHeader>
-	<detail>
-		<band height="125" splitType="Stretch"/>
 	</detail>
-	<columnFooter>
-		<band height="45" splitType="Stretch"/>
-	</columnFooter>
-	<pageFooter>
-		<band height="54" splitType="Stretch"/>
-	</pageFooter>
-	<summary>
-		<band height="42" splitType="Stretch"/>
-	</summary>
 </jasperReport>

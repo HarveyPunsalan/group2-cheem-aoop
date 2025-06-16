@@ -4,11 +4,10 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<parameter name="P_PAYSLIP_ID" class="java.lang.Integer"/>
+	<parameter name="P_PAYSLIP_ID" class="java.lang.Integer" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[SELECT
             p.payslip_id,
-            p.payroll_id,
             p.employee_id,
             u.employee_name,                         -- from system_user
             p.position,
@@ -18,18 +17,26 @@
             p.days_worked,
             p.overtime,
             p.gross_salary,
-            p.employee_allowance_id,
+            p.rice_subsidy,
+            p.phone_allowance,
+            p.clothing_allowance,
+            p.sss,
+			p.pagibig,
+			p.philhealth,
+			p.tin
             p.total_allowance,
-            p.employee_government_deduction_id,
             p.total_deductions,
             p.net_salary,
             p.generated_date
+            p.gross_income,
+            p.period_start,
+    		p.period_end
+            
           FROM payslip p
           LEFT JOIN system_user u ON p.employee_id = u.user_id
           WHERE p.payslip_id = $P{P_PAYSLIP_ID}]]>
 	</queryString>
 	<field name="payslip_id" class="java.lang.Integer"/>
-	<field name="payroll_id" class="java.lang.Integer"/>
 	<field name="employee_id" class="java.lang.Integer"/>
 	<field name="employee_name" class="java.lang.String"/>
 	<field name="position" class="java.lang.String"/>
@@ -39,12 +46,19 @@
 	<field name="days_worked" class="java.lang.Integer"/>
 	<field name="overtime" class="java.math.BigDecimal"/>
 	<field name="gross_salary" class="java.math.BigDecimal"/>
-	<field name="employee_allowance_id" class="java.lang.Integer"/>
+	<field name="rice_subsidy" class="java.math.BigDecimal"/>
+	<field name="phone_allowance" class="java.math.BigDecimal"/>
+	<field name="clothing_allowance" class="java.math.BigDecimal"/>
+	<field name="sss" class="java.math.BigDecimal"/>
+	<field name="pagibig" class="java.math.BigDecimal"/>
+	<field name="philhealth" class="java.math.BigDecimal"/>
+	<field name="tin" class="java.math.BigDecimal"/>
 	<field name="total_allowance" class="java.math.BigDecimal"/>
-	<field name="employee_government_deduction_id" class="java.lang.Integer"/>
 	<field name="total_deductions" class="java.math.BigDecimal"/>
 	<field name="net_salary" class="java.math.BigDecimal"/>
 	<field name="generated_date" class="java.sql.Date"/>
+	<field name="period_start" class="java.sql.Date"/>
+	<field name="period_end" class="java.sql.Date"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -64,17 +78,10 @@
 				</textElement>
 				<text><![CDATA[Employee Payslip]]></text>
 			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="350" y="0" width="59" height="30" forecolor="#FFFFFF" backcolor="#1D344C" uuid="7c95a3d7-833f-48a7-a720-7292bca06aec"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Payroll ID:]]></text>
-			</staticText>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="60" splitType="Stretch">
+		<band height="72" splitType="Stretch">
 			<staticText>
 				<reportElement mode="Opaque" x="0" y="0" width="100" height="20" forecolor="#FFFFFF" backcolor="#1D344C" uuid="7e1258d7-999b-495c-b41a-8384cd44e476"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -121,10 +128,30 @@
 				<reportElement x="100" y="0" width="100" height="20" uuid="7e59a2b7-6c14-48a8-b18d-b471c3c78840"/>
 				<textFieldExpression><![CDATA[$F{payslip_id}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="100" y="20" width="100" height="19" uuid="5846e3db-6300-4fc3-b3d0-e98c5da7af46"/>
+				<textFieldExpression><![CDATA[$F{employee_id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="41" width="100" height="19" uuid="8b2dfd9c-e403-4745-9e64-8d045e97c1cb"/>
+				<textFieldExpression><![CDATA[$F{employee_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="462" y="41" width="100" height="18" uuid="3c6d79d6-9f4c-4752-a999-685d36eab1fd"/>
+				<textFieldExpression><![CDATA[$F{department} + "  "  + $F{position}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="462" y="0" width="100" height="19" uuid="f3fd942a-ec9b-4db9-baf5-1f9ca2821775"/>
+				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("MMMM dd, yyyy").format($F{period_start})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="462" y="20" width="100" height="22" uuid="c7314d53-d21e-453b-b7be-d4c5d1d47f74"/>
+				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("MMMM dd, yyyy").format($F{period_end})]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="121" splitType="Stretch">
+		<band height="122" splitType="Stretch">
 			<rectangle>
 				<reportElement x="0" y="0" width="555" height="20" backcolor="#1D344C" uuid="3f965f6a-c253-4cd3-864c-4949b5aa7ae8"/>
 			</rectangle>
@@ -164,10 +191,26 @@
 				<reportElement x="100" y="20" width="100" height="20" uuid="e4baac93-52af-4e2c-819a-32d8c0a68820"/>
 				<textFieldExpression><![CDATA[$F{monthly_rate}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="100" y="41" width="100" height="18" uuid="d93bd598-a0b7-4a1d-921f-bc798e987395"/>
+				<textFieldExpression><![CDATA[$F{daily_rate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="60" width="100" height="20" uuid="1ac27459-16d7-490d-b870-717712554152"/>
+				<textFieldExpression><![CDATA[$F{days_worked}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="79" width="100" height="22" uuid="3475c80f-3eca-48ec-8317-5b748d38cc18"/>
+				<textFieldExpression><![CDATA[$F{overtime}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="100" width="100" height="22" uuid="41424141-9a4e-499b-8ab1-aea1383a4138"/>
+				<textFieldExpression><![CDATA[$F{gross_salary}]]></textFieldExpression>
+			</textField>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="103" splitType="Stretch">
+		<band height="330" splitType="Stretch">
 			<rectangle>
 				<reportElement x="0" y="0" width="555" height="20" backcolor="#1D344C" uuid="882f016a-5f66-439c-a1a3-d7b9cd79403a"/>
 			</rectangle>
@@ -206,82 +249,123 @@
 				</textElement>
 				<text><![CDATA[Total]]></text>
 			</staticText>
-		</band>
-	</detail>
-	<columnFooter>
-		<band height="128" splitType="Stretch">
+			<textField>
+				<reportElement x="102" y="40" width="100" height="19" uuid="3d7db20c-02b5-48be-b821-8e9aee412a5e"/>
+				<textFieldExpression><![CDATA[$F{phone_allowance}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="102" y="20" width="100" height="19" uuid="5a2236a7-e27a-4c1e-94f2-6a87aaecda52"/>
+				<textFieldExpression><![CDATA[$F{rice_subsidy}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="102" y="60" width="148" height="19" uuid="b65f76b2-ec24-46d9-aacb-48b1fe934f6d"/>
+				<textFieldExpression><![CDATA[$F{clothing_allowance}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="79" width="100" height="19" uuid="7357fa32-47d2-41a7-b0d5-930901c7b16c"/>
+				<textFieldExpression><![CDATA[$F{total_allowance}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="129" width="100" height="20" uuid="0f48bffd-8bc3-4f53-9740-9b2ec936495d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[SSS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="148" width="100" height="20" uuid="ec41a3d0-cfc5-43eb-aa21-e733998ba5bb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Pag-ibig]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="168" width="100" height="20" uuid="3930e1e5-a433-4da9-a04f-23c4ca8c39e9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Philhealth]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="188" width="100" height="20" uuid="d441a765-20cb-4bad-beec-95f7d20e4850"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[TIN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="208" width="100" height="20" uuid="59090a5f-dcce-4ed7-9c6a-53f768c4e8d9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Total Deductions]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="102" y="129" width="100" height="19" uuid="6a52f8a8-1e00-434b-80c0-476555945bcb"/>
+				<textFieldExpression><![CDATA[$F{sss}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="102" y="148" width="100" height="19" uuid="c328ccba-fd88-44d5-8db4-612052214e78"/>
+				<textFieldExpression><![CDATA[$F{pagibig}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="102" y="169" width="100" height="18" uuid="1c08c70b-0071-42a4-9509-3209e6ca1fb2"/>
+				<textFieldExpression><![CDATA[$F{philhealth}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="102" y="189" width="100" height="19" uuid="9545b3c0-bf97-4202-8e31-2e8066371b43"/>
+				<textFieldExpression><![CDATA[$F{tin}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="102" y="208" width="100" height="18" uuid="a0b8edca-d001-47d9-baa7-21dcaf145726"/>
+				<textFieldExpression><![CDATA[$F{total_deductions}]]></textFieldExpression>
+			</textField>
 			<rectangle>
-				<reportElement x="2" y="0" width="553" height="20" backcolor="#1D344C" uuid="2cb0db05-4b59-4b21-8caf-9c996ebdf0ce"/>
+				<reportElement x="0" y="109" width="553" height="20" backcolor="#1D344C" uuid="2cb0db05-4b59-4b21-8caf-9c996ebdf0ce"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="2" y="1" width="137" height="20" forecolor="#FFFFFF" uuid="7c1638db-d7bc-4ef4-926d-63723abe5c5a"/>
+				<reportElement x="0" y="109" width="137" height="20" forecolor="#FFFFFF" uuid="7c1638db-d7bc-4ef4-926d-63723abe5c5a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Government Contributions]]></text>
 			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="2" y="21" width="100" height="20" uuid="0f48bffd-8bc3-4f53-9740-9b2ec936495d"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[SSS]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="2" y="40" width="100" height="20" uuid="ec41a3d0-cfc5-43eb-aa21-e733998ba5bb"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Pag-ibig]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="2" y="60" width="100" height="20" uuid="3930e1e5-a433-4da9-a04f-23c4ca8c39e9"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Philhealth]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="2" y="80" width="100" height="20" uuid="d441a765-20cb-4bad-beec-95f7d20e4850"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[TIN]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="2" y="100" width="100" height="20" uuid="59090a5f-dcce-4ed7-9c6a-53f768c4e8d9"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Total Deductions]]></text>
-			</staticText>
-		</band>
-	</columnFooter>
-	<pageFooter>
-		<band height="111" splitType="Stretch">
 			<rectangle>
-				<reportElement x="2" y="0" width="553" height="20" backcolor="#1D344C" uuid="033c0a33-3185-4714-9b1e-bcdf48394a2a"/>
+				<reportElement x="0" y="228" width="553" height="20" backcolor="#1D344C" uuid="033c0a33-3185-4714-9b1e-bcdf48394a2a"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="2" y="1" width="100" height="20" forecolor="#FFFFFF" uuid="0f76942a-0f15-42d6-8d68-e287b3039204"/>
+				<reportElement x="2" y="228" width="100" height="20" forecolor="#FFFFFF" uuid="0f76942a-0f15-42d6-8d68-e287b3039204"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Summary]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2" y="21" width="100" height="20" uuid="27432484-ce65-4f9e-b06d-92ef51ba36c5"/>
+				<reportElement mode="Opaque" x="0" y="248" width="100" height="20" uuid="27432484-ce65-4f9e-b06d-92ef51ba36c5"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Gross Income]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2" y="41" width="100" height="20" uuid="e9b9d235-b399-4fb4-a988-d72f326ea821"/>
+				<reportElement mode="Opaque" x="0" y="268" width="100" height="20" uuid="e9b9d235-b399-4fb4-a988-d72f326ea821"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Benefits]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2" y="61" width="100" height="20" uuid="093480a5-939f-43c4-b7ef-b0e70b22f31a"/>
+				<reportElement mode="Opaque" x="0" y="288" width="100" height="20" uuid="093480a5-939f-43c4-b7ef-b0e70b22f31a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Deductions]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2" y="81" width="100" height="20" uuid="a85176b0-f8c4-43a5-a7a8-07e524c30d51"/>
+				<reportElement mode="Opaque" x="0" y="308" width="100" height="20" uuid="a85176b0-f8c4-43a5-a7a8-07e524c30d51"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Total Net Pay]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="100" y="248" width="100" height="19" uuid="8005805f-e9d1-4636-9261-60acfbd5f14b"/>
+				<textFieldExpression><![CDATA[$F{gross_salary}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="267" width="100" height="20" uuid="6cd07806-4a27-4727-aa2b-fd3dd1b0ffed"/>
+				<textFieldExpression><![CDATA[$F{total_allowance}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="98" y="288" width="100" height="19" uuid="e95ed3a7-8add-4735-b9cf-59ab089aff36"/>
+				<textFieldExpression><![CDATA[$F{total_deductions}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="307" width="100" height="20" uuid="83aa72b4-a4cf-4a44-b6d1-7776a99bff5a"/>
+				<textFieldExpression><![CDATA[$F{net_salary}]]></textFieldExpression>
+			</textField>
 		</band>
-	</pageFooter>
-	<summary>
-		<band height="42" splitType="Stretch"/>
-	</summary>
+	</detail>
 </jasperReport>
