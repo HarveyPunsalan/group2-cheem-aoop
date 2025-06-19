@@ -47,9 +47,9 @@ public class SQLExecutor {
     public <T> List<T> executeQuery(Script script, List<Object> params, ResultSetMapper<T> mapper) throws SQLException {
         // 🔒 Validate parameter count
         validateParameters(script.toString(), params);
-        
+           
         List<T> results = new ArrayList<>();
-
+        
         try (PreparedStatement preparedStatement = connection.prepareStatement(script.toString())) {
             // ✅ Only set parameters if there are any
             if (!params.isEmpty()) {
