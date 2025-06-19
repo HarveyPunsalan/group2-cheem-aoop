@@ -7,8 +7,9 @@ package Class.EMS;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-/*This test class is used to verify that the EmployeeDeletionService correctly deletes
- * all data associated with a given employee ID from the database.
+/**
+ * Test class to verify that the EmployeeDeletionService correctly deletes
+ * all data associated with a specific employee ID from the database.
 */
 public class EmployeeDeletionTest {
     public static void main(String[] args) {
@@ -19,10 +20,10 @@ public class EmployeeDeletionTest {
             EmployeeDeletionService deletionService = new EmployeeDeletionService(conn);
             
             // Test deletion of a specific employee by ID
-            deletionService.deleteEmployee(10048);  // Example employee ID to delete
+            deletionService.deleteEmployee(10205);  // Example employee ID to delete
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error: deletion failed");
         }
     }
 }

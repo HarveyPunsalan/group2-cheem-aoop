@@ -4,11 +4,6 @@
  */
 package Frame;
 
-/**
- * Frame for Admin users to view and manage employee information.
- * Allows retrieval of active employees and populates a JTable with their details. 
- */
-
 import Class.EMS.*;
 import Class.UMS.*;
 import com.motorph.database.execution.SQLExecutor;
@@ -19,47 +14,61 @@ import javax.swing.table.DefaultTableModel;
 import java.sql.SQLException;
 import javax.swing.UnsupportedLookAndFeelException;
 
+/**
+ * Frame for Admin users to view and manage employee information.
+ * Allows retrieval of active employees and populates a JTable with their details.
+ */
 public class EmployeeInformation extends javax.swing.JFrame {
 
-    private final Admin admin;
-    private final Connection connection;
-    private final EmployeeRetrievalService retrievalService;
-    private final EmployeeDeletionService deletionService;
+    private final Admin admin; // The currently logged-in admin user
+    private final Connection connection; // Database connection used for operations
+    private final EmployeeRetrievalService retrievalService; // Service to fetch employee data
+    private final EmployeeDeletionService deletionService; // Service to delete employee records
 
+    /**
+     * Constructs the EmployeeInformation frame.
+     *
+     * @param admin the current Admin user
+     * @param connection the database connection to be used for services
+     */
     public EmployeeInformation(Admin admin, Connection connection) {
-        initComponents();
+        initComponents(); // Initialize Swing GUI components
         this.admin = admin;
         this.connection = connection;
 
-        admin.addLogoutListener(this);
+        admin.addLogoutListener(this); // Register logout listener to handle session events
 
+        // Initialize services with a shared SQLExecutor
         this.retrievalService = new EmployeeRetrievalService(new SQLExecutor((java.sql.Connection) connection));
         this.deletionService = new EmployeeDeletionService((java.sql.Connection) connection);
 
+        // Load active employees into the table upon opening the frame
         refreshEmployeeTable();
     }
 
      /**
-     * Retrieves the list of active employees from the database and updates the JTable model.
+     * Retrieves the list of active employees from the database and updates the JTable.
      */
     private void refreshEmployeeTable() {
         try {
-            List<Employee> employees = retrievalService.getActiveEmployees();
-            jTable1EmployeeList.setModel(mapToTableModel(employees));
+            List<Employee> employees = retrievalService.getActiveEmployees(); // Fetch the list of active employees from the service
+            jTable1EmployeeList.setModel(mapToTableModel(employees)); // Convert the list into a table model and update the JTable
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error loading employees: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error loading employees: " + e.getMessage()); // Show error dialog if retrieval fails
         }
     }
 
     /**
-     * Converts a list of Employee objects into a JTable model.
-     * @param employees List of active employees
-     * @return Table model to be used in JTable
+     * Converts a list of Employee objects into a DefaultTableModel suitable for JTable display.
+     *
+     * @param employees List of active employees to display
+     * @return a non-editable table model containing employee data
      */
     private DefaultTableModel mapToTableModel(List<Employee> employees) {
         String[] columns = {"ID", "First Name", "Last Name", "Birthday", "Phone", "Email"};
         Object[][] data = new Object[employees.size()][columns.length];
 
+        // Populate the table data array with employee info
         for (int i = 0; i < employees.size(); i++) {
             Employee emp = employees.get(i);
             data[i][0] = emp.getEmployeeId();
@@ -70,6 +79,7 @@ public class EmployeeInformation extends javax.swing.JFrame {
             data[i][5] = emp.getEmail();
         }
 
+        // Return a table model that disallows editing any cell
         return new DefaultTableModel(data, columns) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -343,37 +353,40 @@ public class EmployeeInformation extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1AddNewRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1AddNewRecordActionPerformed
-        // Open ViewEmployeeDetails frame in ADD new record mode (blank editable fields)
+        // Instantiate the details frame in "add new employee" mode
         ViewEmployeeDetails addFrame = new ViewEmployeeDetails((Admin) admin, connection);
-        addFrame.setVisible(true);
+        addFrame.setVisible(true); // Show the new frame
 
-        this.setVisible(false); 
+        this.setVisible(false); // Hide the current frame
     }//GEN-LAST:event_jButton1AddNewRecordActionPerformed
     
     private void jButton1ViewEmployeeDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ViewEmployeeDetailsActionPerformed
-        // Ensure a record is selected before proceeding
+        // Check if a row is selected; abort if none is selected
         if (!isSelectRecord()) {
             return;
         }
         
-         try {
-        // Get selected employee ID from the table
+        try {
+        // Get the index of the selected row in the JTable
         int rowIndex = jTable1EmployeeList.getSelectedRow();
+        
+        // Retrieve the employee ID from the selected row (column 0)
         String employeeID = jTable1EmployeeList.getValueAt(rowIndex, 0).toString();
 
-        // Open the ViewEmployeeDetails frame in VIEW mode (grayed out fields)
+        // Open the ViewEmployeeDetails frame in "View Mode" (fields are non-editable)
         ViewEmployeeDetails detailsPage = new ViewEmployeeDetails(
             (Admin) admin, connection, employeeID
         );
         detailsPage.setVisible(true);
 
-        // Hide the current frame
+        // Close the current frame
         this.dispose();
 
-    } catch (SQLException e) {
+    } catch (SQLException e) { // Display a message if there's a problem with the database query
         JOptionPane.showMessageDialog(this, "Error loading employee details: " + e.getMessage(),
             "Database Error", JOptionPane.ERROR_MESSAGE);
-    } catch (Exception e) {
+        
+    } catch (Exception e) { // Catch-all for unexpected issues
         JOptionPane.showMessageDialog(this, "Unexpected error: " + e.getMessage(),
             "Error", JOptionPane.ERROR_MESSAGE);
     }
@@ -384,11 +397,11 @@ public class EmployeeInformation extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton6LogOutActionPerformed
 
     private void jButton2DeleteEmployeeRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2DeleteEmployeeRecordActionPerformed
-         if (!isSelectRecord()) { // Check if a row is selected in the JTable
-            return;
+         if (!isSelectRecord()) { // Check if a record is selected in the JTable
+            return; // If no selection, exit the method (prevent further execution)
         }
 
-        // Show confirmation dialog before deletion
+        // Show a confirmation dialog to prevent accidental deletion
         int result = JOptionPane.showConfirmDialog(
                 this,
                 "Are you sure to delete the Employee Record?",
@@ -396,24 +409,29 @@ public class EmployeeInformation extends javax.swing.JFrame {
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE);
 
-        // If user chooses 'No', cancel deletion
+        // If user cancels (selects "No"), abort deletion
         if (result != JOptionPane.YES_OPTION) return;
         
-        // Get the selected row index
+        // Get the index of the selected row
         int rowIndex = jTable1EmployeeList.getSelectedRow();
         
-        // Retrieve employee ID from the first column of the selected row
+        // Extract the employee ID from the selected row (first column)
         int employeeId = Integer.parseInt(jTable1EmployeeList.getValueAt(rowIndex, 0).toString());
 
         try {
-            deletionService.deleteEmployee(employeeId);
-            refreshEmployeeTable();
-            JOptionPane.showMessageDialog(this, "Successfully Deleted");
+            deletionService.deleteEmployee(employeeId); // Attempt to delete the employee from the database
+            refreshEmployeeTable(); // Refresh the JTable to reflect the deletion
+            JOptionPane.showMessageDialog(this, "Successfully Deleted"); // Notify the user of successful deletion
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Failed to delete employee: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Failed to delete employee: " + e.getMessage()); // Handle any SQL/database errors during deletion
         }
     }
 
+    /**
+    * Utility method to check if a row is selected in the employee JTable.
+    *
+    * @return true if a row is selected, false otherwise
+    */
     private boolean isSelectRecord() {
         return jTable1EmployeeList.getSelectedRow() >= 0;
     }//GEN-LAST:event_jButton2DeleteEmployeeRecordActionPerformed

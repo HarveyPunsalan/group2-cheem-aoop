@@ -5,25 +5,39 @@
 package Class.EMS;
 
 /**
- * Represents a job or position in the organization.
- * 
+ * Represents a job or position within the organization.
+ *
+ * This class contains the job's title, its unique identifier, and the
+ * department to which the job belongs.
  */
 public class Job {
 
-    private int jobID;           
-    private String jobTitle;   
-    private Department department;   
+    private int jobID;   // Unique identifier for the job position        
+    private String jobTitle;   // Title or name of the job
+    private Department department;   // Department to which this job belongs
 
+    //Default constructor
     public Job() {
     }
 
-    // Constructor for insert
+    /**
+     * Constructor used when inserting a new job record
+     *
+     * @param jobTitle   the title of the job
+     * @param department the associated department
+     */
     public Job(String jobTitle, Department department) {
         this.jobTitle = jobTitle;
         this.department = department;
     }
 
-    // Constructor for retrieval
+    /**
+     * Constructor used when retrieving an existing job from the database.
+     *
+     * @param jobID      the unique ID of the job
+     * @param jobTitle   the title of the job
+     * @param department the associated department
+     */
     public Job(int jobID, String jobTitle, Department department) {
         this.jobID = jobID;
         this.jobTitle = jobTitle;
@@ -55,6 +69,10 @@ public class Job {
         this.department = department;
     }
 
+    /**
+     * @return a string representation of the job for display or debugging.
+     *
+     */
     @Override
     public String toString() {
         return String.format("Job [ID: %d, Title: %s, Department: %s]",

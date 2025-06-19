@@ -4,17 +4,16 @@
  */
 package Class.EMS;
 
-/**
- * This service class is responsible for updating employee-related data across multiple tables.
- * 
- * All update operations are done within a single database transaction to ensure consistency.
- * If any update fails, the transaction is rolled back.
- */
-
 import com.motorph.database.execution.Script;
 import java.math.BigDecimal;
 import java.sql.*;
 
+/**
+ * Service class responsible for updating all employee-related data in the system.
+ * 
+ * All updates are wrapped in a single transaction to ensure atomicity.
+ * If any update fails, the transaction is rolled back to prevent partial updates.
+ */
 public class EmployeeUpdateService {
 
     private final Connection connection;
@@ -23,9 +22,15 @@ public class EmployeeUpdateService {
         this.connection = connection;
     }
 
+    /**
+     * Performs a full update of an employee's records across all related tables.
+     * 
+     * @param employee The employee object with updated fields
+     * @throws SQLException If any update fails; triggers a rollback
+     */
     public void updateEmployee(Employee employee) throws SQLException {
         try {
-            connection.setAutoCommit(false);
+            connection.setAutoCommit(false);// Start transaction
 
             updatePersonalInformation(employee);
             updateAddress(employee);
@@ -39,15 +44,17 @@ public class EmployeeUpdateService {
 
             updateSupervisorAssignment(employee.getEmployeeId(), employee.getSupervisorId());
 
-            connection.commit();
+            connection.commit();// Commit if all updates succeed
+            
         } catch (SQLException ex) {
-            connection.rollback();
+            connection.rollback();// Rollback on any error
             throw ex;
         } finally {
-            connection.setAutoCommit(true);
+            connection.setAutoCommit(true);// Restore default behavior
         }
     }
 
+    // ========== Individual Table Update Methods ==========
     private void updatePersonalInformation(Employee employee) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(Script.UPDATE_PERSONAL_INFORMATION.toString())) {
             stmt.setString(1, employee.getFirstName());
@@ -142,21 +149,30 @@ public class EmployeeUpdateService {
         }
     }
     
-    /**
-     * Inserts a new allowance record for an employee.
-     * (Currently not used but can be helpful if allowance records do not exist)
-     */
-    private void insertAllowance(int employeeId, int allowanceId, BigDecimal amount) throws SQLException {
-        String sql = "INSERT INTO employee_allowance (allowance_id, employee_id, amount, effective_date, created_date, allowance_frequency) " +
-                "VALUES (?, ?, ?, CURDATE(), CURDATE(), 'Monthly')";
+    private void updateSupervisorAssignment(int employeeId, int supervisorId) throws SQLException {
+        String sql = "UPDATE supervisor_assignment SET supervisor_id = ? WHERE employee_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, allowanceId);
+            stmt.setInt(1, supervisorId);
             stmt.setInt(2, employeeId);
-            stmt.setBigDecimal(3, amount);
-            stmt.executeUpdate();
+            int updatedRows = stmt.executeUpdate();
+
+            if (updatedRows == 0) {
+                // No existing supervisor_assignment, insert new record
+                insertSupervisorAssignment(employeeId, supervisorId);
+            }
         }
     }
 
+    private void insertSupervisorAssignment(int employeeId, int supervisorId) throws SQLException {
+        String sql = "INSERT INTO supervisor_assignment (employee_id, supervisor_id, start_date) VALUES (?, ?, CURDATE())";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, employeeId);
+            stmt.setInt(2, supervisorId);
+            stmt.executeUpdate();
+        }
+    }
+    
+    // ========== Utility Methods ==========
     private int getSalaryIdByEmployeeId(int employeeId) throws SQLException {
         String sql = "SELECT salary_id FROM employee_employment_information WHERE employee_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -199,26 +215,18 @@ public class EmployeeUpdateService {
             }
         }
     }
-
-    private void updateSupervisorAssignment(int employeeId, int supervisorId) throws SQLException {
-        String sql = "UPDATE supervisor_assignment SET supervisor_id = ? WHERE employee_id = ?";
+    
+    /**
+     * (Optional) Inserts a new allowance record if missing.
+     * Can be used to handle new allowance types dynamically.
+     */
+    private void insertAllowance(int employeeId, int allowanceId, BigDecimal amount) throws SQLException {
+        String sql = "INSERT INTO employee_allowance (allowance_id, employee_id, amount, effective_date, created_date, allowance_frequency) " +
+                "VALUES (?, ?, ?, CURDATE(), CURDATE(), 'Monthly')";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, supervisorId);
+            stmt.setInt(1, allowanceId);
             stmt.setInt(2, employeeId);
-            int updatedRows = stmt.executeUpdate();
-
-            if (updatedRows == 0) {
-                // No existing supervisor_assignment, insert new record
-                insertSupervisorAssignment(employeeId, supervisorId);
-            }
-        }
-    }
-
-    private void insertSupervisorAssignment(int employeeId, int supervisorId) throws SQLException {
-        String sql = "INSERT INTO supervisor_assignment (employee_id, supervisor_id, start_date) VALUES (?, ?, CURDATE())";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, employeeId);
-            stmt.setInt(2, supervisorId);
+            stmt.setBigDecimal(3, amount);
             stmt.executeUpdate();
         }
     }

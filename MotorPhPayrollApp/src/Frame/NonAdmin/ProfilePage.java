@@ -4,12 +4,6 @@
  */
 package Frame.NonAdmin;
 
-/**
- * This frame displays an employee's full profile information 
- * and is part of the Employee Self service portal
- * 
- */
-
 import Class.EMS.Employee;
 import Class.EMS.EmployeeRetrievalService;
 import Class.EMS.EmployeeUpdateService;
@@ -25,6 +19,11 @@ import javax.swing.JOptionPane;
 import java.sql.SQLException;
 import javax.swing.UnsupportedLookAndFeelException;
 
+/**
+ * This frame displays an employee's complete profile.
+ * It is part of the Employee Self-Service portal and is accessible by both admins and non-admin users.
+ * 
+ */
 public class ProfilePage extends javax.swing.JFrame {
 
     private final User user;
@@ -32,30 +31,38 @@ public class ProfilePage extends javax.swing.JFrame {
     private final EmployeeRetrievalService retrievalService;
     private Employee currentEmployee;
 
+    /**
+     * Constructs the profile page and loads the current employee's details.
+     *
+     * @param user       The logged-in user (Admin or NonAdmin).
+     * @param connection Active database connection.
+     */
     public ProfilePage(User user, Connection connection) {
         initComponents();
         this.user = user;
         this.connection = connection;
 
+        // Register logout listener
         user.addLogoutListener(this);
 
-        // Hide admin portal if user is NonAdmin
+        // Hide admin-only components if the user is not an admin
         if (user instanceof NonAdmin) {
             jButton3AdminPortal.setVisible(false);
         }
 
-        // Initialize retrieval service for loading employee data
+        // Initialize service to retrieve employee data
         this.retrievalService = new EmployeeRetrievalService(new SQLExecutor((java.sql.Connection) connection));
-        //loadEmployeeDetails(user.getEmployeeId());
-        loadEmployeeDetails(10052);// TEMPORARY! Only a default employee record until user.getEmployeeId() is available
+        
+        // TODO!!!: Replace hardcoded ID with dynamic retrieval when user.getEmployeeId() is functional
+        loadEmployeeDetails(10052);
 
-        disableAllTextFields();  // Disable text fields to prevent accidental modifications
+        disableAllTextFields(); // Prevent edits to the profile form
     }
 
     /**
-     * Loads and populates employee details from the database into the form fields.
+     * Loads and displays an employee's profile details from the database.
      *
-     * @param employeeId The ID of the employee whose data will be shown.
+     * @param employeeId The ID of the employee to load.
      */
     private void loadEmployeeDetails(int employeeId) {
     try {
@@ -112,6 +119,10 @@ public class ProfilePage extends javax.swing.JFrame {
     }
 }
     
+    /**
+     * Disables all input fields to ensure the profile is read-only.
+     * Used when displaying employee information without allowing edits.
+     */
     private void disableAllTextFields() {
         jTextField1EmployeeNo.setEnabled(false);
         jTextField1FirstName.setEnabled(false);
@@ -917,9 +928,7 @@ public class ProfilePage extends javax.swing.JFrame {
         }
 
     } catch (SQLException e) {
-        JOptionPane.showMessageDialog(this,
-                "Update failed. Please check your input or try again.\n" + e.getMessage(),
-                "Update Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Update failed. Please check your input or try again.");
     }
     }//GEN-LAST:event_jButtonUpdateRecordActionPerformed
 

@@ -5,7 +5,8 @@
 package Class.EMS;
 
 /**
- * Represents government-issued identification numbers for an employee.
+ * Represents government-issued identification numbers associated with an employee.
+ * This includes SSS, PhilHealth, Pag-IBIG, and TIN identifiers.
  * 
  */
 public class GovernmentInformation extends Information {
@@ -20,7 +21,16 @@ public class GovernmentInformation extends Information {
     public GovernmentInformation() {
         super(0);
     }
-    // Constructor for insert
+    
+    /**
+     * Constructor used when inserting new government information
+     *
+     * @param employeeID              ID of the employee
+     * @param sssNumber               SSS number
+     * @param philhealthNumber        PhilHealth number
+     * @param pagibigNumber           Pag-IBIG number
+     * @param taxIdentificationNumber TIN number
+     */
     public GovernmentInformation(int employeeID, String sssNumber, String philhealthNumber,
                                  String pagibigNumber, String taxIdentificationNumber) {
         super(employeeID);
@@ -30,7 +40,16 @@ public class GovernmentInformation extends Information {
         this.taxIdentificationNumber = taxIdentificationNumber;
     }
 
-    // Constructor for retrieval
+    /**
+     * Constructor used when retrieving government information from the database.
+     *
+     * @param govInfoID               Unique ID of the government record
+     * @param employeeID              ID of the employee
+     * @param sssNumber               SSS number
+     * @param philhealthNumber        PhilHealth number
+     * @param pagibigNumber           Pag-IBIG number
+     * @param taxIdentificationNumber TIN
+     */
     public GovernmentInformation(int govInfoID, int employeeID, String sssNumber, String philhealthNumber,
                                  String pagibigNumber, String taxIdentificationNumber) {
         super(employeeID);
@@ -82,6 +101,10 @@ public class GovernmentInformation extends Information {
         this.taxIdentificationNumber = taxIdentificationNumber;
     }
 
+    /**
+     * @return a formatted string containing the government identification details
+     * of the employee
+     */
     @Override
     public String toString() {
         return String.format("Government Info [Employee ID: %d, SSS: %s, PhilHealth: %s, Pag-IBIG: %s, TIN: %s]",

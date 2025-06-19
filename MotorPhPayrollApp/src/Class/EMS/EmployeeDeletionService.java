@@ -8,9 +8,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-/*This service class handles the deletion of an employee and all related data
- * across multiple tables in the system. The deletion is wrapped in a single
- * transaction to ensure atomicity — either all deletions succeed, or none are applied.*/
+/**
+ * Service class responsible for deleting an employee and all related data 
+ * across multiple tables in a single transaction for atomicity.
+ */
 
 public class EmployeeDeletionService {
 
@@ -21,11 +22,11 @@ public class EmployeeDeletionService {
     }
     
     /**
-     * Deletes all records related to a specific employee from the database.
-     * The deletion follows the correct order based on foreign key constraints.
+     * Deletes all records associated with the given employee ID.
+     * Ensures that deletions respect foreign key constraints by order.
      *
-     * @param employeeId The unique ID of the employee to delete
-     * @throws SQLException If any deletion fails or transaction rollback is triggered
+     * @param employeeId the unique ID of the employee to delete
+     * @throws SQLException if any deletion fails, triggering a rollback
      */
     public void deleteEmployee(int employeeId) throws SQLException {
         try {

@@ -5,23 +5,35 @@
 package Class.EMS;
 
 /**
- * Represents a department in the organization.
+ * Represents a department within the organization.
+ * 
+ * Each department has a unique ID and a name.
  * 
  */
 public class Department {
 
-    private int departmentID;         
-    private String departmentName;    
+    private int departmentID; // Unique identifier for the department        
+    private String departmentName;  // Name of the department  
 
+    //Default constructor
     public Department() {
     }
 
-    // Constructor for insert
+    /**
+     * Constructor for inserting a new department (without ID).
+     * 
+     * @param departmentName the name of the department
+     */
     public Department(String departmentName) {
         this.departmentName = departmentName;
     }
 
-    // Constructor for retrieval
+    /**
+     * Constructor for retrieving a department from the database.
+     * 
+     * @param departmentID   the department's unique ID
+     * @param departmentName the name of the department
+     */
     public Department(int departmentID, String departmentName) {
         this.departmentID = departmentID;
         this.departmentName = departmentName;
@@ -44,6 +56,11 @@ public class Department {
         this.departmentName = departmentName;
     }
 
+    /**
+     * Returns a string representation of the department.
+     * 
+     * @return formatted string with department ID and name
+     */
     @Override
     public String toString() {
         return String.format("Department [ID: %d, Name: %s]", departmentID, departmentName);

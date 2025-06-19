@@ -4,19 +4,25 @@
  */
 package Class.EMS;
 
-/**
- * Test class to demonstrate updating an employee's information using EmployeeUpdateService.
- * 
- * Connects to the database, creates an Employee object with updated data,
- * and calls the update service to persist the changes.
- */
-
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Date;
 
+/**
+ * Test class to demonstrate updating an employee's information using EmployeeUpdateService.
+ * 
+ * Steps:
+ * 1. Establish a connection to the payroll database
+ * 2. Create and populate an Employee object with updated data
+ * 3. Call the update service to persist changes in all related tables
+ * 
+ * Pre-requisites:
+ * - Employee ID must already exist in the database
+ * - Job title and department must exist and be correctly linked
+ * - Supervisor ID must also exist as a valid employee
+ */
 public class EmployeeUpdateTest {
 
     public static void main(String[] args) {
@@ -25,7 +31,7 @@ public class EmployeeUpdateTest {
         String password = "admin";
 
         try (Connection conn = DriverManager.getConnection(url, user, password)) {
-            EmployeeUpdateService updateService = new EmployeeUpdateService(conn);
+            EmployeeUpdateService updateService = new EmployeeUpdateService(conn);// Initialize the update service
 
             // Create and populate an Employee object with updated data
             Employee emp = new Employee();
@@ -65,7 +71,7 @@ public class EmployeeUpdateTest {
             emp.setPhoneAllowance(new BigDecimal("200"));
             emp.setClothingAllowance(new BigDecimal("100"));
 
-            emp.setSupervisorId(10002); // Make sure this supervisor exists
+            emp.setSupervisorId(10002); // Ensure this is a valid employee ID
 
             updateService.updateEmployee(emp);
 
@@ -73,7 +79,6 @@ public class EmployeeUpdateTest {
 
         } catch (SQLException ex) {
             System.err.println("Failed to update employee: " + ex.getMessage());
-            ex.printStackTrace();
         }
     }
 }

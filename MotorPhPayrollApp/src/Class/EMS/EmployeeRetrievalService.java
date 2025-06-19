@@ -3,12 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Class.EMS;
-/**
- * This service class is responsible for retrieving employee data from the database.
- * It supports retrieving basic active employee lists as well as full employee
- * profiles including personal, address, government, employment, supervisor,
- * salary, and allowance details.
- */
+
 import com.motorph.database.execution.SQLExecutor;
 import com.motorph.database.execution.Script;
 import java.math.BigDecimal;
@@ -16,10 +11,24 @@ import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.util.List;
 
+/**
+ * This service class is responsible for retrieving employee data from the database.
+ * 
+ * It supports:
+ * - Retrieving a list of all active employees with basic information
+ * - Fetching a complete employee profile by ID
+ * 
+ * All data retrievals use the provided SQLExecutor utility to run queries and map results.
+ */
 public class EmployeeRetrievalService {
 
     private final SQLExecutor executor;
 
+    /**
+     * Constructor to initialize the retrieval service with a SQLExecutor.
+     * 
+     * @param executor the SQLExecutor utility used for database operations
+     */
     public EmployeeRetrievalService(SQLExecutor executor) {
         this.executor = executor;
     }
@@ -28,7 +37,7 @@ public class EmployeeRetrievalService {
      * Retrieves a list of all active employees with basic information.
      *
      * @return list of active Employee objects
-     * @throws SQLException if a database error occurs
+     * @throws SQLException if a database error occurs during retrieval
      */
     public List<Employee> getActiveEmployees() throws SQLException {
         return executor.executeQuery(
@@ -38,11 +47,11 @@ public class EmployeeRetrievalService {
     }
 
     /**
-     * Retrieves full details of an employee by their ID.
+     * Retrieves a full employee profile using their unique employee ID.
      *
-     * @param id the employee id
-     * @return Employee details or null if not found
-     * @throws SQLException on DB error
+     * @param id The employee ID to look up
+     * @return Employee object containing full profile, or null if not found
+     * @throws SQLException if a database error occurs during retrieval
      */
     public Employee getEmployeeById(int id) throws SQLException {
         List<Employee> employees = executor.executeQuery(
@@ -55,7 +64,12 @@ public class EmployeeRetrievalService {
     }
 
     /**
-     * Maps the basic employee info from ResultSet.
+     * Maps basic employee fields from a ResultSet row to an Employee object.
+     * This includes only core personal information.
+     *
+     * @param rs The result set containing employee data
+     * @return Mapped Employee object with basic details
+     * @throws SQLException if column access fails
      */
     private Employee mapBasicEmployee(ResultSet rs) throws SQLException {
         Employee emp = new Employee();
@@ -69,8 +83,11 @@ public class EmployeeRetrievalService {
     }
 
     /**
-     * Maps full employee details from ResultSet including personal info,
-     * address, government info, employment, job, supervisor, and salary.
+     * Maps full employee profile from a ResultSet row.
+     * 
+     * @param rs The result set containing all employee details from a join query
+     * @return Fully populated Employee object
+     * @throws SQLException if column access fails
      */
     private Employee mapFullEmployee(ResultSet rs) throws SQLException {
         Employee emp = new Employee();
@@ -115,18 +132,18 @@ public class EmployeeRetrievalService {
         emp.setGrossSemiMonthlyRate(rs.getBigDecimal("gross_semi_monthly_rate"));
         emp.setHourlyRate(rs.getBigDecimal("hourly_rate"));
 
-        // Load allowances 
+        // Allowances 
         loadAllowances(emp);
  
         return emp;
     }
    
     /**
-     * Loads and maps the allowances for the given employee.
-     * Maps by matching allowance name (e.g., "Rice Subsidy", "Phone Allowance").
+     * Loads all allowance records associated with the employee and maps them
+     * into the correct fields in the Employee object.
      *
-     * @param emp The employee object to populate
-     * @throws SQLException on DB error
+     * @param emp The employee whose allowances need to be retrieved
+     * @throws SQLException if the allowance query fails
      */
     private void loadAllowances(Employee emp) throws SQLException {
         List<AllowanceRecord> allowances = executor.executeQuery(
@@ -145,7 +162,8 @@ public class EmployeeRetrievalService {
     }
 
     /**
-     * Helper record to encapsulate allowance data from the ResultSet.
+     * Helper class for mapping allowance rows into structured records.
+     * Used internally during allowance data extraction.
      */
     private static class AllowanceRecord {
         String name;

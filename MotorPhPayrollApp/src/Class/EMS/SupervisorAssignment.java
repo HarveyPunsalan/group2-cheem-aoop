@@ -10,16 +10,24 @@ import java.time.LocalDate;
  * Represents the supervisor assignment of an employee.
  */
 public class SupervisorAssignment extends Information {
-    private int supervisorAssignmentID; 
-    private int supervisorID;          
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private int supervisorAssignmentID; // Unique identifier for the assignment record
+    private int supervisorID;  // employee ID of the assigned supervisor        
+    private LocalDate startDate; // Date the supervision began
+    private LocalDate endDate; // Date the supervision ended (nullable if ongoing)
 
+    //Default constructor
     public SupervisorAssignment() {
         super(0);
     }
 
-    // Constructor for insertion
+    /**
+     * Constructor used for inserting new supervisor assignment records.
+     *
+     * @param employeeID   the ID of the employee being supervised
+     * @param supervisorID the employee ID of the supervisor
+     * @param startDate    the date the assignment started
+     * @param endDate      the date the assignment ended (nullable)
+     */
     public SupervisorAssignment(int employeeID, int supervisorID, LocalDate startDate, LocalDate endDate) {
         super(employeeID);
         this.supervisorID = supervisorID;
@@ -27,7 +35,15 @@ public class SupervisorAssignment extends Information {
         this.endDate = endDate;
     }
 
-    // Constructor for retrieval
+    /**
+     * Constructor used for retrieving existing supervisor assignments from the database.
+     *
+     * @param supervisorAssignmentID unique ID of the assignment
+     * @param employeeID             the ID of the employee being supervised
+     * @param supervisorID           the employee ID of the supervisor
+     * @param startDate              the date the assignment started
+     * @param endDate                the date the assignment ended (nullable)
+     */
     public SupervisorAssignment(int supervisorAssignmentID, int employeeID, int supervisorID,
                                 LocalDate startDate, LocalDate endDate) {
         super(employeeID);
@@ -70,6 +86,9 @@ public class SupervisorAssignment extends Information {
         this.endDate = endDate;
     }
 
+    /**
+     * Returns a string representation of the supervisor assignment.
+     */
     @Override
     public String toString() {
         return String.format("Supervisor Assignment [ID: %d, Employee ID: %d, Supervisor ID: %d, Start: %s, End: %s]",

@@ -11,5 +11,15 @@
                 <root id="test.src.dir"/>
             </test-roots>
         </data>
+        <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>barangay</word>
+            <word>Danilo</word>
+            <word>Enum</word>
+            <word>nullable</word>
+            <word>onboarding</word>
+            <word>Pag</word>
+            <word>payrollsystem</word>
+            <word>Pre</word>
+        </spellchecker-wordlist>
     </configuration>
 </project>

@@ -4,36 +4,37 @@
  */
 package Class.EMS;
 
+import com.motorph.database.execution.SQLExecutor;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.List;
+
 /**
  * This test class is used to verify and demonstrate the functionality of
- * EmployeeRetrievalService. It performs the following:
- * 1. Connects to the payroll database
+ * the EmployeeRetrievalService. It performs the following:
+ *
+ * 1. Connects to the payroll system database
  * 2. Retrieves a list of all active employees (basic info)
  * 3. Retrieves full information of a specific employee by ID
  * 4. Displays all retrieved data in a readable format
  */
-
-import com.motorph.database.execution.SQLExecutor;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.util.List;
-
 public class EmployeeRetrievalTest {
 
     public static void main(String[] args) {
         try {
-            // Step 1: Connect to DB
+            //Connect to DB
             Connection conn = DriverManager.getConnection(
                 "jdbc:mysql://localhost:3306/payrollsystem_db",
                 "root",
                 "admin"
             );
 
-            // Step 2: Initialize executor and service
+            //Initialize SQL executor and retrieval service
             SQLExecutor executor = new SQLExecutor(conn);
             EmployeeRetrievalService service = new EmployeeRetrievalService(executor);
 
-            // Step 3: Retrieve and display active employees
+            //Retrieve and display basic info of all active employees
             System.out.println("=== ACTIVE EMPLOYEES ===");
             List<Employee> activeEmployees = service.getActiveEmployees();
             for (Employee emp : activeEmployees) {
@@ -47,8 +48,8 @@ public class EmployeeRetrievalTest {
                 );
             }
 
-            // Step 4: Retrieve and display full details of a specific employee
-            int testEmployeeId = 10053; // Replace with an actual employee_id that exists in DB
+            //Retrieve and display full details of a specific employee
+            int testEmployeeId = 10178; // Replace with an actual employee_id that exists in DB
             System.out.println("\n=== FULL DETAILS FOR EMPLOYEE ID: " + testEmployeeId + " ===");
             Employee full = service.getEmployeeById(testEmployeeId);
             if (full != null) {
@@ -57,16 +58,17 @@ public class EmployeeRetrievalTest {
                 System.out.println("Employee not found.");
             }
 
-            // Step 5: Close the connection
+            //Close the connection
             conn.close();
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
         }
     }
     
     /**
      * Helper method to print all details of a single employee in formatted form.
+     * @param emp the employee object to print
+     * 
      */
     private static void printFullEmployee(Employee emp) {
         System.out.println("Employee No: " + emp.getEmployeeId());

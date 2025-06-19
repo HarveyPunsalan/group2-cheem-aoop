@@ -17,11 +17,20 @@ public class PersonalInformation extends Information {
     private String phoneNumber;
     private String email;
 
+    //Default constructor
     public PersonalInformation() {
         super(0); 
     }
 
-    // Constructor for insert
+    /**
+     * Constructor used when creating new personal information
+     * 
+     * @param firstName    employee's first name
+     * @param lastName     employee's last name
+     * @param birthday     employee's birth date
+     * @param phoneNumber  contact phone number
+     * @param email        unique email address
+     */
     public PersonalInformation(String firstName, String lastName, LocalDate birthday,
                                String phoneNumber, String email) {
         super(0); 
@@ -32,7 +41,16 @@ public class PersonalInformation extends Information {
         this.email = email;
     }
 
-    // Constructor for retrieval
+    /**
+     * Constructor used when retrieving personal information from the database.
+     * 
+     * @param employeeID   unique identifier for the employee
+     * @param firstName    employee's first name
+     * @param lastName     employee's last name
+     * @param birthday     employee's birth date
+     * @param phoneNumber  contact phone number
+     * @param email        unique email address
+     */
     public PersonalInformation(int employeeID, String firstName, String lastName,
                                LocalDate birthday, String phoneNumber, String email) {
         super(employeeID);
@@ -84,6 +102,9 @@ public class PersonalInformation extends Information {
         this.email = email;
     }
 
+    /**
+     * @return a string representation of the personal info.
+     */
     @Override
     public String toString() {
         return String.format("Employee #%d: %s %s", employeeID, firstName, lastName);

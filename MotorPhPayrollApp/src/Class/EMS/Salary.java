@@ -18,10 +18,18 @@ public class Salary {
     private BigDecimal grossSemiMonthlyRate; 
     private BigDecimal hourlyRate;           
 
+    //Default constructor
     public Salary() {
     }
 
-    // Constructor for insertion
+    /**
+     * Constructor used for inserting new salary records
+     *
+     * @param salaryGrade           salary grade level
+     * @param basicSalary           basic monthly salary
+     * @param grossSemiMonthlyRate  gross pay per half-month
+     * @param hourlyRate            calculated hourly wage
+     */
     public Salary(int salaryGrade, BigDecimal basicSalary, BigDecimal grossSemiMonthlyRate, BigDecimal hourlyRate) {
         this.salaryGrade = salaryGrade;
         this.basicSalary = basicSalary;
@@ -29,7 +37,15 @@ public class Salary {
         this.hourlyRate = hourlyRate;
     }
 
-    // Constructor for retrieval
+    /**
+     * Constructor used when retrieving salary records from the database.
+     *
+     * @param salaryID              unique ID of the salary record
+     * @param salaryGrade           salary grade level
+     * @param basicSalary           basic monthly salary
+     * @param grossSemiMonthlyRate  gross pay per half-month
+     * @param hourlyRate            calculated hourly wage
+     */
     public Salary(int salaryID, int salaryGrade, BigDecimal basicSalary, BigDecimal grossSemiMonthlyRate, BigDecimal hourlyRate) {
         this.salaryID = salaryID;
         this.salaryGrade = salaryGrade;
@@ -79,6 +95,9 @@ public class Salary {
         this.hourlyRate = hourlyRate;
     }
 
+    /**
+     * Returns a string with salary details.
+     */
     @Override
     public String toString() {
         return String.format("Salary [ID: %d, Grade: %d, Basic: %.2f, Semi-Monthly: %.2f, Hourly: %.2f]",

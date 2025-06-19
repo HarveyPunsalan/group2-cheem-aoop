@@ -8,7 +8,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
- * Represents the allowance details for an employee.
+ * Represents the allowance details assigned to a specific employee.
+ *
+ * <p>This class extends {Information}, linking the record to an employee via employee ID.
+ * Each record represents a single type of allowance (e.g., Phone, Rice) with an amount, frequency,
+ * and effective/creation dates. It supports both insertion and retrieval from a data source.</p>
  * 
  */
 public class EmployeeAllowance extends Information {
@@ -19,11 +23,21 @@ public class EmployeeAllowance extends Information {
     private LocalDate createdDate;
     private String allowanceFrequency;
 
+    //Default constructor
     public EmployeeAllowance() {
         super(0); 
     }
 
-    // Constructor for inserting new record
+    /**
+     * Constructor used for inserting a new allowance record.
+     *
+     * @param employeeID          the ID of the employee
+     * @param allowance           the type of allowance
+     * @param amount              the monetary amount of the allowance
+     * @param effectiveDate       the allowance effective date
+     * @param createdDate         the date the allowance was recorded
+     * @param allowanceFrequency  how often the allowance is given
+     */
     public EmployeeAllowance(int employeeID, Allowance allowance, BigDecimal amount,
                              LocalDate effectiveDate, LocalDate createdDate, String allowanceFrequency) {
         super(employeeID);
@@ -34,7 +48,17 @@ public class EmployeeAllowance extends Information {
         this.allowanceFrequency = allowanceFrequency;
     }
 
-    // Constructor with employeeAllowanceID (for fetching from DB)
+    /**
+     * Constructor used for retrieving a record from the database.
+     *
+     * @param employeeAllowanceID the unique ID of the allowance record
+     * @param employeeID          the ID of the employee
+     * @param allowance           the type of allowance
+     * @param amount              the monetary amount of the allowance
+     * @param effectiveDate       the allowance effective date
+     * @param createdDate         the date the allowance was recorded
+     * @param allowanceFrequency  how often the allowance is given
+     */
     public EmployeeAllowance(int employeeAllowanceID, int employeeID, Allowance allowance, BigDecimal amount,
                              LocalDate effectiveDate, LocalDate createdDate, String allowanceFrequency) {
         super(employeeID);
@@ -47,7 +71,6 @@ public class EmployeeAllowance extends Information {
     }
 
     // Getters and setters
-
     public int getEmployeeAllowanceID() {
         return employeeAllowanceID;
     }
@@ -96,6 +119,9 @@ public class EmployeeAllowance extends Information {
         this.allowanceFrequency = allowanceFrequency;
     }
 
+    /**
+     * @return a string representation of the allowance record.
+     */
     @Override
     public String toString() {
         return String.format("Employee Allowance [ID: %d, Employee ID: %d, Allowance: %s, Amount: %s, Effective: %s, Created: %s, Frequency: %s]",

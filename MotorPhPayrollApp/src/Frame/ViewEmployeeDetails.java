@@ -4,21 +4,32 @@
  */
 package Frame;
 
-/**
- * This frame handles both adding a new employee and viewing/editing an existing employee's details.
- * It supports admins access only.
- */
-
 import Class.EMS.*;
 import Class.UMS.*;
 import Class.UMS.User;
 import com.motorph.database.execution.SQLExecutor;
+import java.awt.HeadlessException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.math.BigDecimal;
 import javax.swing.JOptionPane;
 import javax.swing.UnsupportedLookAndFeelException;
+
+/**
+ * JFrame for managing employee records.
+ * 
+ * This form supports two main functions:
+ * 1. Adding a new employee.
+ * 2. Viewing/editing details of an existing employee.
+ * 
+ * Access is restricted to admin users only.
+ * 
+ * Dependencies:
+ * - EmployeeRetrievalService: fetches employee data.
+ * - EmployeeCreationService: handles new employee creation.
+ * - EmployeeUpdateService: updates existing employee records.
+ */
 
 public class ViewEmployeeDetails extends javax.swing.JFrame {
 
@@ -31,10 +42,13 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
     private Employee currentEmployee;
 
     /**
-     * Constructor used when creating a new employee record.
-     * @param admin The admin user performing the operation.
-     * @param connection Active DB connection.
-     */
+    * Constructor for adding a new employee.
+    *
+    * Initializes UI components and services for employee creation.
+    * 
+    * @param admin The admin user performing the operation.
+    * @param connection Active database connection.
+    */
     public ViewEmployeeDetails(Admin admin, Connection connection) {
         initComponents();
 
@@ -56,12 +70,16 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
     }
 
     /**
-     * Constructor used when viewing/editing an existing employee's record.
-     * @param admin The admin user.
-     * @param connection DB connection.
-     * @param employeeID ID of the employee to view/edit.
-     * @throws SQLException if DB operation fails.
-     */
+    * Constructor for viewing/editing an existing employee's record.
+    *
+    * Fetches employee data from the database and displays it in the form.
+    * Fields are read-only by default to prevent unintended edits.
+    * 
+    * @param admin       The admin user performing the operation.
+    * @param connection  Active database connection.
+    * @param employeeID  The ID of the employee whose details are to be displayed.
+    * @throws SQLException if an error occurs while retrieving employee data.
+    */
     public ViewEmployeeDetails(Admin admin, Connection connection, String employeeID) throws SQLException {
         initComponents();
 
@@ -85,9 +103,10 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
     }
 
     /**
-     * Populates the UI fields with employee details.
-     * @param emp The employee whose data will be displayed.
-     */
+    * Populates the form fields with the data of the specified employee.
+    *
+    * @param emp The employee whose details are to be loaded into the UI.
+    */
     private void loadEmployeeDetails(Employee emp) {
         jTextField2FirstName.setText(emp.getFirstName());
         jTextField1LastName.setText(emp.getLastName());
@@ -126,9 +145,11 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
     }
 
     /**
-     * Saves the employee form:
-     * - If in new record mode: calls add.
-     * - Otherwise: updates existing employee.
+     * Saves the employee form data.
+     * If currentEmployee is null, it creates a new employee.
+     * Otherwise, it updates the existing employee.
+     *
+     * @throws SQLException if an error occurs during the save operation.
      */
     private void saveEmployee() throws SQLException {
         Employee emp = collectEmployeeFromFields();
@@ -140,18 +161,31 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Adds a new employee to the database.
+     *
+     * @param emp Employee object containing new employee data.
+     * @throws SQLException if an error occurs during insertion.
+     */
     private void addEmployee(Employee emp) throws SQLException {
         creationService.addEmployee(emp);
     }
 
+    /**
+     * Updates an existing employee in the database.
+     *
+     * @param emp Employee object containing updated data.
+     * @throws SQLException if an error occurs during update.
+     */
     private void updateEmployee(Employee emp) throws SQLException {
         emp.setEmployeeId(currentEmployee.getEmployeeId());
         updateService.updateEmployee(emp);
     }
 
     /**
-     * Collects input fields into an Employee object.
-     * @return Populated Employee object.
+     * Collects data from form fields and creates an Employee object.
+     *
+     * @return A populated Employee object.
      */
     private Employee collectEmployeeFromFields() {
         Employee emp = new Employee();
@@ -194,6 +228,7 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
             return emp;
     }
 
+    //Disables all editable fields in the form to make it read-only.
     private void disableAllTextFields() {
         jTextField1LastName.setEnabled(false);
         jTextField2FirstName.setEnabled(false);
@@ -228,9 +263,7 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
         jDateChooserBirthday.getDateEditor().setEnabled(false);
         jDateChooserDateHired.getDateEditor().setEnabled(false);
     }
-   
-    
-    
+      
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -930,18 +963,18 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
 
     private void jButton2SaveChangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2SaveChangesActionPerformed
     try {
-        saveEmployee();  // Attempt to save employee (add or update based on currentEmployee state)
+        saveEmployee();  // Attempt to save the employee (either create or update)
 
-      JOptionPane.showMessageDialog(this, "Action completed successfully.");
+        JOptionPane.showMessageDialog(this, "Action completed successfully."); // Notify the user
 
         if (currentEmployee != null) {
-            disableAllTextFields(); 
+            disableAllTextFields(); // Disable fields again after update
         } else {
-            clearAllTextFields(); // If a new employee was just added, clear all fields for next entry
+            clearAllTextFields(); // Clear the form after adding a new employee
         }
 
      } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Error saving employee data. Please review your input and try again.");
+        JOptionPane.showMessageDialog(this, "Error saving employee data. Please review your input and try again.");  // Show a generic error message
     }             
     }//GEN-LAST:event_jButton2SaveChangesActionPerformed
 
@@ -1191,6 +1224,12 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldPhilhealth;
     // End of variables declaration//GEN-END:variables
  
+    /**
+    * Clears all input fields in the employee form.
+    *
+    * Used after successfully adding a new employee
+    * to reset the form for the next entry.
+    */
     private void clearAllTextFields() {
         jTextField2FirstName.setText("");
         jTextField1LastName.setText("");

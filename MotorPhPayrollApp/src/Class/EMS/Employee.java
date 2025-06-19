@@ -4,6 +4,9 @@
  */
 package Class.EMS;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 /**
  * Represents an Employee entity with comprehensive details.
  *
@@ -15,9 +18,6 @@ package Class.EMS;
  * The class provides getter and setter methods for all attributes, facilitating
  * easy data manipulation and retrieval.</p>
  */
-import java.math.BigDecimal;
-import java.util.Date;
-
 public class Employee {
 
     // Personal Information
@@ -64,7 +64,6 @@ public class Employee {
     private BigDecimal clothingAllowance;
 
     // Getters and Setters
-
     public int getEmployeeId() {
         return employeeId;
     }

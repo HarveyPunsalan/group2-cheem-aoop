@@ -5,25 +5,40 @@
 package Class.EMS;
 
 /**
- * Represents a type of address (e.g., Permanent, Current).
+ * Represents a type of address (e.g., Permanent, Current, Temporary).
+ * 
+ * This class is used to define different categories of addresses.
+ * It contains an ID, a name, and a description.
  *
  */
 public class AddressType {
 
-    private int addressTypeID;            
-    private String addressTypeName;         
-    private String addressTypeDescription; 
+    private int addressTypeID; // Unique identifier for the address type            
+    private String addressTypeName; // Name of the address type        
+    private String addressTypeDescription; // Description of the address type
 
+    //Default constructor
     public AddressType() {
     }
 
-    // Constructor for insert
+    /**
+     * Constructor used when creating a new address type to insert into a database.
+     * 
+     * @param addressTypeName        the name of the address type
+     * @param addressTypeDescription the description of the address type
+     */
     public AddressType(String addressTypeName, String addressTypeDescription) {
         this.addressTypeName = addressTypeName;
         this.addressTypeDescription = addressTypeDescription;
     }
 
-    // Constructor for retrieval
+    /**
+     * Constructor used when retrieving an address type from a database.
+     * 
+     * @param addressTypeID          the ID of the address type
+     * @param addressTypeName        the name of the address type
+     * @param addressTypeDescription the description of the address type
+     */
     public AddressType(int addressTypeID, String addressTypeName, String addressTypeDescription) {
         this.addressTypeID = addressTypeID;
         this.addressTypeName = addressTypeName;
@@ -55,6 +70,11 @@ public class AddressType {
         this.addressTypeDescription = addressTypeDescription;
     }
 
+    /**
+     * Returns a formatted string representation of the address type.
+     * 
+     * @return formatted string with ID, name, and description
+     */
     @Override
     public String toString() {
         return String.format("AddressType [ID: %d, Name: %s, Description: %s]",

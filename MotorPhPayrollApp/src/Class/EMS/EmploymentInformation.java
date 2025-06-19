@@ -7,23 +7,33 @@ package Class.EMS;
 import java.time.LocalDate;
 
 /**
- * Represents employment information of an employee.
+ * Represents the employment-related details of an employee.
  * 
  */
 public class EmploymentInformation extends Information {
 
-    private int employmentID;  
-    private Job job;         
-    private Salary salary;     
-    private String employmentType;  
-    private String employmentStatus;
-    private LocalDate dateHired;
+    private int employmentID;  // Unique ID for the employment record (from DB)
+    private Job job; // Job information (title, department, etc.)        
+    private Salary salary;   // Salary details  
+    private String employmentType;  // e.g., "Regular", "Contractual"
+    private String employmentStatus; // e.g., "Active", "Terminated", "On Leave"
+    private LocalDate dateHired; // Date the employee was hired
 
+    //Default constructor
     public EmploymentInformation() {
         super(0);
     }
 
-    // Constructor for insert
+    /**
+     * Constructor used when inserting a new employment record (employmentID is auto-generated).
+     *
+     * @param employeeID        the employee's ID
+     * @param job               the employee's job details
+     * @param salary            the employee's salary details
+     * @param employmentType    the nature of employment (e.g., "Regular")
+     * @param employmentStatus  current status (e.g., "Active")
+     * @param dateHired         the date the employee was hired
+     */
     public EmploymentInformation(int employeeID, Job job, Salary salary, String employmentType,
                                  String employmentStatus, LocalDate dateHired) {
         super(employeeID);
@@ -34,7 +44,17 @@ public class EmploymentInformation extends Information {
         this.dateHired = dateHired;
     }
 
-    // Constructor for retrieval
+    /**
+     * Constructor used when retrieving an existing employment record from the database.
+     *
+     * @param employmentID      the unique record ID
+     * @param employeeID        the employee's ID
+     * @param job               job information
+     * @param salary            salary information
+     * @param employmentType    the nature of employment
+     * @param employmentStatus  current employment status
+     * @param dateHired         hire date
+     */
     public EmploymentInformation(int employmentID, int employeeID, Job job, Salary salary,
                                  String employmentType, String employmentStatus, LocalDate dateHired) {
         super(employeeID);
@@ -95,6 +115,9 @@ public class EmploymentInformation extends Information {
         this.dateHired = dateHired;
     }
 
+    /**
+     * @return a string representation of this employment information
+     */
     @Override
     public String toString() {
         return String.format("Employment Info [Employment ID: %d, Employee ID: %d, Job: %s, Salary: %s, Type: %s, Status: %s, Hired: %s]",

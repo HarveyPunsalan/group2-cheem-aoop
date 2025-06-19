@@ -4,35 +4,40 @@
  */
 package Class.EMS;
 
-/*This service class handles the complete onboarding process for a new employee.
- * It coordinates the insertion of all relevant employee data across multiple database tables
- * within a single transaction. If any operation fails, the transaction is rolled back to ensure data consistency.*/
-
 import java.math.BigDecimal;
 import java.sql.*;
+
+/**
+ * Service class responsible for handling the complete onboarding process of a new employee.
+ * <p>
+ * This includes the coordinated insertion of employee personal details, address, government IDs,
+ * job assignment, salary details, allowances, and supervisor assignment across multiple database tables.
+ * All operations are executed within a single database transaction to ensure data integrity.
+ * </p>
+ */
 
 public class EmployeeCreationService {
 
     private final Connection connection;
     
     /**
-     * Constructor that initializes the service with a JDBC connection.
-     * @param connection an active JDBC connection
+     * Initializes the service with an active JDBC connection.
+     *
+     * @param connection a valid open JDBC connection
      */
-
     public EmployeeCreationService(Connection connection) {
         this.connection = connection;
     }
     
     /**
-     * Public method to add a new employee and all their related information.
-     * This method manages the transaction manually to ensure atomicity.
-     * @param employee the employee object containing all information to be stored
-     * @throws SQLException if any part of the transaction fails
+     * Orchestrates the entire employee creation process in one atomic transaction.
+     *
+     * @param employee the Employee object containing all relevant data
+     * @throws SQLException if any database operation fails
      */
     public void addEmployee(Employee employee) throws SQLException {
         try {
-            connection.setAutoCommit(false);
+            connection.setAutoCommit(false); // Begin transaction
 
             int employeeId = insertPersonalInformation(employee);
             insertAddress(employeeId, employee);
@@ -43,15 +48,17 @@ public class EmployeeCreationService {
             insertAllowances(employeeId, employee);
             insertSupervisorAssignment(employeeId, employee.getSupervisorId());
 
-            connection.commit();
+            connection.commit();// Commit transaction if everything succeeds
+            
         } catch (SQLException ex) {
-            connection.rollback();
+            connection.rollback(); // Roll back if any step fails
             throw ex;
         } finally {
-            connection.setAutoCommit(true);
+            connection.setAutoCommit(true); // Reset auto-commit
         }
     }
 
+    //Helper methods
     private int insertPersonalInformation(Employee employee) throws SQLException {
         String sql = "INSERT INTO employee_personal_information " +
                 "(first_name, last_name, birthday, phone_number, email) VALUES (?, ?, ?, ?, ?)";
@@ -65,7 +72,7 @@ public class EmployeeCreationService {
             stmt.executeUpdate();
             try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {
-                    return rs.getInt(1); // employee_id
+                    return rs.getInt(1); // return generated employee_id
                 } else {
                     throw new SQLException("Failed to insert employee personal information.");
                 }
