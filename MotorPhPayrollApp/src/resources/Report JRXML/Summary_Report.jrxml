@@ -2,30 +2,33 @@
 <!-- Created with Jaspersoft Studio version 9.0.0.final using JasperReports Library version 6.21.0-4f56c4f36cd19e17675219a9ac4692d5f0f13b06  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Payroll Summary" pageWidth="1530" pageHeight="842" columnWidth="1490" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="216dbc49-ca70-4183-afb4-c0cccf228589">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="4"/>
 	<property name="ireport.y" value="0"/>
+	<parameter name="YEAR_MONTH" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[SELECT
-            p.employee_id                                            AS EmployeeNumber,
-            CONCAT(e.first_name, ' ', e.last_name)                   AS EmployeeFullName,
-            p.position                                               AS Position,
-            p.department                                             AS Department,
-            SUM(p.gross_salary)                                      AS GrossIncome,
-            gi.sss_number                                            AS SocialSecurityNumber,
-            SUM(p.total_deductions)                                  AS SocialSecurityContribution,
-            gi.pagibig_number                                        AS PagibigNumber,
-            SUM(p.total_deductions)                                  AS PagibigContribution,
-            gi.philhealth_number                                     AS PhilHealthNumber,
-            SUM(p.total_deductions)                                  AS PhilHealthContribution,
-            gi.tax_identification_number                             AS TIN,
-            SUM(p.total_deductions)                                  AS WithholdingTax
-          FROM
+    <![CDATA[
+        SELECT
+            p.employee_id AS EmployeeNo,
+            CONCAT(e.first_name, ' ', e.last_name) AS EmployeeFullName,
+            p.position AS Position,
+            p.department AS Department,
+            SUM(p.gross_salary) AS GrossIncome,
+            gi.sss_number AS SocialSecurityNo,
+            SUM(p.total_deductions) AS SocialSecurityContribution,
+            gi.pagibig_number AS PagibigNo,
+            SUM(p.total_deductions) AS PagibigContribution,
+            gi.philhealth_number AS PhilHealthNo,
+            SUM(p.total_deductions) AS PhilHealthContribution,
+            gi.tax_identification_number AS TIN,
+            SUM(p.total_deductions) AS WithholdingTax,
+            SUM(p.gross_salary - p.total_deductions) AS NetPay
+        FROM
             payslip p
-            INNER JOIN employee_personal_information e
-              ON p.employee_id = e.employee_id
-            INNER JOIN employee_government_information gi
-              ON e.employee_id = gi.employee_id
-          GROUP BY
+        INNER JOIN employee_personal_information e
+            ON p.employee_id = e.employee_id
+        INNER JOIN employee_government_information gi
+            ON e.employee_id = gi.employee_id
+        GROUP BY
             p.employee_id,
             e.first_name,
             e.last_name,
@@ -35,23 +38,25 @@
             gi.pagibig_number,
             gi.philhealth_number,
             gi.tax_identification_number
-          ORDER BY
+        ORDER BY
             e.last_name,
-            e.first_name]]>
-	</queryString>
-	<field name="EmployeeNumber" class="java.lang.Integer"/>
+            e.first_name
+    ]]>
+</queryString>
+	<field name="EmployeeNo" class="java.lang.Integer"/>
 	<field name="EmployeeFullName" class="java.lang.String"/>
 	<field name="Position" class="java.lang.String"/>
 	<field name="Department" class="java.lang.String"/>
 	<field name="GrossIncome" class="java.math.BigDecimal"/>
-	<field name="SocialSecurityNumber" class="java.lang.String"/>
+	<field name="SocialSecurityNo" class="java.lang.String"/>
 	<field name="SocialSecurityContribution" class="java.math.BigDecimal"/>
-	<field name="PagibigNumber" class="java.lang.String"/>
+	<field name="PagibigNo" class="java.lang.String"/>
 	<field name="PagibigContribution" class="java.math.BigDecimal"/>
-	<field name="PhilHealthNumber" class="java.lang.String"/>
+	<field name="PhilHealthNo" class="java.lang.String"/>
 	<field name="PhilHealthContribution" class="java.math.BigDecimal"/>
 	<field name="TIN" class="java.lang.String"/>
 	<field name="WithholdingTax" class="java.math.BigDecimal"/>
+	<field name="NetPay" class="java.math.BigDecimal"/>
 	<title>
 		<band height="80" splitType="Stretch">
 			<staticText>
@@ -66,6 +71,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Pay Period:]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="754" y="30" width="100" height="20" uuid="17a12527-0f2f-4878-abd3-efecbde2f9d4"/>
+				<textFieldExpression><![CDATA[$P{YEAR_MONTH}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>
@@ -78,7 +87,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Employee Number]]></text>
+				<text><![CDATA[Employee No.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="98" y="21" width="104" height="28" forecolor="#FFFFFF" uuid="9215f502-ebb1-468d-b080-7089ce18b76b"/>
@@ -113,7 +122,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Social Security Number]]></text>
+				<text><![CDATA[Social Security No.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="600" y="20" width="100" height="28" forecolor="#FFFFFF" uuid="ee7e6367-a671-47f8-a5fc-ae4636b9645e"/>
@@ -127,7 +136,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Pag-ibig Number]]></text>
+				<text><![CDATA[Pag-ibig No.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="800" y="22" width="100" height="28" forecolor="#FFFFFF" uuid="277a06b9-a300-4b4d-b3c1-90ba6076c3fe"/>
@@ -141,7 +150,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Philhealth Number]]></text>
+				<text><![CDATA[Philhealth No.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="1000" y="21" width="100" height="28" forecolor="#FFFFFF" uuid="fc6099ab-d781-4b6a-b9b9-91c4f06fe5e9"/>
@@ -174,60 +183,78 @@
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="90" splitType="Stretch">
+		<band height="37" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.spreadsheet.SpreadsheetLayout"/>
 			<textField>
-				<reportElement x="0" y="0" width="100" height="90" uuid="f7349224-4d3c-41cb-a6b4-8d83acc8b76c"/>
-				<textFieldExpression><![CDATA[$F{EmployeeNumber}]]></textFieldExpression>
+				<reportElement x="0" y="0" width="100" height="37" uuid="f7349224-4d3c-41cb-a6b4-8d83acc8b76c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{EmployeeNo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="100" y="0" width="100" height="90" uuid="bfaf5527-a756-44ad-809a-081ddd0b6c44"/>
+				<reportElement x="100" y="0" width="100" height="37" uuid="bfaf5527-a756-44ad-809a-081ddd0b6c44"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{EmployeeFullName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="200" y="0" width="100" height="90" uuid="7594eb4b-83e4-4543-81fb-f29b60bf2b76"/>
+				<reportElement x="200" y="0" width="100" height="37" uuid="7594eb4b-83e4-4543-81fb-f29b60bf2b76"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{Position}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="300" y="0" width="100" height="90" uuid="971855e5-51c7-4aed-8261-6fa9b4a1fe20"/>
+				<reportElement x="300" y="0" width="100" height="37" uuid="971855e5-51c7-4aed-8261-6fa9b4a1fe20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{Department}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="400" y="0" width="100" height="90" uuid="77188dd2-2885-4aaa-8d95-6fe7eef1beaf"/>
+				<reportElement x="400" y="0" width="100" height="37" uuid="77188dd2-2885-4aaa-8d95-6fe7eef1beaf"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{GrossIncome}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="500" y="0" width="100" height="90" uuid="f65fec47-8d52-446a-b40d-d6f5a716daeb"/>
-				<textFieldExpression><![CDATA[$F{SocialSecurityNumber}]]></textFieldExpression>
+				<reportElement x="500" y="0" width="100" height="37" uuid="4e1c52f1-3f5c-4b17-af6c-bb25e48efd1b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PagibigNo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="600" y="0" width="100" height="90" uuid="d6f0d6cf-65f5-481a-a9b3-a23cc41c8709"/>
-				<textFieldExpression><![CDATA[$F{SocialSecurityContribution}]]></textFieldExpression>
+				<reportElement x="600" y="0" width="100" height="37" uuid="e06ab4bf-057f-4796-acd6-3c902a829527"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PhilHealthNo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="700" y="0" width="100" height="90" uuid="4e1c52f1-3f5c-4b17-af6c-bb25e48efd1b"/>
-				<textFieldExpression><![CDATA[$F{PagibigNumber}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="800" y="0" width="100" height="90" uuid="3514de87-1335-4525-ac84-4c58913014e2"/>
-				<textFieldExpression><![CDATA[$F{PagibigContribution}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="900" y="0" width="100" height="90" uuid="e06ab4bf-057f-4796-acd6-3c902a829527"/>
-				<textFieldExpression><![CDATA[$F{PhilHealthNumber}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="1000" y="0" width="100" height="90" uuid="4ac0372d-0776-4337-aee0-47e6a8135bdf"/>
+				<reportElement x="700" y="0" width="100" height="37" uuid="4ac0372d-0776-4337-aee0-47e6a8135bdf"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{PhilHealthContribution}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="1100" y="0" width="100" height="90" uuid="bcd90cd1-5951-4820-a4a2-a85e3c2d1f93"/>
+				<reportElement x="800" y="0" width="100" height="37" uuid="bcd90cd1-5951-4820-a4a2-a85e3c2d1f93"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{TIN}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="1200" y="0" width="100" height="90" uuid="9e90b62f-fc39-4080-b8e2-8231ccd86a04"/>
+				<reportElement x="900" y="0" width="100" height="37" uuid="9e90b62f-fc39-4080-b8e2-8231ccd86a04"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{WithholdingTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1000" y="0" width="100" height="37" uuid="f65fec47-8d52-446a-b40d-d6f5a716daeb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{SocialSecurityNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1100" y="0" width="100" height="37" uuid="d6f0d6cf-65f5-481a-a9b3-a23cc41c8709"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{SocialSecurityContribution}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1200" y="0" width="100" height="37" uuid="3514de87-1335-4525-ac84-4c58913014e2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PagibigContribution}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1300" y="0" width="100" height="37" uuid="f7145a14-79ad-41a6-a81e-544ddfe8af25"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{NetPay}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

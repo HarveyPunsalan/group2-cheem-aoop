@@ -5,7 +5,7 @@
 package Class.PPS;
 
 
-import com.motorph.database.connection.DatabaseConnector;
+import com.motorph.database.connection.DatabaseService;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -14,15 +14,11 @@ import net.sf.jasperreports.engine.JasperReport;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
-import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
-import net.sf.jasperreports.export.SimpleExporterInput;
-import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
-import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
 
 
 /**
@@ -31,106 +27,96 @@ import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
  */
 public class ReportUtil {
     
-    private static final Logger LOGGER = Logger.getLogger(ReportUtil.class.getName());
+   //Path/location to jrxml templates
+    private static final String PAYSLIP_JRXML = "src/resources/Report JRXML/MotorPH_Payslip.jrxml";
+    private static final String SUMMARY_JRXML= "src/resources/Report JRXML/Summary_Report.jrxml";
     
-    //Path/location to jrxml templates
-    private static final String PAYSLIP_JRXML = "scr/Reports/MotorPH_Payslip.jrxml";
-    private static final String SUMMARY_JRXML= "src/Reports/Summary_Report.jrxml";
-    
-    /**
-     * Generates a PDF payslip report for a given payslip ID.
-     */
-    public static void generatePayslipFromDB(String payslipID) {
-        try (Connection conn = DatabaseConnector.connect()) {
-
+    public static void generatePayslipFromDB(int employeeId, int payrollId) {
+        Connection conn = null;
+        try {
+            // Compile the JRXML into a JasperReport
             JasperReport jasperReport = JasperCompileManager.compileReport(PAYSLIP_JRXML);
 
-            // Fill parameters
+            // Prepare parameters map
             Map<String, Object> params = new HashMap<>();
-            params.put("PayslipID", payslipID);
-            params.put("GeneratedOn", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            params.put("P_EMPLOYEE_ID", employeeId);
+            params.put("P_PAYROLL_ID", payrollId);
+//            params.put("GeneratedOn", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
+            // Obtain a JDBC connection
+            conn = DatabaseService.connectToMotorPH();
+
+            // Fill the report with data from DB using stored procedure
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, params, conn);
 
-            // Ensure output directory
-            String dirPath = "payslips";
+            // Output directory and filename
+            String dirPath = "src/resources/report";
             File dir = new File(dirPath);
             if (!dir.exists()) dir.mkdirs();
 
-            // Filename with timestamp
             String ts = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"));
-            String safePayslipID = payslipID.replaceAll("\\s+", "_");
-            String outputFile = String.format("%s/Payslip_%s_%s.pdf", dirPath, ts, safePayslipID);
+            String outputFile = String.format("%s/Payslip_%s_EID%d_PID%d.pdf", dirPath, ts, employeeId, payrollId);
 
-            // Export PDF and open
+            // Export to PDF
             JasperExportManager.exportReportToPdfFile(jasperPrint, outputFile);
             java.awt.Desktop.getDesktop().open(new File(outputFile));
 
-            LOGGER.info("Payslip generated: " + outputFile);
-
+            System.out.println("Payslip generated: " + outputFile);
         } catch (Exception e) {
-            LOGGER.severe("Error generating payslip: " + e.getMessage());
             e.printStackTrace();
+        } finally {
+            // Close JDBC connection
+            if (conn != null) {
+                try { conn.close(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
         }
     }
 
-    /**
-     * Generates payroll summary report for the specified period (PDF and Excel).
-     */
-    public static void generateSummaryReportFromDB(String periodStart, String periodEnd) {
-        try (Connection conn = DatabaseConnector.connect()) {
-
+    public static void generateSummaryReportFromDB(String yearMonth) {
+        Connection conn = null;
+        try {
+            // Compile the JRXML into a JasperReport
             JasperReport jasperReport = JasperCompileManager.compileReport(SUMMARY_JRXML);
 
+            // Build the parameter map
             Map<String, Object> params = new HashMap<>();
-            params.put("PeriodStart", periodStart);
-            params.put("PeriodEnd", periodEnd);
-            params.put("GeneratedOn", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            params.put("YEAR_MONTH", yearMonth);
+//            params.put("PeriodEnd",   periodEnd);
+//            params.put("GeneratedOn", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
-            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, params, conn);
+            // Obtain a JDBC connection
+            conn = DatabaseService.connectToMotorPH();
 
-            // Output folder
-            String dirPath = "summary_reports";
+            // Fill the report: the SQL inside JRXML will run on this connection
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,params,conn);
+
+            // Ensure output directory exists
+            String dirPath = "src/resources/report";
             File dir = new File(dirPath);
             if (!dir.exists()) dir.mkdirs();
 
-            // Timestamps
-            String ts = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"));
-            String pdfFileName = String.format("%s/Summary_%s.pdf", dirPath, ts);
-            String excelFileName = String.format("%s/Summary_%s.xlsx", dirPath, ts);
+            // Build a timestamped filename
+            String ts = LocalDateTime.now() .format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"));
+            String fileName = String.format("%s/Summary_%s.pdf", dirPath, ts);
 
-            // Export PDF
-            JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFileName);
+            // Export to PDF and open on desktop
+            JasperExportManager.exportReportToPdfFile(jasperPrint, fileName);
+            java.awt.Desktop.getDesktop().open(new File(fileName));
 
-            // Export Excel
-            JRXlsxExporter exporter = new JRXlsxExporter();
-            exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-            exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(excelFileName));
-            SimpleXlsxReportConfiguration config = new SimpleXlsxReportConfiguration();
-            config.setDetectCellType(true);
-            config.setCollapseRowSpan(false);
-            exporter.setConfiguration(config);
-            exporter.exportReport();
-
-            // Auto-open
-            java.awt.Desktop.getDesktop().open(new File(pdfFileName));
-            java.awt.Desktop.getDesktop().open(new File(excelFileName));
-
-            LOGGER.info("Summary PDF: " + pdfFileName);
-            LOGGER.info("Summary Excel: " + excelFileName);
-
+            System.out.println("Summary report generated: " + fileName);
         } catch (Exception e) {
-            LOGGER.severe("Error generating summary report: " + e.getMessage());
             e.printStackTrace();
+        } finally {
+            // Close JDBC connection (if opened)
+            if (conn != null) {
+                try { conn.close(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
         }
     }
 
-    /**
-     * Helper to call summary report using PayPeriod object.
-     */
-    public static void generatePayrollSummaryReport(PayPeriod payrollPayPeriod) {
-        String periodStart = payrollPayPeriod.getStartDate().toString();
-        String periodEnd = payrollPayPeriod.getEndDate().toString();
-        generateSummaryReportFromDB(periodStart, periodEnd);
-    }
+//    public static void generatePayrollSummaryReport(PayPeriod payrollPayPeriod) {
+//        String periodStart = payrollPayPeriod.getStartDate().toString();
+//        String periodEnd = payrollPayPeriod.getEndDate().toString();
+//        generateSummaryReportFromDB(periodStart, periodEnd);
+//    }
 }
