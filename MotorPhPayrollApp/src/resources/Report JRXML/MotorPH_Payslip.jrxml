@@ -6,36 +6,43 @@
 	<property name="ireport.y" value="0"/>
 	<parameter name="P_PAYSLIP_ID" class="java.lang.Integer" isForPrompting="false"/>
 	<queryString>
-		<![CDATA[SELECT
-            p.payslip_id,
-            p.employee_id,
-            u.employee_name,                         -- from system_user
-            p.position,
-            p.department,
-            p.monthly_rate,
-            p.daily_rate,
-            p.days_worked,
-            p.overtime,
-            p.gross_salary,
-            p.rice_subsidy,
-            p.phone_allowance,
-            p.clothing_allowance,
-            p.sss,
-			p.pagibig,
-			p.philhealth,
-			p.tin
-            p.total_allowance,
-            p.total_deductions,
-            p.net_salary,
-            p.generated_date
-            p.gross_income,
-            p.period_start,
-    		p.period_end
-            
-          FROM payslip p
-          LEFT JOIN system_user u ON p.employee_id = u.user_id
-          WHERE p.payslip_id = $P{P_PAYSLIP_ID}]]>
-	</queryString>
+  <![CDATA[
+    SELECT
+      p.payslip_id,
+      p.employee_id,
+
+      -- build the full name from first_name + last_name
+      CONCAT(u.last_name, ', ', u.first_name) AS employee_name,
+
+      p.position,
+      p.department,
+      p.monthly_rate,
+      p.daily_rate,
+      p.days_worked,
+      p.overtime,
+      p.gross_salary,
+      p.rice_subsidy,
+      p.phone_allowance,
+      p.clothing_allowance,
+      p.sss,
+      p.pagibig,
+      p.philhealth,
+      p.tin,
+      p.total_allowance,
+      p.total_deductions,
+      p.net_salary,
+      p.generated_date,
+      p.period_start,
+      p.period_end
+    FROM
+      payslip p
+      LEFT JOIN system_user u
+        ON p.employee_id = u.user_id
+    WHERE
+      p.payslip_id = $P{P_PAYSLIP_ID}
+  ]]>
+</queryString>
+
 	<field name="payslip_id" class="java.lang.Integer"/>
 	<field name="employee_id" class="java.lang.Integer"/>
 	<field name="employee_name" class="java.lang.String"/>
@@ -59,6 +66,12 @@
 	<field name="generated_date" class="java.sql.Date"/>
 	<field name="period_start" class="java.sql.Date"/>
 	<field name="period_end" class="java.sql.Date"/>
+                        <field name="gross_income" class="java.math.BigDecimal"/>
+                        <variable name="netPay" class="java.math.BigDecimal" calculation="Nothing">
+                        <variableExpression><![CDATA[
+                                 $F{gross_salary}.add($F{total_allowance}).subtract($F{total_deductions})
+                        ]]></variableExpression>
+                        </variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -363,9 +376,9 @@
 				<textFieldExpression><![CDATA[$F{total_deductions}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="100" y="307" width="100" height="20" uuid="83aa72b4-a4cf-4a44-b6d1-7776a99bff5a"/>
-				<textFieldExpression><![CDATA[$F{net_salary}]]></textFieldExpression>
-			</textField>
+                                                                        <reportElement x="100" y="307" width="100" height="20" uuid="83aa72b4-a4cf-4a44-b6d1-7776a99bff5a"/>
+                                                                        <textFieldExpression><![CDATA[$V{netPay}]]></textFieldExpression>
+                                                                    </textField>
 		</band>
 	</detail>
 </jasperReport>
