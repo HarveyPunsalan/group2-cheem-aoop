@@ -4,45 +4,11 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<parameter name="P_PAYSLIP_ID" class="java.lang.Integer" isForPrompting="false"/>
-	<queryString>
-  <![CDATA[
-    SELECT
-      p.payslip_id,
-      p.employee_id,
-
-      -- build the full name from first_name + last_name
-      CONCAT(u.last_name, ', ', u.first_name) AS employee_name,
-
-      p.position,
-      p.department,
-      p.monthly_rate,
-      p.daily_rate,
-      p.days_worked,
-      p.overtime,
-      p.gross_salary,
-      p.rice_subsidy,
-      p.phone_allowance,
-      p.clothing_allowance,
-      p.sss,
-      p.pagibig,
-      p.philhealth,
-      p.tin,
-      p.total_allowance,
-      p.total_deductions,
-      p.net_salary,
-      p.generated_date,
-      p.period_start,
-      p.period_end
-    FROM
-      payslip p
-      LEFT JOIN system_user u
-        ON p.employee_id = u.user_id
-    WHERE
-      p.payslip_id = $P{P_PAYSLIP_ID}
-  ]]>
-</queryString>
-
+	<parameter name="P_EMPLOYEE_ID" class="java.lang.Integer"/>
+	<parameter name="P_PAYROLL_ID" class="java.lang.Integer"/>
+	<queryString language="SQL">
+            <![CDATA[CALL find_payslip_by_employee_id($P{P_EMPLOYEE_ID}, $P{P_PAYROLL_ID})]]>
+        </queryString>
 	<field name="payslip_id" class="java.lang.Integer"/>
 	<field name="employee_id" class="java.lang.Integer"/>
 	<field name="employee_name" class="java.lang.String"/>
@@ -57,21 +23,15 @@
 	<field name="phone_allowance" class="java.math.BigDecimal"/>
 	<field name="clothing_allowance" class="java.math.BigDecimal"/>
 	<field name="sss" class="java.math.BigDecimal"/>
-	<field name="pagibig" class="java.math.BigDecimal"/>
+	<field name="pag_ibig" class="java.math.BigDecimal"/>
 	<field name="philhealth" class="java.math.BigDecimal"/>
-	<field name="tin" class="java.math.BigDecimal"/>
+	<field name="withholding_tax" class="java.math.BigDecimal"/>
 	<field name="total_allowance" class="java.math.BigDecimal"/>
 	<field name="total_deductions" class="java.math.BigDecimal"/>
 	<field name="net_salary" class="java.math.BigDecimal"/>
 	<field name="generated_date" class="java.sql.Date"/>
-	<field name="period_start" class="java.sql.Date"/>
-	<field name="period_end" class="java.sql.Date"/>
-                        <field name="gross_income" class="java.math.BigDecimal"/>
-                        <variable name="netPay" class="java.math.BigDecimal" calculation="Nothing">
-                        <variableExpression><![CDATA[
-                                 $F{gross_salary}.add($F{total_allowance}).subtract($F{total_deductions})
-                        ]]></variableExpression>
-                        </variable>
+	<field name="pay_period_start" class="java.sql.Date"/>
+	<field name="pay_period_end" class="java.sql.Date"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -155,11 +115,11 @@
 			</textField>
 			<textField>
 				<reportElement x="462" y="0" width="100" height="19" uuid="f3fd942a-ec9b-4db9-baf5-1f9ca2821775"/>
-				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("MMMM dd, yyyy").format($F{period_start})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("MMMM dd, yyyy").format($F{pay_period_start})]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="462" y="20" width="100" height="22" uuid="c7314d53-d21e-453b-b7be-d4c5d1d47f74"/>
-				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("MMMM dd, yyyy").format($F{period_end})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("MMMM dd, yyyy").format($F{pay_period_end})]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -296,7 +256,7 @@
 			<staticText>
 				<reportElement mode="Opaque" x="2" y="188" width="100" height="20" uuid="d441a765-20cb-4bad-beec-95f7d20e4850"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[TIN]]></text>
+				<text><![CDATA[Withholding Tax]]></text>
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="2" y="208" width="100" height="20" uuid="59090a5f-dcce-4ed7-9c6a-53f768c4e8d9"/>
@@ -309,7 +269,7 @@
 			</textField>
 			<textField>
 				<reportElement x="102" y="148" width="100" height="19" uuid="c328ccba-fd88-44d5-8db4-612052214e78"/>
-				<textFieldExpression><![CDATA[$F{pagibig}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{pag_ibig}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="102" y="169" width="100" height="18" uuid="1c08c70b-0071-42a4-9509-3209e6ca1fb2"/>
@@ -317,7 +277,7 @@
 			</textField>
 			<textField>
 				<reportElement x="102" y="189" width="100" height="19" uuid="9545b3c0-bf97-4202-8e31-2e8066371b43"/>
-				<textFieldExpression><![CDATA[$F{tin}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{withholding_tax}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="102" y="208" width="100" height="18" uuid="a0b8edca-d001-47d9-baa7-21dcaf145726"/>
@@ -376,9 +336,9 @@
 				<textFieldExpression><![CDATA[$F{total_deductions}]]></textFieldExpression>
 			</textField>
 			<textField>
-                                                                        <reportElement x="100" y="307" width="100" height="20" uuid="83aa72b4-a4cf-4a44-b6d1-7776a99bff5a"/>
-                                                                        <textFieldExpression><![CDATA[$V{netPay}]]></textFieldExpression>
-                                                                    </textField>
+				<reportElement x="100" y="307" width="100" height="20" uuid="83aa72b4-a4cf-4a44-b6d1-7776a99bff5a"/>
+				<textFieldExpression><![CDATA[$F{net_salary}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 </jasperReport>
