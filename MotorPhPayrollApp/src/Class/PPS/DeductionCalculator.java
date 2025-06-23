@@ -4,6 +4,8 @@
  */
 package Class.PPS;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.TreeMap;
@@ -15,7 +17,7 @@ import java.util.TreeMap;
  * salary, or other parameters. Extend this class with specific deduction calculation logic as needed.</p>
  */
 public class DeductionCalculator {
-    private static DecimalFormat decimalFormat = new DecimalFormat("0.00");
+    private static final DecimalFormat DECIMAL = new DecimalFormat("0.00");
 
     /**
      * Calculates the SSS deduction based on the gross salary.
@@ -29,7 +31,6 @@ public class DeductionCalculator {
      * @return the SSS deduction corresponding to the gross salary, or 0.0 if below threshold.
      */
     public static double calculateSSS(double gross) {
-        // Create a TreeMap to store salary thresholds and corresponding SSS deduction amounts.
         TreeMap<Double, Double> sssChart = new TreeMap<>();
         sssChart.put(3249.00, 135.00);
         sssChart.put(3250.00, 157.50);
@@ -76,77 +77,70 @@ public class DeductionCalculator {
         sssChart.put(23750.00, 1080.00);
         sssChart.put(24250.00, 1102.50);
         sssChart.put(24750.00, 1125.00);
-        
-        // Get the entry with the greatest key less than or equal to the gross salary.
+
         Map.Entry<Double, Double> entry = sssChart.floorEntry(gross);
-        
-        if (entry == null) {
-            return 0.0; // Return 0.0 if the gross salary is below the lowest threshold.
-        }
-
-        return entry.getValue(); // Return the corresponding SSS deduction value.
+        if (entry == null) return 0.0;
+        return Double.parseDouble(DECIMAL.format(entry.getValue()));
     }
 
-    /**
-     * Calculates the PhilHealth deduction based on the gross salary.
-     *
-     * <p>This method calculates the deduction by taking 3% of the gross salary and then applying 50%
-     * to that amount. The result is formatted using a predefined decimal format and then converted back
-     * to a double.</p>
-     *
-     * @param gross the gross salary.
-     * @return the calculated PhilHealth deduction.
-     */
+    public static BigDecimal calculateSSS(BigDecimal gross) {
+        if (gross == null) return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        return BigDecimal.valueOf(calculateSSS(gross.doubleValue())).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    // --- Double-based PhilHealth ---
     public static double calculatePhilHealth(double gross) {
-        return Double.parseDouble(decimalFormat.format((gross * 0.03) * 0.5)); // Calculate 3% of the gross salary and then take half of that value, format the result.
+        double value = (gross * 0.03) * 0.5;
+        return Double.parseDouble(DECIMAL.format(value));
     }
 
-    /**
-     * Calculates the Pag-IBIG deduction based on the gross salary.
-     *
-     * <p>This method uses a predefined Pag-IBIG chart stored in a TreeMap where each key represents a salary
-     * threshold and the associated value represents the deduction rate. The method finds the appropriate rate for
-     * the given gross salary, calculates the deduction, caps it at 100 if necessary, formats the result, and returns it as a double.</p>
-     *
-     * @param gross the gross salary.
-     * @return the calculated Pag-IBIG deduction.
-     */
+    public static BigDecimal calculatePhilHealth(BigDecimal gross) {
+        if (gross == null) return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        BigDecimal value = gross.multiply(new BigDecimal("0.03"))
+                                .multiply(new BigDecimal("0.5"))
+                                .setScale(2, RoundingMode.HALF_UP);
+        return value;
+    }
+
+    // --- Double-based Pag-IBIG ---
     public static double calculatePagIbig(double gross) {
-        // Create a TreeMap to store salary thresholds and corresponding Pag-IBIG deduction rates.
         TreeMap<Double, Double> pagibigChart = new TreeMap<>();
         pagibigChart.put(1500.00, 0.01);
         pagibigChart.put(1501.00, 0.02);
 
-        double pagibig = gross * pagibigChart.floorEntry(gross).getValue(); // Get the deduction rate for the given gross salary.
-        return Double.parseDouble(decimalFormat.format((pagibig >= 100) ? 100 : pagibig)); // Cap the deduction at 100, format the result, and parse it back to a double.
+        Map.Entry<Double, Double> entry = pagibigChart.floorEntry(gross);
+        if (entry == null) return 0.0;
+        double pagibig = gross * entry.getValue();
+        double capped = (pagibig >= 100) ? 100 : pagibig;
+        return Double.parseDouble(DECIMAL.format(capped));
     }
 
-    /**
-     * Calculates the total government contribution.
-     *
-     * <p>This method adds the SSS, PhilHealth, and Pag-IBIG contributions together, formats the sum using a
-     * predefined decimal format, and returns the result as a double.</p>
-     *
-     * @param sssContri the SSS contribution.
-     * @param philhealthContri the PhilHealth contribution.
-     * @param pagibigContri the Pag-IBIG contribution.
-     * @return the total government contribution.
-     */
-    public static double calculateGovernmentContribution(double sssContri, double philhealthContri, double pagibigContri) {
-        return Double.parseDouble(decimalFormat.format(sssContri + philhealthContri + pagibigContri)); // Sum the contributions and format the total.
+    public static BigDecimal calculatePagIbig(BigDecimal gross) {
+        if (gross == null) return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        return BigDecimal.valueOf(calculatePagIbig(gross.doubleValue())).setScale(2, RoundingMode.HALF_UP);
     }
-    
-    /**
-     * Calculates the total deductions.
-     *
-     * <p>This method sums the government contribution and withholding tax, formats the result using a predefined
-     * decimal format, and returns the formatted value as a double.</p>
-     *
-     * @param governmentContribution the total government contribution.
-     * @param withHoldingTax the withholding tax amount.
-     * @return the total deductions.
-     */
-    public static double calculateTotalDeductions(double governmentContribution, double withHoldingTax) {
-        return Double.parseDouble(decimalFormat.format(governmentContribution + withHoldingTax)); // Sum the government contribution and withholding tax, format the result, and return as a double.
+
+    // --- Government Contribution ---
+    public static double calculateGovernmentContribution(double sss, double philHealth, double pagibig) {
+        double sum = sss + philHealth + pagibig;
+        return Double.parseDouble(DECIMAL.format(sum));
+    }
+
+    public static BigDecimal calculateGovernmentContribution(BigDecimal sss, BigDecimal philHealth, BigDecimal pagibig) {
+        if (sss == null) sss = BigDecimal.ZERO;
+        if (philHealth == null) philHealth = BigDecimal.ZERO;
+        if (pagibig == null) pagibig = BigDecimal.ZERO;
+        return sss.add(philHealth).add(pagibig).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    // --- Total Deductions ---
+    public static double calculateTotalDeductions(double gov, double whTax) {
+        return Double.parseDouble(DECIMAL.format(gov + whTax));
+    }
+
+    public static BigDecimal calculateTotalDeductions(BigDecimal gov, BigDecimal whTax) {
+        if (gov == null) gov = BigDecimal.ZERO;
+        if (whTax == null) whTax = BigDecimal.ZERO;
+        return gov.add(whTax).setScale(2, RoundingMode.HALF_UP);
     }
 }

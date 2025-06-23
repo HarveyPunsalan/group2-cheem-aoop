@@ -4,7 +4,10 @@
  */
 package Class.PPS;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -12,16 +15,10 @@ import java.util.TreeMap;
  * @author 63909
  */
 public class TaxCalculator {
-    private static DecimalFormat decimalFormat = new DecimalFormat("0.00");
-    
-    /**
-     * Calculates the withholding tax based on the gross salary and current total deductions.
-     * @param gross
-     * @param totalDeductions
-     * @return 
-     */
-    public static  double calculateWithHoldingTax(double gross, double totalDeductions) {
-        // Define tax brackets as arrays:
+    private static final DecimalFormat DECIMAL = new DecimalFormat("0.00");
+
+    public static double calculateWithHoldingTax(double gross, double totalDeductions) {
+        // Define brackets
         Double[] n20832 = {0.00, 0.00, 0.00};
         Double[] n20833 = {0.20, 20833.00, 0.00};
         Double[] n33333 = {0.25, 33333.00, 2500.00};
@@ -37,7 +34,25 @@ public class TaxCalculator {
         withHTaxChart.put(166667.00, n166667);
         withHTaxChart.put(666667.00, n666667);
 
-        Double[] taxValue = withHTaxChart.floorEntry(gross).getValue();
-        return Double.parseDouble(decimalFormat.format((((gross - totalDeductions) - taxValue[1]) * taxValue[0]) + taxValue[2]));
+        Map.Entry<Double, Double[]> entry = withHTaxChart.floorEntry(gross);
+        if (entry == null) return 0.0;
+
+        Double[] bracket = entry.getValue();
+        double rate      = bracket[0];
+        double threshold = bracket[1];
+        double baseTax   = bracket[2];
+
+        double taxable   = (gross - totalDeductions) - threshold;
+        double tax       = (taxable * rate) + baseTax;
+        return Double.parseDouble(DECIMAL.format(tax < 0 ? 0 : tax));
+    }
+
+    public static BigDecimal calculateWithHoldingTax(BigDecimal gross, BigDecimal totalDeductions) {
+        if (gross == null) gross = BigDecimal.ZERO;
+        if (totalDeductions == null) totalDeductions = BigDecimal.ZERO;
+        double dGross = gross.doubleValue();
+        double dDeduct = totalDeductions.doubleValue();
+        double result = calculateWithHoldingTax(dGross, dDeduct);
+        return BigDecimal.valueOf(result).setScale(2, RoundingMode.HALF_UP);
     }
 }

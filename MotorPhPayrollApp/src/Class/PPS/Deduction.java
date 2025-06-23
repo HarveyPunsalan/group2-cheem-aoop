@@ -4,6 +4,8 @@
  */
 package Class.PPS;
 
+import java.math.BigDecimal;
+
 /**
  * Represents a deduction.
  *
@@ -11,9 +13,12 @@ package Class.PPS;
  * Extend this class with additional fields and methods as needed for managing deduction details.</p>
  */
 public class Deduction {
-    private String deductionID;
-    private String deductionName;
-    private String description;
+    public enum Type {SSS, PHILHEALTH, PAGIBIG}
+    
+    private int id;
+    private int payslipId; 
+    private Type type;
+    private BigDecimal amount;
 
     /**
      * Default constructor for Deduction.
@@ -28,35 +33,23 @@ public class Deduction {
      *
      * @param deductionID the unique identifier for the deduction.
      */
-    public Deduction(String deductionID) {
-        this.deductionID = deductionID; // Initialize the deduction ID.
+    public Deduction(int payslipId, Type type, BigDecimal amount) {
+        this.payslipId = payslipId;
+        this.type      = type;
+        this.amount    = amount;
     }
     
-    /**
-     * Constructs a Deduction object with the specified attributes.
-     *
-     * @param deductionID the unique identifier for the deduction.
-     * @param deductionName the name of the deduction.
-     * @param description a description of the deduction.
-     */
-    public Deduction(String deductionID, String deductionName, String description) {
-        this.deductionID = deductionID;
-        this.deductionName = deductionName;
-        this.description = description;
-    }
-    
-    // Getters and Setters
-    public String getDeductionID() {
-        return deductionID;
-    }
+    // ——— Getters & Setters ———
 
-    public String getDeductionName() {
-        return deductionName;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public String getDescription() {
-        return description;
-    }
+    public int getPayslipId() { return payslipId; }
+    public void setPayslipId(int payslipId) { this.payslipId = payslipId; }
 
+    public Type getType() { return type; }
+    public void setType(Type type) { this.type = type; }
+
+    public BigDecimal getAmount() { return amount; }
+    public void setAmount(BigDecimal amount) { this.amount = amount; }
 }
-

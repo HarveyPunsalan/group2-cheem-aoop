@@ -7,6 +7,7 @@ package Class.PPS;
 import CSVFileManager.CsvFile;
 import Class.EMS.*;
 import Class.TAT.*;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -26,10 +27,17 @@ public class PayrollService {
     private AttendanceService attendanceService;
 
     public PayrollService() {
-        this.payPeriodList = CsvFile.PAYPERIOD.readFile(PayPeriod::new);
-        this.employeeService = new EmployeeService();
-        this.attendanceService = new AttendanceService(); 
-    }    
+        this.payPeriodList = CsvFile.PAYPERIOD.readFile(fields ->
+            new PayPeriod(
+                    Integer.parseInt(fields[0]),   // pay_period_id
+                    fields[1],                     // start_date (ISO yyyy-MM-dd)
+                    fields[2],                     // end_date
+                    fields[3],                     // pay_day
+                    fields[4]                      // payroll_due
+            )
+        );
+        
+    }   
        
     /**
      * Generates a list of PayrollRecords for all employees in a given pay period.
@@ -126,15 +134,18 @@ public class PayrollService {
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
         
         for (Employee employee : employeeService.getEmployeeRecords()) {
-            
             List<DailyAttendance> filteredRecords = attendanceService.getFilteredDailyAttendance(employee, payPeriod);
             
             double payableHours = AttendanceCalculator.calculatePayableHours(filteredRecords);
             double baseSalary = SalaryCalculator.calculateBasicSalary(payableHours, Double.parseDouble(employee.getHourlyRate().replace(",", "")));
-            double totalAllowance = AllowanceCalculator.calculateTotalAllowance(Double.parseDouble(employee.getRiceSubsidy().replace(",", "")),
-                                                                                Double.parseDouble(employee.getPhoneAllowance().replace(",", "")), 
-                                                                                Double.parseDouble(employee.getClothingAllowance().replace(",", "")));
-            double grossSalary = SalaryCalculator.calculateGrossSalary(baseSalary, totalAllowance);
+
+            // Use BigDecimal for allowances
+            BigDecimal rice = new BigDecimal(employee.getRiceSubsidy().replace(",", ""));
+            BigDecimal phone = new BigDecimal(employee.getPhoneAllowance().replace(",", ""));
+            BigDecimal clothing = new BigDecimal(employee.getClothingAllowance().replace(",", ""));
+            BigDecimal totalAllowance = AllowanceCalculator.calculateTotalAllowance(rice, phone, clothing);
+
+            double grossSalary = SalaryCalculator.calculateGrossSalary(baseSalary, totalAllowance.doubleValue());
             
             // Construct a row using the aggregated values.
             Object[] row = {
@@ -162,17 +173,18 @@ public class PayrollService {
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
         
         for (Employee employee : employeeService.getEmployeeRecords()) {
-            
             List<DailyAttendance> filteredRecords = attendanceService.getFilteredDailyAttendance(employee, payPeriod);
             
             double payableHours = AttendanceCalculator.calculatePayableHours(filteredRecords);
             double baseSalary = SalaryCalculator.calculateBasicSalary(payableHours, Double.parseDouble(employee.getHourlyRate().replace(",", "")));
-            double totalAllowance = AllowanceCalculator.calculateTotalAllowance(Double.parseDouble(employee.getRiceSubsidy().replace(",", "")),
-                                                                                Double.parseDouble(employee.getPhoneAllowance().replace(",", "")), 
-                                                                                Double.parseDouble(employee.getClothingAllowance().replace(",", "")));
-            double grossSalary = SalaryCalculator.calculateGrossSalary(baseSalary, totalAllowance);
+            BigDecimal rice = new BigDecimal(employee.getRiceSubsidy().replace(",", ""));
+            BigDecimal phone = new BigDecimal(employee.getPhoneAllowance().replace(",", ""));
+            BigDecimal clothing = new BigDecimal(employee.getClothingAllowance().replace(",", ""));
+            BigDecimal totalAllowance = AllowanceCalculator.calculateTotalAllowance(rice, phone, clothing);
+
+            double grossSalary = SalaryCalculator.calculateGrossSalary(baseSalary, totalAllowance.doubleValue());
             double sss = DeductionCalculator.calculateSSS(grossSalary);
-            double philhealth = DeductionCalculator.calculatePhilHealth(grossSalary);            
+            double philhealth = DeductionCalculator.calculatePhilHealth(grossSalary);
             double pagibig = DeductionCalculator.calculatePagIbig(grossSalary);
             double govermentContribution = DeductionCalculator.calculateGovernmentContribution(sss, philhealth, pagibig);
             double tax = TaxCalculator.calculateWithHoldingTax(grossSalary, govermentContribution);
@@ -204,17 +216,18 @@ public class PayrollService {
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
         
         for (Employee employee : employeeService.getEmployeeRecords()) {
-            
             List<DailyAttendance> filteredRecords = attendanceService.getFilteredDailyAttendance(employee, payPeriod);
             
             double payableHours = AttendanceCalculator.calculatePayableHours(filteredRecords);
             double baseSalary = SalaryCalculator.calculateBasicSalary(payableHours, Double.parseDouble(employee.getHourlyRate().replace(",", "")));
-            double totalAllowance = AllowanceCalculator.calculateTotalAllowance(Double.parseDouble(employee.getRiceSubsidy().replace(",", "")),
-                                                                                Double.parseDouble(employee.getPhoneAllowance().replace(",", "")), 
-                                                                                Double.parseDouble(employee.getClothingAllowance().replace(",", "")));
-            double grossSalary = SalaryCalculator.calculateGrossSalary(baseSalary, totalAllowance);
+            BigDecimal rice = new BigDecimal(employee.getRiceSubsidy().replace(",", ""));
+            BigDecimal phone = new BigDecimal(employee.getPhoneAllowance().replace(",", ""));
+            BigDecimal clothing = new BigDecimal(employee.getClothingAllowance().replace(",", ""));
+            BigDecimal totalAllowance = AllowanceCalculator.calculateTotalAllowance(rice, phone, clothing);
+
+            double grossSalary = SalaryCalculator.calculateGrossSalary(baseSalary, totalAllowance.doubleValue());
             double sss = DeductionCalculator.calculateSSS(grossSalary);
-            double philhealth = DeductionCalculator.calculatePhilHealth(grossSalary);            
+            double philhealth = DeductionCalculator.calculatePhilHealth(grossSalary);
             double pagibig = DeductionCalculator.calculatePagIbig(grossSalary);
             double govermentContribution = DeductionCalculator.calculateGovernmentContribution(sss, philhealth, pagibig);
             double tax = TaxCalculator.calculateWithHoldingTax(grossSalary, govermentContribution);

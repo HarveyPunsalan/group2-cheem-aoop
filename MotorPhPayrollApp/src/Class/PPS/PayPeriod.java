@@ -6,91 +6,115 @@ package Class.PPS;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+
 
 /**
  *
  * @author 63909
  */
 public class PayPeriod {
-    private static final DateTimeFormatter FORMATTER  = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-    private String payPeriodID;
-    private LocalDate  startDate;
-    private LocalDate  endDate;
-    private LocalDate  payDate;
-    private LocalDate  payrollDueDate;   
+    private int       id;         // maps to pay_period_id
+    private LocalDate startDate;  // start_date
+    private LocalDate endDate;    // end_date
+    private LocalDate payDay;     // pay_day
+    private LocalDate payrollDue; // payroll_due
 
-    public PayPeriod(){
-    }
-    
-    public PayPeriod(String startDate, String endDate){
-        try {
-            this.startDate = LocalDate.parse(startDate, FORMATTER);
-            this.endDate = LocalDate.parse(endDate, FORMATTER);
-            
-            validateDateOrder(this.startDate, this.endDate, "Start date must be before end date.");
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Invalid date format. Expected format: MM-dd-yyyy", e);
-        }
-    }
-    
-    public PayPeriod(String payPeriodID) {
-        this.payPeriodID = payPeriodID;
-    }
-    
-    public PayPeriod(String[] payPeriodData) {
-        if (payPeriodData.length < 5) {
-            throw new IllegalArgumentException("Invalid data length for pay period.");
-        }
-        
-        try {
-            this.payPeriodID = payPeriodData[0];
+    // ISO format (yyyy-MM-dd) matches your dump and the JDBC DATE type
+    private static final DateTimeFormatter ISO = DateTimeFormatter.ISO_LOCAL_DATE;
 
-            this.startDate = LocalDate.parse(payPeriodData[1], FORMATTER );
-            this.endDate = LocalDate.parse(payPeriodData[2], FORMATTER );
-            this.payDate = LocalDate.parse(payPeriodData[3], FORMATTER );
-            this.payrollDueDate = LocalDate.parse(payPeriodData[4], FORMATTER);
+    public PayPeriod() { }
 
-            validateDateOrder(startDate, endDate, "Start date must be before end date.");
-        } catch (DateTimeParseException e) {
-            System.out.println("Invalid date format: " + e.getMessage());
-        }      
-    }
-    
-    private void validateDateOrder(LocalDate first, LocalDate second, String errorMessage) {
-        if (first.isAfter(second)) {
-            throw new IllegalArgumentException(errorMessage);
-        }
+    /** Full constructor for JDBC or manual creation. */
+    public PayPeriod(int id,
+                     LocalDate startDate,
+                     LocalDate endDate,
+                     LocalDate payDay,
+                     LocalDate payrollDue) {
+        validateOrder(startDate, endDate,   "start must be ≤ end");
+        validateOrder(endDate,   payDay,    "end must be < pay day");
+        validateOrder(payDay,    payrollDue,"pay day must be ≤ payroll due");
+
+        this.id          = id;
+        this.startDate   = startDate;
+        this.endDate     = endDate;
+        this.payDay      = payDay;
+        this.payrollDue  = payrollDue;
     }
 
-    public String getPayPeriodID() {
-        return payPeriodID;
+    /** Convenience: parse all dates from ISO strings. */
+    public PayPeriod(int id,
+                     String startIso,
+                     String endIso,
+                     String payDayIso,
+                     String payrollDueIso) {
+        this(id,
+             LocalDate.parse(startIso,   ISO),
+             LocalDate.parse(endIso,     ISO),
+             LocalDate.parse(payDayIso,  ISO),
+             LocalDate.parse(payrollDueIso, ISO)
+        );
+    }
+    /**
+     * Quick two-arg constructor for GUI/list parsing.
+     * Only start/end; leaves payDay & payrollDue null.
+     */
+    public PayPeriod(String startIso, String endIso) {
+        LocalDate s = LocalDate.parse(startIso, ISO);
+        LocalDate e = LocalDate.parse(endIso,   ISO);
+        validateOrder(s, e, "startDate must be ≤ endDate");
+        this.startDate = s;
+        this.endDate   = e;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
+    private void validateOrder(LocalDate a, LocalDate b, String msg) {
+        if (a.isAfter(b)) throw new IllegalArgumentException(msg);
     }
 
-    public LocalDate getEndDate() {
-        return endDate;
+    // — Getters & setters —
+
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    public LocalDate getStartDate() { return startDate; }
+    public void setStartDate(LocalDate startDate) {
+        validateOrder(startDate, this.endDate, "start must be ≤ end");
+        this.startDate = startDate;
     }
 
+    public LocalDate getEndDate() { return endDate; }
+    public void setEndDate(LocalDate endDate) {
+        validateOrder(this.startDate, endDate, "start must be ≤ end");
+        this.endDate = endDate;
+    }
+
+    public LocalDate getPayDay() { return payDay; }
+    public void setPayDay(LocalDate payDay) {
+        validateOrder(this.endDate, payDay, "end must be < pay day");
+        this.payDay = payDay;
+    }
+
+    public LocalDate getPayrollDue() { return payrollDue; }
+    public void setPayrollDue(LocalDate payrollDue) {
+        validateOrder(this.payDay, payrollDue, "pay day must be ≤ payroll due");
+        this.payrollDue = payrollDue;
+    }
+
+    /** Inclusive length of the period in days. */
+    public int getLengthDays() {
+        return (int)(endDate.toEpochDay() - startDate.toEpochDay() + 1);
+    }
+
+    /** True if d is between startDate and endDate (inclusive). */
+    public boolean includes(LocalDate d) {
+        return !d.isBefore(startDate) && !d.isAfter(endDate);
+    }
     public LocalDate getPayDate() {
-        return payDate;
-    }
+    return payDay;
+}
 
-    public LocalDate getPayrollDueDate() {
-        return payrollDueDate;
-    }  
-    
     @Override
     public String toString() {
-        return "PayPeriod{" +
-                "payPeriodID='" + payPeriodID + '\'' +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", payDate=" + payDate +
-                ", payrollDueDate=" + payrollDueDate +
-                '}';
+        return String.format("PayPeriod[id=%d, %s → %s, payDay=%s, due=%s]",
+                id, startDate, endDate, payDay, payrollDue);
     }
 }
