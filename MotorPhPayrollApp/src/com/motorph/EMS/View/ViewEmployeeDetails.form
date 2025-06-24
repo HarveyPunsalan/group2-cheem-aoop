@@ -1,0 +1,832 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+  <NonVisualComponents>
+    <Component class="javax.swing.JTextField" name="jTextField4Address6">
+    </Component>
+  </NonVisualComponents>
+  <Properties>
+    <Property name="defaultCloseOperation" type="int" value="3"/>
+  </Properties>
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="true"/>
+  </SyntheticProperties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Component id="jPanel2" max="32767" attributes="0"/>
+          <Group type="102" attributes="0">
+              <Component id="jPanelAdmin" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="jLabel5EditEmployeeDetails" alignment="0" min="-2" pref="261" max="-2" attributes="0"/>
+                  <Component id="jLabel6PEmail" min="-2" pref="111" max="-2" attributes="0"/>
+                  <Component id="jLabel6PhoneNumber" alignment="0" min="-2" pref="99" max="-2" attributes="0"/>
+                  <Component id="jLabel2FirstName" alignment="0" min="-2" pref="76" max="-2" attributes="0"/>
+                  <Component id="jLabel3Birthday" alignment="0" min="-2" pref="88" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="152" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Component id="jDateChooserBirthday" min="-2" pref="200" max="-2" attributes="0"/>
+                                  <Component id="jTextField5PhoneNumber" alignment="1" min="-2" pref="200" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Component id="jLabel1LastName" alignment="0" min="-2" pref="76" max="-2" attributes="0"/>
+                          <Component id="jLabel4HouseNo" alignment="0" min="-2" pref="79" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jLabel4Street" min="-2" pref="79" max="-2" attributes="0"/>
+                                  <Component id="jLabel4Barangay" min="-2" pref="79" max="-2" attributes="0"/>
+                                  <Component id="jLabel4Municipality" min="-2" pref="79" max="-2" attributes="0"/>
+                                  <Component id="jLabel15EmployementType" alignment="0" min="-2" pref="122" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="jLabel16EmployementStatus" alignment="1" min="-2" pref="134" max="-2" attributes="0"/>
+                                      <Component id="jLabel4Province" min="-2" pref="79" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="jLabel4PostalCode" min="-2" pref="79" max="-2" attributes="0"/>
+                                  <Component id="jLabel4Country" min="-2" pref="79" max="-2" attributes="0"/>
+                                  <Component id="jLabel4AddressType" min="-2" pref="79" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="jTextField2FirstName" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="jTextField10AddressType" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="jTextField16PostalCode" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="jTextField15Province" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="jTextField13Municipality" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="jTextField8Barangay" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="jTextField7Street" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="jTextField6Email" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="jTextField5HouseNo" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="jTextField10Country" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="jTextField10EmployementType" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="jTextField4EmployementStatus" alignment="1" pref="202" max="32767" attributes="0"/>
+                                  <Component id="jTextField1LastName" alignment="1" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <EmptySpace min="-2" pref="77" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jLabel11BasicSalary" alignment="0" min="-2" pref="71" max="-2" attributes="0"/>
+                                  <Component id="jLabel19GrossSemi" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel20HourlyRate" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel11SalaryGrade" alignment="0" min="-2" pref="71" max="-2" attributes="0"/>
+                                  <Group type="103" alignment="0" groupAlignment="1" attributes="0">
+                                      <Component id="jLabel14PhoneAllowance" min="-2" pref="100" max="-2" attributes="0"/>
+                                      <Component id="jLabel17ClothingAllowance" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
+                                      <Component id="jLabel12RiceSubsidy" min="-2" pref="108" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="jLabel11DateHired" alignment="0" min="-2" pref="71" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="74" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jLabel8Philhealth" min="-2" pref="134" max="-2" attributes="0"/>
+                                  <Component id="jLabel7SSS" min="-2" pref="146" max="-2" attributes="0"/>
+                                  <Component id="jLabel13Pagibig" alignment="0" min="-2" pref="134" max="-2" attributes="0"/>
+                                  <Component id="jLabel9TIN" alignment="0" min="-2" pref="134" max="-2" attributes="0"/>
+                                  <Component id="jLabel10JobTitle" alignment="0" min="-2" pref="98" max="-2" attributes="0"/>
+                                  <Component id="jLabelSupervisorId" alignment="0" min="-2" pref="76" max="-2" attributes="0"/>
+                                  <Component id="jLabel11Department" alignment="0" min="-2" pref="71" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jTextField4Pagibig" min="-2" pref="202" max="-2" attributes="0"/>
+                          <Component id="jTextField4Department" min="-2" pref="202" max="-2" attributes="0"/>
+                          <Component id="jTextField4SSS" min="-2" pref="202" max="-2" attributes="0"/>
+                          <Component id="jTextField4SupervisorId" min="-2" pref="202" max="-2" attributes="0"/>
+                          <Component id="jTextFieldPhilhealth" min="-2" pref="202" max="-2" attributes="0"/>
+                          <Component id="jTextField4TIN" min="-2" pref="202" max="-2" attributes="0"/>
+                          <Component id="jTextField4JobTitle" min="-2" pref="202" max="-2" attributes="0"/>
+                          <Component id="jDateChooserDateHired" min="-2" pref="200" max="-2" attributes="0"/>
+                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <EmptySpace min="-2" pref="94" max="-2" attributes="0"/>
+                                  <Component id="jButton2SaveChanges" pref="106" max="32767" attributes="0"/>
+                              </Group>
+                              <Component id="jTextField18HourlyRate" alignment="0" max="32767" attributes="0"/>
+                              <Component id="jTextField17GrossSemi" alignment="0" max="32767" attributes="0"/>
+                              <Component id="jTextField9ClothingAllowance" alignment="0" max="32767" attributes="0"/>
+                              <Component id="jTextField14PhoneAllowance" alignment="0" max="32767" attributes="0"/>
+                              <Component id="jTextField12RiceSubsidy" alignment="0" max="32767" attributes="0"/>
+                              <Component id="jTextField11BasicSalary" alignment="0" max="32767" attributes="0"/>
+                              <Component id="jTextField11SalaryGrade" alignment="0" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                  </Group>
+              </Group>
+              <EmptySpace min="0" pref="44" max="32767" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
+              <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jPanelAdmin" max="32767" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                      <Component id="jLabel5EditEmployeeDetails" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jLabel2FirstName" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jTextField2FirstName" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
+                          <Component id="jTextField4SSS" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel7SSS" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel1LastName" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jTextField1LastName" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jTextFieldPhilhealth" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel8Philhealth" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="1" attributes="0">
+                                      <Component id="jDateChooserBirthday" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel3Birthday" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="jTextField4Pagibig" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel13Pagibig" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextField5PhoneNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel6PhoneNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jTextField4TIN" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel9TIN" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextField6Email" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel6PEmail" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextField5HouseNo" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel4HouseNo" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextField7Street" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel4Street" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jTextField8Barangay" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel4Barangay" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextField13Municipality" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel4Municipality" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="3" attributes="0">
+                                          <Component id="jTextField15Province" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jLabel4Province" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="3" attributes="0">
+                                          <Component id="jTextField16PostalCode" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jLabel4PostalCode" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="3" attributes="0">
+                                          <Component id="jTextField10Country" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jLabel4Country" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="3" attributes="0">
+                                          <Component id="jTextField10AddressType" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jLabel4AddressType" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="3" attributes="0">
+                                          <Component id="jTextField10EmployementType" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jLabel15EmployementType" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="40" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="jLabel16EmployementStatus" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jTextField4EmployementStatus" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="143" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextField4JobTitle" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel10JobTitle" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextField4SupervisorId" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabelSupervisorId" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextField4Department" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel11Department" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Component id="jLabel11DateHired" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jDateChooserDateHired" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextField11SalaryGrade" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel11SalaryGrade" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextField11BasicSalary" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel11BasicSalary" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace pref="44" max="32767" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextField12RiceSubsidy" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel12RiceSubsidy" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextField14PhoneAllowance" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel14PhoneAllowance" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextField9ClothingAllowance" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel17ClothingAllowance" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jLabel19GrossSemi" alignment="1" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jTextField17GrossSemi" alignment="1" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel20HourlyRate" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jTextField18HourlyRate" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                      <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
+                      <Component id="jButton2SaveChanges" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Container class="javax.swing.JPanel" name="jPanel2">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+        </Property>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+        </Property>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <EmptySpace min="0" pref="23" max="32767" attributes="0"/>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+    </Container>
+    <Container class="javax.swing.JPanel" name="jPanelAdmin">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="99" green="66" red="0" type="rgb"/>
+        </Property>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="jButton1EmployeeInformation" alignment="0" max="32767" attributes="0"/>
+                      <Component id="jButton3EmployeeRequest" alignment="0" pref="178" max="32767" attributes="0"/>
+                      <Component id="jButton4Payroll" alignment="1" pref="178" max="32767" attributes="0"/>
+                      <Component id="jButton6LogOut" alignment="0" pref="178" max="32767" attributes="0"/>
+                      <Component id="jButton3SelfServicePortal" alignment="0" pref="178" max="32767" attributes="0"/>
+                      <Component id="jButton4Attendance" alignment="0" pref="178" max="32767" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" pref="87" max="-2" attributes="0"/>
+                  <Component id="jButton3SelfServicePortal" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                  <Component id="jButton3EmployeeRequest" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                  <Component id="jButton1EmployeeInformation" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                  <Component id="jButton4Payroll" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                  <Component id="jButton4Attendance" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
+                  <Component id="jButton6LogOut" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JButton" name="jButton1EmployeeInformation">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="99" green="66" red="0" type="rgb"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Segoe UI" size="12" style="1"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Employee Information"/>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="null"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1EmployeeInformationActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="jButton3EmployeeRequest">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="99" green="66" red="0" type="rgb"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Segoe UI" size="12" style="1"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Employee Request"/>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="null"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton3EmployeeRequestActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="jButton4Payroll">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="99" green="66" red="0" type="rgb"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Segoe UI" size="12" style="1"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Payroll"/>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="null"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton4PayrollActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="jButton6LogOut">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="99" green="66" red="0" type="rgb"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Segoe UI" size="10" style="0"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Log Out"/>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="null"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton6LogOutActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="jButton3SelfServicePortal">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="99" green="66" red="0" type="rgb"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Segoe UI" size="12" style="1"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Self Service Portal"/>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="null"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton3SelfServicePortalActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="jButton4Attendance">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="99" green="66" red="0" type="rgb"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Segoe UI" size="12" style="1"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Attendance"/>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="null"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton4AttendanceActionPerformed"/>
+          </Events>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Component class="javax.swing.JTextField" name="jTextField1LastName">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField1LastNameMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField2FirstName">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField2FirstNameMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel1LastName">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Last Name"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel2FirstName">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="First Name"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel3Birthday">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Birthday"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel4HouseNo">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="House No."/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField4Department">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField4DepartmentMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel5EditEmployeeDetails">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Segoe UI" size="18" style="1"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Employee Details"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel6PhoneNumber">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Phone Number"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField5PhoneNumber">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField5PhoneNumberMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel7SSS">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="SSS #"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField6Email">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField6EmailMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel8Philhealth">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Philhealth #"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField7Street">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField7StreetMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel9TIN">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="TIN #"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField8Barangay">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField8BarangayMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField9ClothingAllowance">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField9ClothingAllowanceMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel10JobTitle">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Job Title"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField10AddressType">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField10AddressTypeMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel11BasicSalary">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Basic Salary"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField11BasicSalary">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField11BasicSalaryMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel12RiceSubsidy">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Rice Subsidy"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField12RiceSubsidy">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField12RiceSubsidyMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel13Pagibig">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Pag-ibig #"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel14PhoneAllowance">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Phone Allowance"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField13Municipality">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField13MunicipalityMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel15EmployementType">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Employement Type"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField14PhoneAllowance">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField14PhoneAllowanceMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField15Province">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField15ProvinceMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel16EmployementStatus">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Employement Status"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel17ClothingAllowance">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Clothing Allowance"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField16PostalCode">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField16PostalCodeMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel19GrossSemi">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Gross Semi-monthly Rate"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel20HourlyRate">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Hourly Rate"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField17GrossSemi">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField17GrossSemiMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField18HourlyRate">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField18HourlyRateMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="jButton2SaveChanges">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Save Changes"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton2SaveChangesActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="com.toedter.calendar.JDateChooser" name="jDateChooserBirthday">
+      <Properties>
+        <Property name="dateFormatString" type="java.lang.String" value="M/d/yyyy"/>
+      </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jDateChooserBirthdayMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabelSupervisorId">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Supervisor ID"/>
+      </Properties>
+    </Component>
+    <Component class="com.toedter.calendar.JDateChooser" name="jDateChooserDateHired">
+      <Properties>
+        <Property name="dateFormatString" type="java.lang.String" value="M/d/yyyy"/>
+      </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jDateChooserDateHiredMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel6PEmail">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Email"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField5HouseNo">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField5HouseNoMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel11SalaryGrade">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Salary Grade"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField11SalaryGrade">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField11SalaryGradeMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel11DateHired">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Date Hired"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel11Department">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Department"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField10Country">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField10CountryMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField10EmployementType">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField10EmployementTypeMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel4AddressType">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Address Type"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel4Country">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Country"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField4EmployementStatus">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField4EmployementStatusMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField4SSS">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField4SSSMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField4SupervisorId">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField4SupervisorIdMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextFieldPhilhealth">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextFieldPhilhealthMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField4TIN">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField4TINMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField4JobTitle">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField4JobTitleMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel4Street">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Street"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel4Municipality">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Municipality"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField4Pagibig">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTextField4PagibigMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel4Barangay">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Barangay"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel4Province">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Province"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel4PostalCode">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Postal Code"/>
+      </Properties>
+    </Component>
+  </SubComponents>
+</Form>
