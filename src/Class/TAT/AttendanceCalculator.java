@@ -89,3 +89,5 @@ public class AttendanceCalculator {
         return Double.parseDouble(decimalFormat.format(value));
     }
 }
+
+//test
