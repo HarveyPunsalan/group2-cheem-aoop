@@ -26,8 +26,6 @@ public class CompanyHomePage extends javax.swing.JFrame {
        
     }
 
-    
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -267,7 +265,6 @@ public class CompanyHomePage extends javax.swing.JFrame {
         }
     });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1EmployeeInformation;
     private javax.swing.JButton jButton3EmployeeRequest;

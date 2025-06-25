@@ -23,159 +23,235 @@ import com.motorph.attendancemanagement.view.admin.AttendanceDailyRecord;
 import com.motorph.payrollprocessing.model.PayPeriod;
 import com.motorph.employeemanagement.model.Employee;
 import javax.swing.JFrame;
+import java.util.logging.Logger;
 
 /**
- *
- * @author 63909
+ * This Handles user access to various parts of the system
+ * 
+ * @author Harvey 
  */
 public class Access {
-    // Access method for Admin to open the User Dashboard
+    private static final Logger logger = Logger.getLogger(Access.class.getName());
+    
+    // Route admin to the company homepage
     public static JFrame accessCompanyHomePage(Admin admin) {
+        logger.info(() -> "Opening Company Home Page for admin: " + admin.getUsername());
         CompanyHomePage companyHomePage = new CompanyHomePage(admin);
         companyHomePage.setVisible(true);
         return companyHomePage;
     }
-
-    // Access method for Admin
+    
+    // Route admin to employee info management
     public static JFrame accessEmployeeInformation(Admin admin) {
+        logger.info(() ->"Opening Employee Information for admin: " + admin.getUsername());
         EmployeeInformation employeeInformation = new EmployeeInformation(admin);
         employeeInformation.setVisible(true);
         return employeeInformation;
     }
     
-    // Access method for Admin
+    // Admin views a specific employee’s DTR (by ID + pay period)
     public static JFrame accessDTR(Admin admin, String employeeID, PayPeriod selectedPayPeriod) {
-        AttendanceDailyRecord dailiyAttendanceRecord = new AttendanceDailyRecord(admin, employeeID, selectedPayPeriod);
-        dailiyAttendanceRecord.setVisible(true);
-        return dailiyAttendanceRecord;
+        logger.info(() -> "Opening DTR for employee: " + employeeID + " by admin: " + admin.getUsername());
+        AttendanceDailyRecord dailyAttendanceRecord = new AttendanceDailyRecord(admin, employeeID, selectedPayPeriod);
+        dailyAttendanceRecord.setVisible(true);
+        return dailyAttendanceRecord;
     }
     
-    // Access method for Admin
+    // Admin views a specific employee’s DTR (by Employee object)
     public static JFrame accessDTR(Admin admin, Employee employee) {
-        AttendanceDailyRecord dailiyAttendanceRecord = new AttendanceDailyRecord(admin, employee);
-        dailiyAttendanceRecord.setVisible(true);
-        return dailiyAttendanceRecord;
+        logger.info(() -> "Opening DTR for employee: " + employee.getEmployeeID() + " by admin: " + admin.getUsername());
+        AttendanceDailyRecord dailyAttendanceRecord = new AttendanceDailyRecord(admin, employee);
+        dailyAttendanceRecord.setVisible(true);
+        return dailyAttendanceRecord;
     }
     
-    // Access method for Admin
+    // Employee views their own DTR
     public static JFrame accessDTR(Employee employee) {
-        AttendanceDailyRecord dailiyAttendanceRecord = new AttendanceDailyRecord(employee);
-        dailiyAttendanceRecord.setVisible(true);
-        return dailiyAttendanceRecord;
+        logger.info(() -> "Opening DTR for employee: " + employee.getEmployeeID());
+        AttendanceDailyRecord dailyAttendanceRecord = new AttendanceDailyRecord(employee);
+        dailyAttendanceRecord.setVisible(true);
+        return dailyAttendanceRecord;
     }
     
-    // Access method for Admin
+    // Admin views biweekly attendance records
     public static JFrame accessAttendanceBiweekly(Admin admin) {
+        logger.info(() -> "Opening Attendance Biweekly for admin: " + admin.getUsername());
         AttendanceBiweekly attendanceBiweeklyRecord = new AttendanceBiweekly(admin);
         attendanceBiweeklyRecord.setVisible(true);
         return attendanceBiweeklyRecord;
     }
-
-    // Access method for all type Users    
+    
+    // View another employee’s details
     public static JFrame accessViewEmployeeDetails(User user, String employeeID) {
+        logger.info(() -> "Opening Employee Details for employee: " + employeeID + " by user: " + user.getUsername());
         ViewEmployeeDetails employeeDetails = new ViewEmployeeDetails(user, employeeID);
         employeeDetails.setVisible(true);
         return employeeDetails;
     }
     
-    // Access method for all type Users    
+    // View own or someone else's details, depends on role
     public static JFrame accessViewEmployeeDetails(User user) {
-        ViewEmployeeDetails employeeDetails = new ViewEmployeeDetails((Admin) user);
+    if (user == null) {
+        logger.warning("Attempted to access employee details with a null user reference.");
+        return null; // Or throw an IllegalArgumentException
+    }
+
+    if (user instanceof Admin admin) {
+        logger.info(() -> "Opening Employee Details for admin: " + admin.getUsername());
+        ViewEmployeeDetails employeeDetails = new ViewEmployeeDetails(admin);
         employeeDetails.setVisible(true);
         return employeeDetails;
+    } else {
+        logger.warning(() -> "Non-admin user attempted to access employee details: " + user.getUsername());
+        return null;
     }
+} 
     
+    // Show profile page (employee or admin)
     public static JFrame accessProfilePage(User user) {
+        logger.info(() -> "Opening Profile Page for user: " + user.getUsername());
         ProfilePage profilePage = new ProfilePage(user);
         profilePage.setVisible(true);
         return profilePage;
     }
     
+    // Show payslip page
     public static JFrame accessEmployeePayslip(User user) {
+        logger.info(() -> "Opening Employee Payslip for user: " + user.getUsername());
         EmployeePayslip employeePayslip = new EmployeePayslip(user);
         employeePayslip.setVisible(true);
         return employeePayslip;
     }
     
+    // Show attendance view
     public static JFrame accessEmployeeAttendance(User user) {
+        logger.info(() -> "Opening Employee Attendance for user: " + user.getUsername());
         EmployeeAttendance employeeAttendance = new EmployeeAttendance(user);
         employeeAttendance.setVisible(true);
         return employeeAttendance;
     }
     
+    // Show payroll list (admin only)
     public static JFrame accessPayrollList(Admin admin) {
-        PayrollList payrollList = new PayrollList(admin);
-        payrollList.setVisible(true);
-        return payrollList;
+        if (admin.isAdmin()) {
+            logger.info(() -> "Opening Payroll List for admin: " + admin.getUsername());
+            PayrollList payrollList = new PayrollList(admin);
+            payrollList.setVisible(true);
+            return payrollList;
+        } else {
+            logger.warning(() -> "Non-admin user attempted to access payroll list: " + admin.getUsername());
+            throw new SecurityException("Access denied: Admin privileges required");
+        }
     }
     
+    // Show payroll employee selector for processing
     public static JFrame accessPayrollEmployeeSelection(Admin admin, PayPeriod payPeriod) {
-        PayrollEmployeeSelection payrollEmployeeSelection = new PayrollEmployeeSelection(admin, payPeriod);
-        payrollEmployeeSelection.setVisible(true);
-        return payrollEmployeeSelection;
+        if (admin.isAdmin()) {
+            logger.info(() -> "Opening Payroll Employee Selection for admin: " + admin.getUsername());
+            PayrollEmployeeSelection payrollEmployeeSelection = new PayrollEmployeeSelection(admin, payPeriod);
+            payrollEmployeeSelection.setVisible(true);
+            return payrollEmployeeSelection;
+        } else {
+            logger.warning(() -> "Non-admin user attempted to access payroll employee selection: " + admin.getUsername());
+            throw new SecurityException("Access denied: Admin privileges required");
+        }
     }
     
-//    public static JFrame accessPayrollEmployeeSelection(PayPeriod payPeriod) {
-//        PayrollEmployeeSelection payrollEmployeeSelection = new PayrollEmployeeSelection(payPeriod);
-//        payrollEmployeeSelection.setVisible(true);
-//        return payrollEmployeeSelection;
-//    }
-    
+    // Show earnings (admin only)
     public static JFrame accessPayrollEarnings(Admin admin, PayPeriod payPeriod) {
-        PayrollEarnings payrollEmployeeEarning = new PayrollEarnings(admin, payPeriod);
-        payrollEmployeeEarning.setVisible(true);
-        return payrollEmployeeEarning;
+        if (admin.isAdmin()) {
+            logger.info(() -> "Opening Payroll Earnings for admin: " + admin.getUsername());
+            PayrollEarnings payrollEmployeeEarning = new PayrollEarnings(admin, payPeriod);
+            payrollEmployeeEarning.setVisible(true);
+            return payrollEmployeeEarning;
+        } else {
+            throw new SecurityException("Access denied: Admin privileges required");
+        }
     }
     
+    // Show earnings (generic, no admin check)
     public static JFrame accessPayrollEarnings(PayPeriod payPeriod) {
+        logger.info(() -> "Opening Payroll Earnings for pay period: " + payPeriod);
         PayrollEarnings payrollEmployeeEarning = new PayrollEarnings(payPeriod);
         payrollEmployeeEarning.setVisible(true);
         return payrollEmployeeEarning;
     }
     
+    // Show deductions (admin only)
     public static JFrame accessPayrollDeductions(Admin admin, PayPeriod payPeriod) {
-        PayrollDeductions payrollEmployeeDeduction= new PayrollDeductions(admin, payPeriod);
-        payrollEmployeeDeduction.setVisible(true);
-        return payrollEmployeeDeduction;
+        if (admin.isAdmin()) {
+            logger.info(() -> "Opening Payroll Deductions for admin: " + admin.getUsername());
+            PayrollDeductions payrollEmployeeDeduction = new PayrollDeductions(admin, payPeriod);
+            payrollEmployeeDeduction.setVisible(true);
+            return payrollEmployeeDeduction;
+        } else {
+            throw new SecurityException("Access denied: Admin privileges required");
+        }
     }
     
+    // Show deductions (general)
     public static JFrame accessPayrollDeductions(PayPeriod payPeriod) {
+        logger.info(() -> "Opening Payroll Deductions for pay period: " + payPeriod);
         PayrollDeductions payrollEmployeeDeduction = new PayrollDeductions(payPeriod);
         payrollEmployeeDeduction.setVisible(true);
         return payrollEmployeeDeduction;
     }
     
+    // Show net pay (admin)
     public static JFrame accessPayrollNetPay(Admin admin, PayPeriod payPeriod) {
-        PayrollNetPay payrollEmployeeNetPay= new PayrollNetPay(admin, payPeriod);
-        payrollEmployeeNetPay.setVisible(true);
-        return payrollEmployeeNetPay;
+        if (admin.isAdmin()) {
+            logger.info(() -> "Opening Payroll Net Pay for admin: " + admin.getUsername());
+            PayrollNetPay payrollEmployeeNetPay = new PayrollNetPay(admin, payPeriod);
+            payrollEmployeeNetPay.setVisible(true);
+            return payrollEmployeeNetPay;
+        } else {
+            throw new SecurityException("Access denied: Admin privileges required");
+        }
     }
     
+    // Show net pay (open access)
     public static JFrame accessPayrollNetPay(PayPeriod payPeriod) {
+        logger.info(() -> "Opening Payroll Net Pay for pay period: " + payPeriod);
         PayrollNetPay payrollEmployeeNetPay = new PayrollNetPay(payPeriod);
         payrollEmployeeNetPay.setVisible(true);
         return payrollEmployeeNetPay;
     }
     
+    // Show summary page (admin)
     public static JFrame accessPayrollSummaryPage(Admin admin, PayPeriod payPeriod) {
-        PayrollSummaryPage payrollSummaryPage = new PayrollSummaryPage(admin, payPeriod);
-        payrollSummaryPage.setVisible(true);
-        return payrollSummaryPage;
+        if (admin.isAdmin()) {
+            logger.info(() -> "Opening Payroll Summary for admin: " + admin.getUsername());
+            PayrollSummaryPage payrollSummaryPage = new PayrollSummaryPage(admin, payPeriod);
+            payrollSummaryPage.setVisible(true);
+            return payrollSummaryPage;
+        } else {
+            throw new SecurityException("Access denied: Admin privileges required");
+        }
     }
     
+    // Show summary page (open access)
     public static JFrame accessPayrollSummaryPage(PayPeriod payPeriod) {
+        logger.info(() -> "Opening Payroll Summary for pay period: " + payPeriod);
         PayrollSummaryPage payrollSummaryPage = new PayrollSummaryPage(payPeriod);
         payrollSummaryPage.setVisible(true);
         return payrollSummaryPage;
     }
     
+    // Admin handles employee requests
     public static JFrame accessEmployeeRequests(Admin admin) {
-        EmployeeRequests employeeRequests = new EmployeeRequests(admin);
-        employeeRequests.setVisible(true);
-        return employeeRequests;
+        if (admin.isAdmin()) {
+            logger.info(() -> "Opening Employee Requests for admin: " + admin.getUsername());
+            EmployeeRequests employeeRequests = new EmployeeRequests(admin);
+            employeeRequests.setVisible(true);
+            return employeeRequests;
+        } else {
+            throw new SecurityException("Access denied: Admin privileges required");
+        }
     }
     
+    // Show request center (accessible by user)
     public static JFrame accessRequestCenter(User user) {
+        logger.info(() -> "Opening Request Center for user: " + user.getUsername());
         RequestCenter employeeRequestCenter = new RequestCenter(user);
         employeeRequestCenter.setVisible(true);
         return employeeRequestCenter;
