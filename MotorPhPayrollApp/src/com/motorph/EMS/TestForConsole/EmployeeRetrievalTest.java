@@ -2,8 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Class.EMS;
+package com.motorph.EMS.TestForConsole;
 
+import com.motorph.EMS.Model.Employee;
+import com.motorph.EMS.Service.EmployeeRetrievalService;
 import com.motorph.database.execution.SQLExecutor;
 import java.sql.Connection;
 import java.sql.DriverManager;

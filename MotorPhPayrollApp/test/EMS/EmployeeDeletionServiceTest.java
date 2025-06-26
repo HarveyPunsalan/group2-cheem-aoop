@@ -2,8 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/UnitTests/JUnit4TestClass.java to edit this template
  */
-package Class.EMS;
+package EMS;
 
+import com.motorph.EMS.Service.EmployeeCreationService;
+import com.motorph.EMS.Service.EmployeeDeletionService;
+import com.motorph.EMS.Service.EmployeeRetrievalService;
+import com.motorph.EMS.Model.Employee;
 import com.motorph.database.execution.SQLExecutor;
 import java.sql.Connection;
 import java.math.BigDecimal;

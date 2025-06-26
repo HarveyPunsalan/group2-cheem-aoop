@@ -2,11 +2,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package Frame;
+package com.motorph.EMS.View;
 
-import Class.EMS.*;
-import Class.UMS.*;
+import com.motorph.EMS.Model.Employee;
+import com.motorph.EMS.Service.EmployeeDeletionService;
+import com.motorph.EMS.Service.EmployeeRetrievalService;
 import com.motorph.database.execution.SQLExecutor;
+import com.motorph.usermanagement.model.Access;
+import com.motorph.usermanagement.model.Admin;
 import java.sql.Connection;
 import java.util.*;
 import javax.swing.JOptionPane;

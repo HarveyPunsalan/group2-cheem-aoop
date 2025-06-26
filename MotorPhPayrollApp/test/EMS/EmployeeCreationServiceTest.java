@@ -2,9 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/UnitTests/JUnit5TestClass.java to edit this template
  */
-package Class.EMS;
+package EMS;
 
 
+import com.motorph.EMS.Model.Employee;
+import com.motorph.EMS.Service.EmployeeCreationService;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
