@@ -11,6 +11,7 @@ import Frame.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import javax.swing.*;
 /**
@@ -63,7 +64,7 @@ public class ProfilePage extends javax.swing.JFrame {
     public void viewPersonalInformation(PersonalInformation personalInformation){      
         jTextField1LastName.setText(personalInformation.getLastName());
         jTextField2FirstName.setText(personalInformation.getFirstName());
-        Date date = this.personalInformation.getBirthday();
+        LocalDate date = this.personalInformation.getBirthday();
          ((JTextField) jDateChooserBirthday.getDateEditor().getUiComponent()).setText(dateFormat.format(date));
 //        ((JTextField)jDateChooserBirthday.getDateEditor().getUiComponent()).setText(this.personalInformation.getBirthday().toString());
         jTextField4Address.setText(personalInformation.getAddress());

@@ -10,6 +10,7 @@ import Class.PromptComboBoxRenderer;
 import Class.TAT.*;
 import Class.UMS.*;
 import Frame.*;
+import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 /**
  *
@@ -625,10 +626,11 @@ public class EmployeePayslip extends javax.swing.JFrame {
         double phone = Double.parseDouble(employee.getPhoneAllowance().replace(",", ""));
         double clothing = Double.parseDouble(employee.getClothingAllowance().replace(",", ""));
         double basicSalary = SalaryCalculator.calculateBasicSalary(payableHours, Double.parseDouble(employee.getHourlyRate().replace(",", "")));
-        double totalAllowance = AllowanceCalculator.calculateTotalAllowance(Double.parseDouble(employee.getRiceSubsidy().replace(",", "")),
-                                                                            Double.parseDouble(employee.getPhoneAllowance().replace(",", "")), 
-                                                                            Double.parseDouble(employee.getClothingAllowance().replace(",", "")));
-        double grossSalary = SalaryCalculator.calculateGrossSalary(basicSalary, totalAllowance);
+        BigDecimal totalAllowance = AllowanceCalculator.calculateTotalAllowance(
+                                                                    new BigDecimal(employee.getRiceSubsidy().replace(",", "")),
+                                                                    new BigDecimal(employee.getPhoneAllowance().replace(",", "")),
+                                                                    new BigDecimal(employee.getClothingAllowance().replace(",", "")));
+        double grossSalary = SalaryCalculator.calculateGrossSalary(basicSalary, totalAllowance.doubleValue());
         double sss = DeductionCalculator.calculateSSS(grossSalary);
         double philhealth = DeductionCalculator.calculatePhilHealth(grossSalary);            
         double pagibig = DeductionCalculator.calculatePagIbig(grossSalary);
