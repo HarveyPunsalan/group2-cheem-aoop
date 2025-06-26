@@ -301,7 +301,7 @@ public class InformationService {
                 personal.getEmployeeID(),
                 personal.getLastName(),
                 personal.getFirstName(),
-                Formatter.formatDate(personal.getBirthday(), outputFormat),
+                personal.getBirthday(), 
                 personal.getAddress(),
                 personal.getPhoneNumber()
             };
