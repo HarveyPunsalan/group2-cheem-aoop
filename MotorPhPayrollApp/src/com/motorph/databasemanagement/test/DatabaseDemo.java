@@ -2,11 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.motorph.database.test;
+package com.motorph.databasemanagement.test;
 
-import com.motorph.database.connection.DatabaseService;
-import com.motorph.database.execution.SQLExecutor;
-import com.motorph.database.execution.Script;
+import com.motorph.databasemanagement.connection.DatabaseService;
+import com.motorph.databasemanagement.execution.SQLExecutor;
+import com.motorph.databasemanagement.execution.Script;
 import com.motorph.employeemanagement.model.PersonalInformation;
 import java.sql.SQLException;
 import java.time.LocalDate;
