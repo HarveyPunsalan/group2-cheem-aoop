@@ -31,8 +31,11 @@ public class DeductionCalculator {
      * @return the SSS deduction corresponding to the gross salary, or 0.0 if below threshold.
      */
     public static double calculateSSS(double gross) {
+        if (gross < 0) throw new IllegalArgumentException("Gross pay cannot be negative"); //Check for negative input
+        
         TreeMap<Double, Double> sssChart = new TreeMap<>();
-        sssChart.put(3249.00, 135.00);
+        sssChart.put(1000.00, 146.20);
+        sssChart.put(3249.00, 146.20);
         sssChart.put(3250.00, 157.50);
         sssChart.put(3750.00, 180.00);
         sssChart.put(4250.00, 202.50);

@@ -66,6 +66,15 @@ public class PayrollCalculator {
             BigDecimal overtimeRate
     ) {
         
+         if ((hoursWorked != null && hoursWorked.compareTo(BigDecimal.ZERO) < 0) ||
+        (hourlyRate != null && hourlyRate.compareTo(BigDecimal.ZERO) < 0) ||
+        (rice != null && rice.compareTo(BigDecimal.ZERO) < 0) ||
+        (phone != null && phone.compareTo(BigDecimal.ZERO) < 0) ||
+        (clothing != null && clothing.compareTo(BigDecimal.ZERO) < 0) ||
+        (overtimeHours != null && overtimeHours.compareTo(BigDecimal.ZERO) < 0) ||
+        (overtimeRate != null && overtimeRate.compareTo(BigDecimal.ZERO) < 0)) {
+        throw new IllegalArgumentException("Inputs must not be negative!");
+    }
         // Ensure all values are not null and not negative
         hoursWorked = safeNonNull(hoursWorked);
         hourlyRate = safeNonNull(hourlyRate);

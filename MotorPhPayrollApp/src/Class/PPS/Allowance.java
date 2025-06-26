@@ -83,5 +83,6 @@ public class Allowance {
     public void setOther(BigDecimal other) {
         this.other = other;
     }
+    
 }
 
