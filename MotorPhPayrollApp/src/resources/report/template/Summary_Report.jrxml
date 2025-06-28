@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Payroll Summary" pageWidth="1500" pageHeight="842" columnWidth="1460" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="216dbc49-ca70-4183-afb4-c0cccf228589">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+<!--         SubDataset Definition 
+        <subDataset name="PayPeriodDataset" uuid="a1234567-b89c-1234-d567-abcdef012345">
+            <parameter name="YEAR_MONTH" class="java.lang.String"/>
+            <queryString>
+                <![CDATA[CALL generate_monthly_pay_periods($P{YEAR_MONTH})]]>
+            </queryString>
+            <field name="Pay Period" class="java.lang.String"/>
+        </subDataset>-->
+<!--        <parameter name="PAY_PERIOD_ID" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[CALL generate_bi_weekly_payroll_summary($P{PAY_PERIOD_ID})]]>
+	</queryString>-->
+        
+	<parameter name="YEAR_MONTH" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[CALL generate_monthly_payroll_summary($P{YEAR_MONTH})]]>
+	</queryString>
+        <field name="Pay Period" class="java.lang.String"/>  
+	<field name="Employee No" class="java.lang.Integer"/>
+	<field name="Employee Full Name" class="java.lang.String"/>
+	<field name="Position" class="java.lang.String"/>
+	<field name="Department" class="java.lang.String"/>
+	<field name="Gross Income" class="java.math.BigDecimal"/>
+	<field name="Social Security No." class="java.lang.String"/>
+	<field name="Social Security Contribution" class="java.math.BigDecimal"/>
+	<field name="Pag-ibig No." class="java.lang.String"/>
+	<field name="Pag-ibig Contribution" class="java.math.BigDecimal"/>
+	<field name="PhilHealth No." class="java.lang.String"/>
+	<field name="PhilHealth Contribution" class="java.math.BigDecimal"/>
+	<field name="TIN" class="java.lang.String"/>
+	<field name="Withholding Tax" class="java.math.BigDecimal"/>
+        <field name="Net Pay" class="java.math.BigDecimal"/>             
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>                
+		<band height="90" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="135" y="12" width="453" height="55" forecolor="#FFFFFF" backcolor="#1D344C" uuid="eea4639d-126e-4f68-bfb4-c50f26fb3d44"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MotorPH Payroll Summary Report]]></text>
+			</staticText>
+
+		</band>
+	</title>
+	<pageHeader>
+		<band height="82">
+                        <staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="100" height="35" forecolor="#FFFFFF" backcolor="#1D344C" uuid="f2059b9a-7db5-48ac-ba2b-80fa96b6c5d9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+                                <text><![CDATA[Pay Period:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="110" y="0" width="160" height="35" uuid="28aa3447-716f-41a9-9771-2910c460169b"/>
+				<textFieldExpression><![CDATA[$F{Pay Period}]]></textFieldExpression>
+			</textField>  
+                              
+			<rectangle>
+				<reportElement x="0" y="40" width="1460" height="40" forecolor="#FFFFFF" backcolor="#1D344C" uuid="13f70e26-8f0d-491e-9808-54e69e0c39df"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="40" width="90" height="40" forecolor="#FFFFFF" uuid="5915c7f3-7145-4bcb-8fc2-a9b9c2884536"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+                                        <paragraph leftIndent="5" rightIndent="0" spacingBefore="0" spacingAfter="0"/>
+				</textElement>
+				<text><![CDATA[Employee ID]]></text>                                
+			</staticText>
+			<staticText>
+				<reportElement x="90" y="40" width="130" height="40" forecolor="#FFFFFF" uuid="9215f502-ebb1-468d-b080-7089ce18b76b"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+                                        <paragraph leftIndent="5" rightIndent="0" spacingBefore="0" spacingAfter="0"/>
+				</textElement>
+				<text><![CDATA[Employee Full Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="220" y="40" width="150" height="40" forecolor="#FFFFFF" uuid="73b6efcc-8340-4531-9619-ec2d9c2beb40"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+                                        <paragraph leftIndent="5" rightIndent="0" spacingBefore="0" spacingAfter="0"/>
+				</textElement>
+				<text><![CDATA[Position]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="370" y="40" width="120" height="40" forecolor="#FFFFFF" uuid="22858ee5-df74-4fc6-b4e9-fae704d3d888"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+                                        <paragraph leftIndent="5" rightIndent="0" spacingBefore="0" spacingAfter="0"/>
+				</textElement>
+				<text><![CDATA[Department]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="460" y="40" width="80" height="40" forecolor="#FFFFFF" uuid="67a7468e-370f-45d0-aa3f-efd48980f772"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+                                        <paragraph leftIndent="0" rightIndent="5" spacingBefore="0" spacingAfter="0"/>
+				</textElement>
+				<text><![CDATA[Gross Income]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="540" y="40" width="120" height="40" forecolor="#FFFFFF" uuid="8f8a21c6-5ff5-4dfd-b0e5-5fd23adecc96"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+                                        <paragraph leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0"/>
+				</textElement>
+				<text><![CDATA[SSS Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="640" y="40" width="120" height="40" forecolor="#FFFFFF" uuid="ee7e6367-a671-47f8-a5fc-ae4636b9645e"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+                                        <paragraph leftIndent="0" rightIndent="5" spacingBefore="0" spacingAfter="0"/>
+				</textElement>
+				<text><![CDATA[SSS Contribution]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="780" y="40" width="100" height="40" forecolor="#FFFFFF" uuid="4817d977-b854-4065-b92a-61c220bf340c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+                                        <paragraph leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0"/>
+				</textElement>
+				<text><![CDATA[Pag-ibig Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="860" y="40" width="110" height="40" forecolor="#FFFFFF" uuid="277a06b9-a300-4b4d-b3c1-90ba6076c3fe"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+                                        <paragraph leftIndent="0" rightIndent="5" spacingBefore="0" spacingAfter="0"/>
+				</textElement>
+				<text><![CDATA[Pag-ibig   Contribution]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="990" y="40" width="100" height="40" forecolor="#FFFFFF" uuid="3a6c9749-2a7d-40d0-80ae-213a73f88415"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+                                        <paragraph leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0"/>
+				</textElement>
+				<text><![CDATA[Philhealth Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1070" y="40" width="110" height="40" forecolor="#FFFFFF" uuid="fc6099ab-d781-4b6a-b9b9-91c4f06fe5e9"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+                                        <paragraph leftIndent="0" rightIndent="5" spacingBefore="0" spacingAfter="0"/>
+				</textElement>
+				<text><![CDATA[PhilHealth Contribution]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1200" y="40" width="70" height="40" forecolor="#FFFFFF" uuid="466a6480-b397-43ac-9f06-a90e53195ca0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+                                        <paragraph leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0"/>
+				</textElement>
+				<text><![CDATA[TIN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1270" y="40" width="100" height="40" forecolor="#FFFFFF" uuid="b4e273da-e233-4ffe-8717-256e6f488460"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+                                        <paragraph leftIndent="0" rightIndent="5" spacingBefore="0" spacingAfter="0"/>
+				</textElement>
+				<text><![CDATA[Withholding Tax]]></text>
+			</staticText>
+                        <staticText>
+				<reportElement x="1370" y="40" width="90" height="40" forecolor="#FFFFFF" uuid="b4e273da-e233-4ffe-8717-256e6f488460"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+                                        <paragraph leftIndent="0" rightIndent="5" spacingBefore="0" spacingAfter="0"/>
+				</textElement>
+				<text><![CDATA[Net Pay]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="37" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.spreadsheet.SpreadsheetLayout"/>
+			<textField>
+				<reportElement x="0" y="0" width="90" height="37" uuid="f7349224-4d3c-41cb-a6b4-8d83acc8b76c"/>
+				<textElement verticalAlignment="Middle">
+				<paragraph leftIndent="5" rightIndent="0" spacingBefore="0" spacingAfter="0"/>
+                                </textElement>
+                                <textFieldExpression><![CDATA[$F{Employee No}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="90" y="0" width="130" height="37" uuid="bfaf5527-a756-44ad-809a-081ddd0b6c44"/>
+				<textElement verticalAlignment="Middle">
+                                <paragraph leftIndent="5" rightIndent="0" spacingBefore="0" spacingAfter="0"/>
+                                </textElement>
+				<textFieldExpression><![CDATA[$F{Employee Full Name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="220" y="0" width="150" height="37" uuid="7594eb4b-83e4-4543-81fb-f29b60bf2b76"/>
+				<textElement verticalAlignment="Middle">
+                                    <paragraph leftIndent="5" rightIndent="0" spacingBefore="0" spacingAfter="0"/>
+                                </textElement>
+				<textFieldExpression><![CDATA[$F{Position}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="370" y="0" width="120" height="37" uuid="971855e5-51c7-4aed-8261-6fa9b4a1fe20"/>
+				<textElement verticalAlignment="Middle">
+                                    <paragraph leftIndent="5" rightIndent="0" spacingBefore="0" spacingAfter="0"/>
+                                </textElement>
+				<textFieldExpression><![CDATA[$F{Department}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="440" y="0" width="100" height="37" uuid="77188dd2-2885-4aaa-8d95-6fe7eef1beaf"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+                                    <paragraph leftIndent="0" rightIndent="5" spacingBefore="0" spacingAfter="0"/>
+                                </textElement>
+				<textFieldExpression><![CDATA[$F{Gross Income}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="540" y="0" width="120" height="37" uuid="4e1c52f1-3f5c-4b17-af6c-bb25e48efd1b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+                                    <paragraph leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0"/>
+                                </textElement>
+				<textFieldExpression><![CDATA[$F{Social Security No.}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="640" y="0" width="120" height="37" uuid="e06ab4bf-057f-4796-acd6-3c902a829527"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+                                    <paragraph leftIndent="0" rightIndent="5" spacingBefore="0" spacingAfter="0"/>
+                                </textElement>
+				<textFieldExpression><![CDATA[$F{Social Security Contribution}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="780" y="0" width="100" height="37" uuid="4ac0372d-0776-4337-aee0-47e6a8135bdf"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+                                    <paragraph leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0"/>
+                                </textElement>
+				<textFieldExpression><![CDATA[$F{Pag-ibig No.}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="860" y="0" width="110" height="37" uuid="bcd90cd1-5951-4820-a4a2-a85e3c2d1f93"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+                                    <paragraph leftIndent="0" rightIndent="5" spacingBefore="0" spacingAfter="0"/>
+                                </textElement>
+				<textFieldExpression><![CDATA[$F{Pag-ibig Contribution}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="990" y="0" width="100" height="37" uuid="9e90b62f-fc39-4080-b8e2-8231ccd86a04"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+                                    <paragraph leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0"/>
+                                </textElement>
+				<textFieldExpression><![CDATA[$F{PhilHealth No.}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1070" y="0" width="110" height="37" uuid="f65fec47-8d52-446a-b40d-d6f5a716daeb"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+                                    <paragraph leftIndent="0" rightIndent="5" spacingBefore="0" spacingAfter="0"/>
+                                </textElement>				
+                                <textFieldExpression><![CDATA[$F{PhilHealth Contribution}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1200" y="0" width="110" height="37" uuid="d6f0d6cf-65f5-481a-a9b3-a23cc41c8709"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+                                    <paragraph leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0"/>
+                                </textElement>				
+                                <textFieldExpression><![CDATA[$F{TIN}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1270" y="0" width="100" height="37" uuid="3514de87-1335-4525-ac84-4c58913014e2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+                                    <paragraph leftIndent="0" rightIndent="5" spacingBefore="0" spacingAfter="0"/>
+                                </textElement>				
+                                <textFieldExpression><![CDATA[$F{Withholding Tax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1370" y="0" width="90" height="37" uuid="f7145a14-79ad-41a6-a81e-544ddfe8af25"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+                                    <paragraph leftIndent="0" rightIndent="5" spacingBefore="0" spacingAfter="0"/>
+                                </textElement>
+				<textFieldExpression><![CDATA[$F{Net Pay}]]></textFieldExpression>
+			</textField>         
+                </band>
+	</detail>
+</jasperReport>

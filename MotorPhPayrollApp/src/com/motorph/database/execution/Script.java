@@ -17,6 +17,7 @@ public enum Script {
     SELECT_ALL_EMPLOYEES("SELECT * FROM employee_details_view"),
     SELECT_PERSONAL_RECORDS("SELECT * FROM employee_personal_information"),
     FIND_EMPLOYEE_BY_ID("SELECT * FROM employee_details_view WHERE employee_id = ?"),
+    FIND_PAYSLIP_BY_EMPLOYEE_ID("SELECT * FROM view_payslip_official WHERE employee_id = ?"),
 
     ADD_PERSONAL_RECORD("INSERT INTO employee_personal_information (first_name, last_name, birthday, phone_number, email) VALUES (?, ?, ?, ?, ?)"),
     ADD_EMPLOYEE_ADDRESS("INSERT INTO employee_address (employee_id, house_number, street, barangay, municipality, province, postal_code, country, address_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"),
