@@ -48,7 +48,7 @@ public class EmployeePayslip extends javax.swing.JFrame {
         this.user = user;
         user.addLogoutListener(this);
         
-        Employee employee = employeeService.getEmployeeInformation(this.user.getEmployeeID());
+        Employee employee = employeeService.getEmployeeInformation(this.user.getEmployeeId());
         
         if (user instanceof NonAdmin){
                 jButton3AdminPortal.setVisible(false);
@@ -629,7 +629,7 @@ public class EmployeePayslip extends javax.swing.JFrame {
         PayPeriod selectedPayPeriod = new PayPeriod(startDate, endDate);
         jLabelInputPayPeriod5.setText(selectedPayPeriod.getStartDate().format(formatterDate1) + " - " + selectedPayPeriod.getEndDate().format(formatterDate2));
         
-        Employee employee = employeeService.getEmployeeInformation(this.user.getEmployeeID());
+        Employee employee = employeeService.getEmployeeInformation(this.user.getEmployeeId());
         BigDecimal payableHours = BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(attendanceService.getFilteredDailyAttendance(employee, selectedPayPeriod)));
         BigDecimal hourlyRate = employee.getHourlyRate();
         BigDecimal rice = employee.getRiceSubsidy();

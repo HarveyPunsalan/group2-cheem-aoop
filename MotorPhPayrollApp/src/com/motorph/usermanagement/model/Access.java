@@ -83,7 +83,7 @@ public class Access {
     }
     
     // Admin views a specific employee's DTR (by ID + pay period)
-    public static JFrame accessDTR(Admin admin, String employeeID, PayPeriod selectedPayPeriod) {
+    public static JFrame accessDTR(Admin admin, int employeeID, PayPeriod selectedPayPeriod) {
         if (admin == null) {
             logger.warning("Attempted to access DTR with null admin reference.");
             return null;
@@ -100,7 +100,7 @@ public class Access {
             logger.warning("Attempted to access DTR with null admin or employee reference.");
             return null;
         }
-        logger.info(() -> "Opening DTR for employee: " + employee.getEmployeeID() + " by admin: " + admin.getUsername());
+        logger.info(() -> "Opening DTR for employee: " + employee.getEmployeeId() + " by admin: " + admin.getUsername());
         AttendanceDailyRecord dailyAttendanceRecord = new AttendanceDailyRecord(admin, employee);
         dailyAttendanceRecord.setVisible(true);
         return dailyAttendanceRecord;
@@ -112,7 +112,7 @@ public class Access {
             logger.warning("Attempted to access DTR with null employee reference.");
             return null;
         }
-        logger.info(() -> "Opening DTR for employee: " + employee.getEmployeeID());
+        logger.info(() -> "Opening DTR for employee: " + employee.getEmployeeId());
         AttendanceDailyRecord dailyAttendanceRecord = new AttendanceDailyRecord(employee);
         dailyAttendanceRecord.setVisible(true);
         return dailyAttendanceRecord;
@@ -131,13 +131,13 @@ public class Access {
     }
     
     // View another employee's details
-    public static JFrame accessViewEmployeeDetails(User user, String employeeID) {
+    public static JFrame accessViewEmployeeDetails(User user, int employeeID) {
         if (user == null) {
             logger.warning("Attempted to access Employee Details with null user reference.");
             return null;
         }
         logger.info(() -> "Opening Employee Details for employee: " + employeeID + " by user: " + user.getUsername());
-        ViewEmployeeDetails employeeDetails = new ViewEmployeeDetails(user, employeeID);
+        ViewEmployeeDetails employeeDetails = new ViewEmployeeDetails((Admin) user, employeeID);
         employeeDetails.setVisible(true);
         return employeeDetails;
     }

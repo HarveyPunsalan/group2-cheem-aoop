@@ -43,7 +43,7 @@ public class ProfilePage extends javax.swing.JFrame {
         this.retrievalService = new EmployeeRetrievalService(new SQLExecutor(DatabaseService.connectToMotorPH()));
         
         // TODO!!!: Replace hardcoded ID with dynamic retrieval when user.getEmployeeId() is functional
-        loadEmployeeDetails(user.getEmployeeID());
+        loadEmployeeDetails(user.getEmployeeId());
 
         disableAllTextFields(); // Prevent edits to the profile form
     }
@@ -69,7 +69,7 @@ public class ProfilePage extends javax.swing.JFrame {
         this.retrievalService = new EmployeeRetrievalService(new SQLExecutor(DatabaseService.connectToMotorPH()));
         
         // TODO!!!: Replace hardcoded ID with dynamic retrieval when user.getEmployeeId() is functional
-        loadEmployeeDetails(user.getEmployeeID());
+        loadEmployeeDetails(user.getEmployeeId());
 
         disableAllTextFields(); // Prevent edits to the profile form
     }

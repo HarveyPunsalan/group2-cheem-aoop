@@ -374,9 +374,9 @@ public class EmployeeAttendance extends javax.swing.JFrame {
         AttendanceService dtrManager = new AttendanceService();
         EmployeeService employeeService = new EmployeeService();
         
-        jTableDailyAttendanceList.setModel(dtrManager.getAttendanceTableModel(employeeService.getEmployeeInformation(this.user.getEmployeeID()), selectedPayPeriod));
+        jTableDailyAttendanceList.setModel(dtrManager.getAttendanceTableModel(employeeService.getEmployeeInformation(this.user.getEmployeeId()), selectedPayPeriod));
 
-        List<DailyAttendance> employeeAttendance = dtrManager.getFilteredDailyAttendance(employeeService.getEmployeeInformation(this.user.getEmployeeID()), selectedPayPeriod);
+        List<DailyAttendance> employeeAttendance = dtrManager.getFilteredDailyAttendance(employeeService.getEmployeeInformation(this.user.getEmployeeId()), selectedPayPeriod);
 
         double payableHours = AttendanceCalculator.calculatePayableHours(employeeAttendance);
         double regularHours = AttendanceCalculator.calculateRegularWorkedHours(employeeAttendance);

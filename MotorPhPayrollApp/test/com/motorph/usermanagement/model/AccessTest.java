@@ -74,7 +74,7 @@ public class AccessTest {
     public void testAccessDTR_3args() {
         System.out.println("accessDTR");
         Admin admin = null;
-        String employeeID = "";
+        int employeeID = 0;
         PayPeriod selectedPayPeriod = null;
         JFrame expResult = null;
         JFrame result = Access.accessDTR(admin, employeeID, selectedPayPeriod);
@@ -133,7 +133,7 @@ public class AccessTest {
     public void testAccessViewEmployeeDetails_User_String() {
         System.out.println("accessViewEmployeeDetails");
         User user = null;
-        String employeeID = "";
+        int employeeID = 0;
         JFrame expResult = null;
         JFrame result = Access.accessViewEmployeeDetails(user, employeeID);
         assertEquals(expResult, result);
