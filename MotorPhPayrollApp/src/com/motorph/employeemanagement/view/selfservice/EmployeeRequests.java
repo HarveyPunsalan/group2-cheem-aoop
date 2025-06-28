@@ -605,7 +605,7 @@ public class EmployeeRequests extends javax.swing.JFrame {
         }
         
         updateOvertime.setIsApproved(true);
-        updateRequest.approve(admin.getEmployeeID());
+        updateRequest.approve(admin.getEmployeeId());
         
         requestService.saveOvertimeRecord(updateOvertime);
         requestService.saveRequestRecord(updateRequest);
@@ -652,7 +652,7 @@ public class EmployeeRequests extends javax.swing.JFrame {
         }
         
         updateOvertime.setIsApproved(false);
-        updateRequest.reject(admin.getEmployeeID(), rejectionReason);
+        updateRequest.reject(admin.getEmployeeId(), rejectionReason);
         
         requestService.saveOvertimeRecord(updateOvertime);
         requestService.saveRequestRecord(updateRequest);
@@ -718,7 +718,7 @@ public class EmployeeRequests extends javax.swing.JFrame {
         }
         
         updateLeave.setIsApproved(true);
-        updateRequest.approve(admin.getEmployeeID());
+        updateRequest.approve(admin.getEmployeeId());
         
         requestService.saveLeaveRecord(updateLeave);
         requestService.saveRequestRecord(updateRequest);
@@ -765,7 +765,7 @@ public class EmployeeRequests extends javax.swing.JFrame {
         }
         
         updateLeave.setIsApproved(false);
-        updateRequest.reject(admin.getEmployeeID(), rejectionReason);
+        updateRequest.reject(admin.getEmployeeId(), rejectionReason);
                 
         EntityManager leave = new EntityManager(EntityType.LEAVE);
         EntityManager request = new EntityManager(EntityType.REQUEST);

@@ -281,7 +281,7 @@ public class PayrollEmployeeSelection extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton6LogOutActionPerformed
 
     private void jButton3SelfServicePortalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3SelfServicePortalActionPerformed
-        Access.accessViewEmployeeDetails(this.admin, this.admin.getEmployeeID());
+        Access.accessViewEmployeeDetails(this.admin, this.admin.getEmployeeId());
         this.setVisible(false);
     }//GEN-LAST:event_jButton3SelfServicePortalActionPerformed
 
