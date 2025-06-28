@@ -72,6 +72,5 @@ public class ComponentsValidator {
         }
         
         return ""; // Return an empty string if a date is selected.
-    }
-    
+    }    
 }

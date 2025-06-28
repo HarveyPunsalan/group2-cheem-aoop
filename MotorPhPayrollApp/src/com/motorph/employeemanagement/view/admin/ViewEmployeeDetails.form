@@ -58,7 +58,7 @@
                                       <Component id="jLabel13Pagibig" alignment="0" max="32767" attributes="0"/>
                                       <Component id="jLabel15Status" alignment="0" max="32767" attributes="0"/>
                                       <Component id="jLabel16Position" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="jLabel10ImmediateSupervisor" alignment="0" pref="146" max="32767" attributes="0"/>
+                                      <Component id="jLabel10ImmediateSupervisor" alignment="0" max="32767" attributes="0"/>
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="jLabelDateHired" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" pref="86" max="-2" attributes="0"/>

@@ -4,54 +4,71 @@
  */
 package com.motorph.usermanagement.model;
 
-import com.motorph.validation.Input;
-
 /**
- *
- * @author 63909
- */
-
-/**
+ * @author Harvey 
+ * 
  * Represents a Non-Admin user in the system.
- * This class extends the User class and provides specific functionality for regular users.
+ * This extends User class and provides non-admin user functionality
  */
 public class NonAdmin extends User {
     
+    public NonAdmin() {
+        super();
+    }
+    
     /**
-     * Constructor to initialize a NonAdmin object with username, password, and user credentials.
-     * @param username The non-admin user's username
-     * @param password The non-admin user's password
-     * @param userInputCredential The Input object containing role ID and employee ID
+     * Constructor for creating NonAdmin with basic credentials.
+     * @param username The user's login identifier
+     * @param passwordHashed Pre-hashed password (should be BCrypt hashed)
+     * @param employeeId Associated employee ID
+     * @param roleId User's role classification
      */
-    public NonAdmin(String username, String password){
-        super(username, password);
+    public NonAdmin(String username, String passwordHashed, int employeeId, int roleId) {
+        super(username, passwordHashed, employeeId, roleId);
     }
     
-    public NonAdmin(User nonAdmin){
-        this.username = nonAdmin.getUsername();
-        this.password = nonAdmin.getPassword();
-        this.employeeID = nonAdmin.getEmployeeID();
-        this.roleID = nonAdmin.getRoleID();
+    /**
+     * Constructor for creating NonAdmin from database result set data.
+     * @param userId Database primary key
+     * @param username User's login name
+     * @param passwordHashed BCrypt hashed password
+     * @param employeeId Associated employee identifier
+     * @param roleId User's role identifier
+     * @param accountCreated Account creation timestamp
+     * @param lastLogin Last login timestamp
+     * @param isActive Account active status
+     */
+    public NonAdmin(int userId, String username, String passwordHashed, int employeeId, 
+                    int roleId, java.sql.Timestamp accountCreated, java.sql.Timestamp lastLogin, boolean isActive) {
+        super(userId, username, passwordHashed, employeeId, roleId, accountCreated, lastLogin, isActive);
     }
     
-    public NonAdmin(Input userInputCredential) {        
-        super(userInputCredential);
-//        this.username = userInputCredential.getUsername();
-//        this.password = userInputCredential.getPassword();
-//        this.roleID = userInputCredential.getRoleID(); // Assign role ID from user input
-//        this.employeeID = userInputCredential.getEmployeeID(); // Assign employee ID from user input
+    /**
+     * Copy constructor to create NonAdmin from existing User object.
+     * @param user Existing User object to copy from
+     */
+    public NonAdmin(User user) {
+        super(user.getUserId(), user.getUsername(), user.getPasswordHashed(), 
+              user.getEmployeeId(), user.getRoleId(), user.getAccountCreated(), 
+              user.getLastLogin(), user.isActive());
     }
     
-    public static void login(User user){        
-        Access.accessProfilePage(user); // Open the dashboard page for the admin
+    /**
+     * Static method to handle non-admin login via Access class
+     * Maintains compatibility with existing UI code
+     * 
+     * @param user The non-admin user attempting to log in
+     */ 
+    public static void login(User user) {
+        Access.accessProfilePage(user);
     }
     
-//    /**
-//     * Overrides the login method to authenticate a Non-Admin user and open their profile page.
-//     * @param userAccount The Non-Admin user account attempting to log in
-//     */
-//    @Override
-//    public void login(User userAccount) {
-//        new ProfilePage(userAccount).setVisible(true); // Open the profile page for the non-admin user  
-//    }
+    /**
+     * Determines if this user is an admin.
+     * Since this is the NonAdmin class, it always returns false.
+     * @return false for NonAdmin instances
+     */
+    public boolean isAdmin() {
+        return false;
+    }
 }

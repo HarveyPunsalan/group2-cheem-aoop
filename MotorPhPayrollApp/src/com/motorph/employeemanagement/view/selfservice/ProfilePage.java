@@ -15,7 +15,7 @@ import com.motorph.usermanagement.model.User;
 import com.motorph.usermanagement.model.Access;
 import com.motorph.common.util.Formatter;
 import com.motorph.validation.ComponentsValidator;
-import com.motorph.validation.Input;
+import com.motorph.usermanagement.util.ValidationUtils;
 import com.motorph.common.ui.dialog.MessageDialog;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -887,8 +887,8 @@ public class ProfilePage extends javax.swing.JFrame {
     public StringBuilder validatePersonalInformationField(){
         StringBuilder errors = new StringBuilder();
     
-        appendError(errors, Input.isValidPhoneNumber(jTextField5PhoneNumber.getText()));
-        appendError(errors, Input.isValidBirthday(jDateChooserBirthday, "M/dd/yyyy"));
+        appendError(errors, ValidationUtils.isValidPhoneNumber(jTextField5PhoneNumber.getText()));
+        appendError(errors, ValidationUtils.isValidBirthday(jDateChooserBirthday, "M/dd/yyyy"));
         
         return errors;         
     }
@@ -896,16 +896,16 @@ public class ProfilePage extends javax.swing.JFrame {
     public StringBuilder validateAllTextField(){
         StringBuilder errors = new StringBuilder();
     
-        appendError(errors, Input.isValidGovernmentIDNumber(jTextField6SSS, "SSS", 10));
-        appendError(errors, Input.isValidGovernmentIDNumber(jTextField7Philhealth, "PhilHealth", 12));
-        appendError(errors, Input.isValidGovernmentIDNumber(jTextField8TIN, "TIN", 12));
-        appendError(errors, Input.isValidGovernmentIDNumber(jTextField13Pagibig, "Pag-IBIG", 12));
-        appendError(errors, Input.isValidAmount(jTextField11BasicSalary.getText(), "Basic Salary"));
-        appendError(errors, Input.isValidAmount(jTextField12RiceSubsidy.getText(), "Rice Subsidy"));
-        appendError(errors, Input.isValidAmount(jTextField14PhoneAllowance.getText(), "Phone Allowance"));
-        appendError(errors, Input.isValidAmount(jTextField9ClothingAllowance.getText(), "Clothing Allowance"));
-        appendError(errors, Input.isValidAmount(jTextField17GrossSemi.getText(), "Gross Semi-monthly Rate"));
-        appendError(errors, Input.isValidAmount(jTextField18HourlyRate.getText(), "Hourly Rate"));
+        appendError(errors, ValidationUtils.isValidGovernmentIDNumber(jTextField6SSS, "SSS", 10));
+        appendError(errors, ValidationUtils.isValidGovernmentIDNumber(jTextField7Philhealth, "PhilHealth", 12));
+        appendError(errors, ValidationUtils.isValidGovernmentIDNumber(jTextField8TIN, "TIN", 12));
+        appendError(errors, ValidationUtils.isValidGovernmentIDNumber(jTextField13Pagibig, "Pag-IBIG", 12));
+        appendError(errors, ValidationUtils.isValidAmount(jTextField11BasicSalary.getText(), "Basic Salary"));
+        appendError(errors, ValidationUtils.isValidAmount(jTextField12RiceSubsidy.getText(), "Rice Subsidy"));
+        appendError(errors, ValidationUtils.isValidAmount(jTextField14PhoneAllowance.getText(), "Phone Allowance"));
+        appendError(errors, ValidationUtils.isValidAmount(jTextField9ClothingAllowance.getText(), "Clothing Allowance"));
+        appendError(errors, ValidationUtils.isValidAmount(jTextField17GrossSemi.getText(), "Gross Semi-monthly Rate"));
+        appendError(errors, ValidationUtils.isValidAmount(jTextField18HourlyRate.getText(), "Hourly Rate"));
 
         return errors;         
     }
