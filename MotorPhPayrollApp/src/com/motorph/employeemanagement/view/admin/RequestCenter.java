@@ -62,7 +62,7 @@ public class RequestCenter extends javax.swing.JFrame {
         jComboBoxLeaveType.setSelectedIndex(-1);
         jTextFieldTotalDays.setText("0");
         
-        Input.addDateValidation(jDateChooser1StartDate, jDateChooser2EndDate, jTextFieldTotalDays); // Attach validation
+        DateUtils.addDateValidation(jDateChooser1StartDate, jDateChooser2EndDate, jTextFieldTotalDays); // Attach validation
     }
     
     public RequestCenter(User user) {
@@ -88,7 +88,7 @@ public class RequestCenter extends javax.swing.JFrame {
         jComboBoxLeaveType.setSelectedIndex(-1);        
         jTextFieldTotalDays.setText("0");
         
-        Input.addDateValidation(jDateChooser1StartDate, jDateChooser2EndDate, jTextFieldTotalDays); // Attach validation
+        DateUtils.addDateValidation(jDateChooser1StartDate, jDateChooser2EndDate, jTextFieldTotalDays); // Attach validation
     }
 
     /**

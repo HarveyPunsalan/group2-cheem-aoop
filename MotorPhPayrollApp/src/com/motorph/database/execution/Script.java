@@ -17,8 +17,7 @@ public enum Script {
     
     /** Finds a single employee by their employee ID from the employee table. */
     FIND_EMPLOYEE_BY_ID("SELECT * FROM employee WHERE employee_id = ?"),
-    
-    /** Adds a new personal record for an employee. */
+
     ADD_PERSONAL_RECORD("INSERT INTO employee_personal_information (first_name, last_name, birthday, phone_number, email) VALUES (?, ?, ?, ?, ?)"),
     
     /** Adds a new address for an employee. */

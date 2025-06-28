@@ -1325,6 +1325,5 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
         jTextField17GrossSemi.setText("");
         jTextField18HourlyRate.setText("");
     }
-     
 }
 
