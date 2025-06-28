@@ -27,12 +27,12 @@ public class AttendanceService {
 
     public AttendanceService() {
         this.dailyAttendanceList = CsvFile.DAILYATTENDANCE.readFile(DailyAttendance::new);
-        this.employeeList = CsvFile.EMPLOYEEINFORMATION.readFile(Employee::new);
+//        this.employeeList = CsvFile.EMPLOYEEINFORMATION.readFile(Employee::new);
     }
     
     public DailyAttendance getEmployeeDailyAttendance(Employee employee, LocalDate date){
         return dailyAttendanceList.stream()
-        .filter(dtr -> dtr.getEmployee().getEmployeeID().equals(employee.getEmployeeID()))
+        .filter(dtr -> dtr.getEmployee().getEmployeeId() == employee.getEmployeeId())
         .filter(dtr -> dtr.getDate().equals(date))
         .findFirst() // Get the first match (if any)
         .orElse(null); // Return null if no record is found
@@ -52,7 +52,7 @@ public class AttendanceService {
     public List<DailyAttendance> getFilteredDailyAttendance(Employee employee, PayPeriod payPeriod){
          // Fetch attendance records for the employee and convert to a map
         List<DailyAttendance> filteredList = dailyAttendanceList.stream()
-            .filter(dtr -> dtr.getEmployee().getEmployeeID().equals(employee.getEmployeeID()))
+            .filter(dtr -> dtr.getEmployee().getEmployeeId() == employee.getEmployeeId())
             .filter(dtr -> !dtr.getDate().isBefore(payPeriod.getStartDate()) &&
                            !dtr.getDate().isAfter(payPeriod.getEndDate()))
             .collect(Collectors.toList());
@@ -126,7 +126,7 @@ public class AttendanceService {
 
             // Construct a row using the aggregated values.
             Object[] row = {
-                employee.getEmployeeID(),
+                employee.getEmployeeId(),
                 employee.getFirstName() + " " + employee.getLastName(),
                 employee.getEmploymentStatus(),
                 totalLate,
@@ -211,7 +211,7 @@ public class AttendanceService {
         List<String[]> dataToWrite = dailyAttendanceList.stream()
             .map(dtr -> new String[]{
                 dtr.getAttendanceID(),
-                dtr.getEmployee().getEmployeeID(),
+                String.valueOf(dtr.getEmployee().getEmployeeId()),
                 dtr.getDate().format(DateTimeFormatter.ofPattern("M/d/yyyy")),
                 dtr.getTimeIn() != null ? dtr.getTimeIn().format(DateTimeFormatter.ofPattern("H:mm")) : "",
                 dtr.getTimeOut() != null ? dtr.getTimeOut().format(DateTimeFormatter.ofPattern("H:mm")) : "",

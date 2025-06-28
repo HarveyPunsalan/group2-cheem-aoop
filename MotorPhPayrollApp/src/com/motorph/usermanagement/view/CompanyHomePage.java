@@ -10,11 +10,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JOptionPane;
 
-/**
- * @author Charm
- */
-
-
 public class CompanyHomePage extends javax.swing.JFrame {
     Admin admin;
     

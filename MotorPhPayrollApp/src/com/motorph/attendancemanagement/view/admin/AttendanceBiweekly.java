@@ -309,7 +309,7 @@ public class AttendanceBiweekly extends javax.swing.JFrame {
         int rowIndex = jTableBiweeklyAttendace.getSelectedRow(); // Get selected row index
         String employeeID = jTableBiweeklyAttendace.getValueAt(rowIndex, 0).toString(); // Retrieve employee ID
         
-        Access.accessDTR(this.admin, employeeID, selectedPayPeriod);
+        Access.accessDTR(this.admin, Integer.parseInt(employeeID), selectedPayPeriod);
         this.setVisible(false);
     }//GEN-LAST:event_jTableBiweeklyAttendaceMouseClicked
 

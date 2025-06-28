@@ -29,7 +29,7 @@ public class Request implements Identifiable {
     private LocalDate requestDate;
     private String reason;
     private String status;
-    private String processedBy;
+    private int processedBy;
     private LocalDate processedDate;
     private String remarks;
     
@@ -80,7 +80,7 @@ public class Request implements Identifiable {
                 this.reason = requestData[3].isEmpty() ? null : requestData[3];
                 
                 this.status = RequestStatus.PENDING.toString(); 
-                this.processedBy = null; // Default to null since it's not provided in this case
+                this.processedBy = 0; // Default to null since it's not provided in this case
                 this.processedDate = null; // Default to null since it's not provided in this case
                 this.remarks = null;
             }
@@ -93,7 +93,7 @@ public class Request implements Identifiable {
                 this.reason = requestData[4].isEmpty() ? null : requestData[4];
                 
                 this.status = RequestStatus.valueOf(requestData[5]).toString();
-                this.processedBy = requestData[6].isEmpty() ? null : requestData[6];
+                this.processedBy = requestData[6].isEmpty() ? -1 : Integer.parseInt(requestData[6]);
                 this.processedDate = requestData[7].isEmpty() ? null : Parser.parseLocalDate(requestData[7], null);
                 this.remarks = requestData[8].isEmpty() ? null : requestData[8];
             }
@@ -130,7 +130,7 @@ public class Request implements Identifiable {
         this.status = status;
     }
 
-    public String getProcessedBy() {
+    public int getProcessedBy() {
         return processedBy;
     }
 
@@ -142,8 +142,8 @@ public class Request implements Identifiable {
         return remarks;
     }   
     
-    public void approve(String processedBy) {
-        if (processedBy == null || processedBy.isEmpty()) {
+    public void approve(int processedBy) {
+        if (processedBy == -1) {
             throw new IllegalArgumentException("Processed by cannot be null or empty.");
         }
         this.processedBy = processedBy;
@@ -151,8 +151,8 @@ public class Request implements Identifiable {
         this.processedDate = LocalDate.now();
     }
 
-    public void reject(String processedBy, String remarks) {
-        if (processedBy == null || processedBy.isEmpty()) {
+    public void reject(int processedBy, String remarks) {
+        if (processedBy == -1) {
             throw new IllegalArgumentException("Processed by cannot be null or empty.");
         }
         if (reason == null || reason.isEmpty()) {

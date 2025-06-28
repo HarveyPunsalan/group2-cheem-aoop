@@ -4,53 +4,79 @@
  */
 package com.motorph.employeemanagement.model;
 
-import com.motorph.employeemanagement.model.Department;
-
 /**
- * Represents a job position.
+ * Represents a job or position within the organization.
  *
- * <p>This class encapsulates job-related details such as the job name.
- * Additional job-related properties and methods can be added as needed.</p>
+ * This class contains the job's title, its unique identifier, and the
+ * department to which the job belongs.
  */
 public class Job {
-    private String jobID; 
-    private String jobName;
-    private Department department;
-    private Employee immediateSupervisor;
+
+    private int jobID;   // Unique identifier for the job position        
+    private String jobTitle;   // Title or name of the job
+    private Department department;   // Department to which this job belongs
+
+    //Default constructor
+    public Job() {
+    }
 
     /**
-     * Constructs a Job with the specified job ID, job name, and salary.
+     * Constructor used when inserting a new job record
      *
-     * @param jobID the unique identifier for the job.
-     * @param jobName the name of the job.
+     * @param jobTitle   the title of the job
+     * @param department the associated department
      */
-    public Job(String jobID, String jobName) {
-        this.jobID = jobID;
-        this.jobName = jobName;
-    }
-    
-    /**
-     * Constructs a Job with the specified job name.
-     *
-     * @param jobName the name of the job.
-     */    
-    public Job(String jobName) {
-        this.jobName = jobName;
+    public Job(String jobTitle, Department department) {
+        this.jobTitle = jobTitle;
+        this.department = department;
     }
 
-    public String getJobID() {
+    /**
+     * Constructor used when retrieving an existing job from the database.
+     *
+     * @param jobID      the unique ID of the job
+     * @param jobTitle   the title of the job
+     * @param department the associated department
+     */
+    public Job(int jobID, String jobTitle, Department department) {
+        this.jobID = jobID;
+        this.jobTitle = jobTitle;
+        this.department = department;
+    }
+
+    // Getters and setters
+    public int getJobID() {
         return jobID;
     }
 
-    public String getJobName() {
-        return jobName;
+    public void setJobID(int jobID) {
+        this.jobID = jobID;
+    }
+
+    public String getJobTitle() {
+        return jobTitle;
+    }
+
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
     }
 
     public Department getDepartment() {
         return department;
     }
 
-    public Employee getImmediateSupervisor() {
-        return immediateSupervisor;
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    /**
+     * @return a string representation of the job for display or debugging.
+     *
+     */
+    @Override
+    public String toString() {
+        return String.format("Job [ID: %d, Title: %s, Department: %s]",
+                jobID, jobTitle,
+                (department != null ? department.getDepartmentName() : "N/A"));
     }
 }

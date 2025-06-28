@@ -4,6 +4,7 @@
  */
 package com.motorph.payrollprocessing.model;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 /**
@@ -12,31 +13,31 @@ import java.text.DecimalFormat;
  */
 public class PayrollSummary {
     private static DecimalFormat decimalFormat = new DecimalFormat("0.00");
-    private double totalBasicSalary;
-    private double totalGrossSalary;
-    private double totalGovernmentContribution;
-    private double totalWithholdingTax;
-    private double totalDeduction;
-    private double totalNetSalary;
+    private BigDecimal totalBasicSalary;
+    private BigDecimal totalGrossSalary;
+    private BigDecimal totalGovernmentContribution;
+    private BigDecimal totalWithholdingTax;
+    private BigDecimal totalDeduction;
+    private BigDecimal totalNetSalary;
 
-    public PayrollSummary(double totalBasicSalary, double totalGrossSalary,
-                          double totalGovernmentContribution, double totalWithholdingTax,
-                          double totalDeduction, double totalNetSalary) {
-        this.totalBasicSalary = Double.parseDouble(decimalFormat.format(totalBasicSalary));
-        this.totalGrossSalary = Double.parseDouble(decimalFormat.format(totalGrossSalary));
-        this.totalGovernmentContribution = Double.parseDouble(decimalFormat.format(totalGovernmentContribution));
-        this.totalWithholdingTax = Double.parseDouble(decimalFormat.format(totalWithholdingTax));
-        this.totalDeduction = Double.parseDouble(decimalFormat.format(totalDeduction));
-        this.totalNetSalary = Double.parseDouble(decimalFormat.format(totalNetSalary));
+    public PayrollSummary(BigDecimal totalBasicSalary, BigDecimal totalGrossSalary,
+                          BigDecimal totalGovernmentContribution, BigDecimal totalWithholdingTax,
+                          BigDecimal totalDeduction, BigDecimal totalNetSalary) {
+        this.totalBasicSalary = totalBasicSalary;
+        this.totalGrossSalary = totalGrossSalary;
+        this.totalGovernmentContribution = totalGovernmentContribution;
+        this.totalWithholdingTax = totalWithholdingTax;
+        this.totalDeduction = totalDeduction;
+        this.totalNetSalary = totalNetSalary;
     }
 
     // Getters for each field
-    public double getTotalBasicSalary() { return totalBasicSalary; }
-    public double getTotalGrossSalary() { return totalGrossSalary; }
-    public double getTotalGovernmentContribution() { return totalGovernmentContribution; }
-    public double getTotalWithholdingTax() { return totalWithholdingTax; }
-    public double getTotalDeductions() { return totalDeduction; }
-    public double getTotalNetSalary() { return totalNetSalary; }
+    public BigDecimal getTotalBasicSalary() { return totalBasicSalary; }
+    public BigDecimal getTotalGrossSalary() { return totalGrossSalary; }
+    public BigDecimal getTotalGovernmentContribution() { return totalGovernmentContribution; }
+    public BigDecimal getTotalWithholdingTax() { return totalWithholdingTax; }
+    public BigDecimal getTotalDeductions() { return totalDeduction; }
+    public BigDecimal getTotalNetSalary() { return totalNetSalary; }
 
     @Override
     public String toString() {

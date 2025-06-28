@@ -4,94 +4,73 @@
  */
 package com.motorph.employeemanagement.model;
 
-import com.motorph.common.util.Parser;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
 /**
- * Represents employment-related information for an employee.
- *
- * <p>This class extends Information and can be used to store details such as job title,
- * department, salary, and employment status. Extend this class with employment-specific properties and methods as needed.</p>
+ * Represents the employment-related details of an employee.
+ * 
  */
 public class EmploymentInformation extends Information {
-    // Formatter for dates in "M/d/yyyy" format.
-    private static final DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("M/d/yyyy");
-    
-    // Employment details
-    private Job jobTitle; 
-    private String employmentType; 
-    private String employmentStatus;
-    private LocalDate dateHired; 
-    private String immediateSupervisor;
-    
-    // Salary and allowances
-    private Salary salary;
-    private String basicSalary, grossSemiMonthlyRate, hourlyRate;
-    private String riceSubsidy, phoneAllowance, clothingAllowance;
-    
-    /**
-     * Constructs an EmploymentInformation object using the provided employment data.
-     *
-     * <p>The constructor initializes the employment information for an employee based on an array of strings.
-     * The first element (employeeID) is passed to the superclass constructor. The array must have at least 12
-     * elements corresponding to job title, employment type, status, date hired, supervisor, salary, allowances,
-     * and rates.</p>
-     *
-     * @param employeeID the employee's unique identifier.
-     * @param employmentData an array of strings representing employment details.
-     * @throws IllegalArgumentException if the employmentData array contains fewer than 12 elements.
-     */
-    public EmploymentInformation(String employeeID, String[] employmentData) {
-        super(employeeID); // Initialize superclass with employeeID
-        
-        // Ensure the provided employment data array has the expected number of elements.
-        if (employmentData.length < 12) {
-            throw new IllegalArgumentException("Invalid data: Employee information must have 12 elements.");
-        }
-        
-        // Initialize employment-related fields using the data array.
-        this.jobTitle = new Job(employmentData[1]);
-        this.employmentType = employmentData[2];
-        this.employmentStatus = employmentData[3];
-//        this.dateHired = Parser.parseDate(employmentData[4], null);
-        this.immediateSupervisor = employmentData[5];
-        this.basicSalary = employmentData[6];
-        this.riceSubsidy = employmentData[7];
-        this.phoneAllowance = employmentData[8];
-        this.clothingAllowance = employmentData[9];
-        this.grossSemiMonthlyRate = employmentData[10];
-        this.hourlyRate = employmentData[11];
+
+    private int employmentID;  // Unique ID for the employment record (from DB)
+    private Job job; // Job information (title, department, etc.)        
+    private Salary salary;   // Salary details  
+    private String employmentType;  // e.g., "Regular", "Contractual"
+    private String employmentStatus; // e.g., "Active", "Terminated", "On Leave"
+    private LocalDate dateHired; // Date the employee was hired
+
+    //Default constructor
+    public EmploymentInformation() {
+        super(0);
     }
-    
-        public EmploymentInformation(String employeeID, String jobTitle, String employmentType, String employmentStatus, LocalDate dateHired, 
-                                        String immediateSupervisor, String basicSalary, String grossSemiMonthlyRate, String hourlyRate,
-                                        String riceSubsidy, String phoneAllowance, String clothingAllowance) {
-        super(employeeID); // Initialize superclass with employeeID
-        
-        // Initialize employment-related fields using the data array.
-        this.jobTitle = new Job(jobTitle);
+
+    /**
+     * Constructor used when inserting a new employment record (employmentID is auto-generated).
+     *
+     * @param employeeID        the employee's ID
+     * @param job               the employee's job details
+     * @param salary            the employee's salary details
+     * @param employmentType    the nature of employment (e.g., "Regular")
+     * @param employmentStatus  current status (e.g., "Active")
+     * @param dateHired         the date the employee was hired
+     */
+    public EmploymentInformation(int employeeID, Job job, Salary salary, String employmentType,
+                                 String employmentStatus, LocalDate dateHired) {
+        super(employeeID);
+        this.job = job;
+        this.salary = salary;
         this.employmentType = employmentType;
         this.employmentStatus = employmentStatus;
         this.dateHired = dateHired;
-        this.immediateSupervisor = immediateSupervisor;
-        
-        this.basicSalary = basicSalary;
-        this.grossSemiMonthlyRate = grossSemiMonthlyRate;
-        this.hourlyRate = hourlyRate;
-        
-        this.riceSubsidy = riceSubsidy;
-        this.phoneAllowance = phoneAllowance;
-        this.clothingAllowance = clothingAllowance;
-        
     }
-        
+
+    /**
+     * Constructor used when retrieving an existing employment record from the database.
+     *
+     * @param employmentID      the unique record ID
+     * @param employeeID        the employee's ID
+     * @param job               job information
+     * @param salary            salary information
+     * @param employmentType    the nature of employment
+     * @param employmentStatus  current employment status
+     * @param dateHired         hire date
+     */
+    public EmploymentInformation(int employmentID, int employeeID, Job job, Salary salary,
+                                 String employmentType, String employmentStatus, LocalDate dateHired) {
+        super(employeeID);
+        this.employmentID = employmentID;
+        this.job = job;
+        this.salary = salary;
+        this.employmentType = employmentType;
+        this.employmentStatus = employmentStatus;
+        this.dateHired = dateHired;
+    }
+    
     public List<Object> toInsertParams() {
         return List.of(
             employeeID,
-            jobTitle.getJobID(),
+//            jobTitle.getJobID(),
             salary.getSalaryID(),
             employmentType,
             employmentStatus,
@@ -102,7 +81,7 @@ public class EmploymentInformation extends Information {
     public List<Object> toUpdateParams() {
         return List.of(
             employeeID,
-            jobTitle.getJobID(),
+//            jobTitle.getJobID(),
             salary.getSalaryID(),
             employmentType,
             employmentStatus,
@@ -120,68 +99,80 @@ public class EmploymentInformation extends Information {
     @Override
     public String[] getInformation() {
         // Return an array with selected employment details.
-        return new String[] {employeeID,
-                            jobTitle.getJobName(),
+        return new String[] {String.valueOf(employeeID),
+//                            jobTitle.getJobName(),
                             employmentType,
                             employmentStatus,
                             dateHired.toString(),
-                            immediateSupervisor,
-                            basicSalary,
-                            riceSubsidy,
-                            phoneAllowance,
-                            clothingAllowance,
-                            grossSemiMonthlyRate,
-                            hourlyRate,
+//                            immediateSupervisor,
+//                            basicSalary,
+//                            riceSubsidy,
+//                            phoneAllowance,
+//                            clothingAllowance,
+//                            grossSemiMonthlyRate,
+//                            hourlyRate,
                             };
     }
-    
-    // Getters
-    public static DateTimeFormatter getFormatterDate() {
-        return formatterDate;
+
+    // Getters and setters
+    public int getEmploymentID() {
+        return employmentID;
     }
 
-    public Job getJobTitle() {
-        return jobTitle;
+    public void setEmploymentID(int employmentID) {
+        this.employmentID = employmentID;
+    }
+
+    public Job getJob() {
+        return job;
+    }
+
+    public void setJob(Job job) {
+        this.job = job;
+    }
+
+    public Salary getSalary() {
+        return salary;
+    }
+
+    public void setSalary(Salary salary) {
+        this.salary = salary;
     }
 
     public String getEmploymentType() {
         return employmentType;
     }
 
+    public void setEmploymentType(String employmentType) {
+        this.employmentType = employmentType;
+    }
+
     public String getEmploymentStatus() {
         return employmentStatus;
+    }
+
+    public void setEmploymentStatus(String employmentStatus) {
+        this.employmentStatus = employmentStatus;
     }
 
     public LocalDate getDateHired() {
         return dateHired;
     }
 
-    public String getImmediateSupervisor() {
-        return immediateSupervisor;
+    public void setDateHired(LocalDate dateHired) {
+        this.dateHired = dateHired;
     }
 
-    public String getBasicSalary() {
-        return basicSalary;
+    /**
+     * @return a string representation of this employment information
+     */
+    @Override
+    public String toString() {
+        return String.format("Employment Info [Employment ID: %d, Employee ID: %d, Job: %s, Salary: %s, Type: %s, Status: %s, Hired: %s]",
+                employmentID, employeeID,
+                (job != null ? job.getJobTitle() : "N/A"),
+                (salary != null ? String.valueOf(salary.getBasicSalary()) : "N/A"),
+                employmentType, employmentStatus,
+                (dateHired != null ? dateHired.toString() : "N/A"));
     }
-
-    public String getRiceSubsidy() {
-        return riceSubsidy;
-    }
-
-    public String getPhoneAllowance() {
-        return phoneAllowance;
-    }
-
-    public String getClothingAllowance() {
-        return clothingAllowance;
-    }
-
-    public String getGrossSemiMonthlyRate() {
-        return grossSemiMonthlyRate;
-    }
-
-    public String getHourlyRate() {
-        return hourlyRate;
-    }
-    
 }

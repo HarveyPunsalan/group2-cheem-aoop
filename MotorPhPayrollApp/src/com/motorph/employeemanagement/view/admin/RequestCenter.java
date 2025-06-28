@@ -10,8 +10,7 @@ import com.motorph.validation.ComponentsValidator;
 import com.motorph.employeemanagement.model.Employee;
 import Class.EntityManagement.EntityManager;
 import Class.EntityManagement.EntityType;
-import Class.IDManagement.IDManager;
-import com.motorph.usermanagement.util.DateUtils;
+import com.motorph.validation.Input;
 import com.motorph.common.ui.renderer.PromptComboBoxRenderer;
 import com.motorph.attendancemanagement.service.AttendanceService;
 import com.motorph.attendancemanagement.model.DailyAttendance;
@@ -539,7 +538,7 @@ public class RequestCenter extends javax.swing.JFrame {
             return;
         }
         
-        String[] overtimeData = {user.getEmployeeID(),
+        String[] overtimeData = {String.valueOf(user.getEmployeeID()),
                                 jComboBoxOvertimeDate.getSelectedItem().toString(),
                                 jTextField5OvertimeStart.getText(),
                                 jTextField4OvertimeEnd.getText(),
@@ -547,7 +546,7 @@ public class RequestCenter extends javax.swing.JFrame {
                                 };
         Overtime newOvertime = new Overtime(overtimeData);
         
-        String[] requestData = {newOvertime.getID(),user.getEmployeeID(),LocalDate.now().toString(), ""};     
+        String[] requestData = {newOvertime.getID(),String.valueOf(user.getEmployeeID()),LocalDate.now().toString(), ""};     
         Request newRequest = new Request(requestData);
         
         EntityManager request = new EntityManager(EntityType.REQUEST);
@@ -747,7 +746,7 @@ public class RequestCenter extends javax.swing.JFrame {
         EntityManager request = new EntityManager(EntityType.REQUEST);
         EntityManager leave = new EntityManager(EntityType.LEAVE);
         
-        String[] LeaveData = {user.getEmployeeID(),
+        String[] LeaveData = {String.valueOf(user.getEmployeeID()),
                                 ((JTextField)jDateChooser1StartDate.getDateEditor().getUiComponent()).getText(),
                                 ((JTextField)jDateChooser2EndDate.getDateEditor().getUiComponent()).getText(),
                                 jComboBoxLeaveType.getSelectedItem().toString(),
@@ -755,7 +754,7 @@ public class RequestCenter extends javax.swing.JFrame {
                                 };
         Leave newLeave = new Leave(LeaveData);
         
-        String[] requestData = {newLeave.getID(), user.getEmployeeID(), LocalDate.now().toString(), jTextArea1Notes.getText()};      
+        String[] requestData = {newLeave.getID(), String.valueOf(user.getEmployeeID()), LocalDate.now().toString(), jTextArea1Notes.getText()};      
         Request newRequest = new Request(requestData);
         
         
@@ -843,7 +842,7 @@ public class RequestCenter extends javax.swing.JFrame {
         PayPeriod selectedPayPeriod = new PayPeriod(startDate, endDate);
         
         jComboBoxOvertimeDate.setEnabled(true);
-        jComboBoxOvertimeDate.setModel(dtrManager.getOvertimeDatesComboBoxModel(dtrManager.getFilteredDailyAttendance(new Employee(user.getEmployeeID()), selectedPayPeriod)));
+//        jComboBoxOvertimeDate.setModel(dtrManager.getOvertimeDatesComboBoxModel(dtrManager.getFilteredDailyAttendance(new Employee(user.getEmployeeID()), selectedPayPeriod)));
         jComboBoxOvertimeDate.setRenderer(new PromptComboBoxRenderer("Select Overtime Date") );
         jComboBoxOvertimeDate.setSelectedIndex(-1);
     }//GEN-LAST:event_jComboBoxAttendancePeriodActionPerformed
@@ -857,7 +856,7 @@ public class RequestCenter extends javax.swing.JFrame {
         
         LocalDate selectedDate = LocalDate.parse((String) jComboBoxOvertimeDate.getSelectedItem(), formatterDate);
         
-        DailyAttendance userAttendance = dtrManager.getEmployeeDailyAttendance(new Employee(user.getEmployeeID()), selectedDate);
+        DailyAttendance userAttendance = dtrManager.getEmployeeDailyAttendance(new Employee(), selectedDate);
         Overtime userOvertime = new Overtime(userAttendance);
         jTextField5OvertimeStart.setText(userOvertime.getStartTime().toString());
         jTextField4OvertimeEnd.setText(userOvertime.getEndTime().toString());

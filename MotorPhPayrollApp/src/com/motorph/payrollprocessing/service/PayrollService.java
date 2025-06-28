@@ -7,11 +7,12 @@ package com.motorph.payrollprocessing.service;
 import com.motorph.payrollprocessing.model.PayrollRecord;
 import com.motorph.payrollprocessing.model.PayPeriod;
 import com.motorph.employeemanagement.model.Employee;
-import com.motorph.employeemanagement.service.EmployeeService;
+import com.motorph.employeemanagement.service.csvversion.EmployeeService;
 import com.motorph.attendancemanagement.service.AttendanceService;
 import com.motorph.attendancemanagement.service.AttendanceCalculator;
 import com.motorph.attendancemanagement.model.DailyAttendance;
 import CSVFileManager.CsvFile;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -47,11 +48,11 @@ public class PayrollService {
         for (Employee employee : employeeService.getEmployeeRecords()) {
             
             // Retrieve payroll inputs from each Employee object
-            double payableHours = AttendanceCalculator.calculatePayableHours(attendanceService.getFilteredDailyAttendance(employee, payPeriod));
-            double hourlyRate = Double.parseDouble(employee.getHourlyRate().replace(",", ""));
-            double rice = Double.parseDouble(employee.getRiceSubsidy().replace(",", ""));
-            double phone = Double.parseDouble(employee.getPhoneAllowance().replace(",", ""));
-            double clothing = Double.parseDouble(employee.getClothingAllowance().replace(",", ""));
+            BigDecimal payableHours = BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(attendanceService.getFilteredDailyAttendance(employee, payPeriod)));
+            BigDecimal hourlyRate = employee.getHourlyRate();
+            BigDecimal rice = employee.getRiceSubsidy();
+            BigDecimal phone = employee.getPhoneAllowance();
+            BigDecimal clothing = employee.getClothingAllowance();
 
             // Calculate the payroll record for the employee using the PayrollCalculator
             PayrollRecord record = PayrollCalculator.calculatePayrollRecord(payableHours, hourlyRate, rice, phone, clothing);
@@ -110,7 +111,7 @@ public class PayrollService {
             
             // Construct a row using the aggregated values.
             Object[] row = {
-                employee.getEmployeeID(),
+                employee.getEmployeeId(),
                 employee.getFirstName() + " " + employee.getLastName(),
                 employee.getEmploymentStatus(),
                 totalRegular,
@@ -134,16 +135,16 @@ public class PayrollService {
             
             List<DailyAttendance> filteredRecords = attendanceService.getFilteredDailyAttendance(employee, payPeriod);
             
-            double payableHours = AttendanceCalculator.calculatePayableHours(filteredRecords);
-            double baseSalary = SalaryCalculator.calculateBasicSalary(payableHours, Double.parseDouble(employee.getHourlyRate().replace(",", "")));
-            double totalAllowance = AllowanceCalculator.calculateTotalAllowance(Double.parseDouble(employee.getRiceSubsidy().replace(",", "")),
-                                                                                Double.parseDouble(employee.getPhoneAllowance().replace(",", "")), 
-                                                                                Double.parseDouble(employee.getClothingAllowance().replace(",", "")));
-            double grossSalary = SalaryCalculator.calculateGrossSalary(baseSalary, totalAllowance);
+            BigDecimal payableHours = BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(filteredRecords));
+            BigDecimal baseSalary = SalaryCalculator.calculateBasicSalary(payableHours, employee.getHourlyRate());
+            BigDecimal totalAllowance = AllowanceCalculator.calculateTotalAllowance(employee.getRiceSubsidy(),
+                                                                                employee.getPhoneAllowance(), 
+                                                                                employee.getClothingAllowance());
+            BigDecimal grossSalary = SalaryCalculator.calculateGrossSalary(baseSalary, totalAllowance);
             
             // Construct a row using the aggregated values.
             Object[] row = {
-                employee.getEmployeeID(),
+                employee.getEmployeeId(),
                 employee.getFirstName() + " " + employee.getLastName(),
                 payableHours,
                 baseSalary,
@@ -170,23 +171,23 @@ public class PayrollService {
             
             List<DailyAttendance> filteredRecords = attendanceService.getFilteredDailyAttendance(employee, payPeriod);
             
-            double payableHours = AttendanceCalculator.calculatePayableHours(filteredRecords);
-            double baseSalary = SalaryCalculator.calculateBasicSalary(payableHours, Double.parseDouble(employee.getHourlyRate().replace(",", "")));
-            double totalAllowance = AllowanceCalculator.calculateTotalAllowance(Double.parseDouble(employee.getRiceSubsidy().replace(",", "")),
-                                                                                Double.parseDouble(employee.getPhoneAllowance().replace(",", "")), 
-                                                                                Double.parseDouble(employee.getClothingAllowance().replace(",", "")));
-            double grossSalary = SalaryCalculator.calculateGrossSalary(baseSalary, totalAllowance);
-            double sss = DeductionCalculator.calculateSSS(grossSalary);
-            double philhealth = DeductionCalculator.calculatePhilHealth(grossSalary);            
-            double pagibig = DeductionCalculator.calculatePagIbig(grossSalary);
-            double govermentContribution = DeductionCalculator.calculateGovernmentContribution(sss, philhealth, pagibig);
-            double tax = TaxCalculator.calculateWithHoldingTax(grossSalary, govermentContribution);
-            double totalDeduction = DeductionCalculator.calculateTotalDeductions(govermentContribution, tax);
+            BigDecimal payableHours = BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(filteredRecords));
+            BigDecimal baseSalary = SalaryCalculator.calculateBasicSalary(payableHours, employee.getHourlyRate());
+            BigDecimal totalAllowance = AllowanceCalculator.calculateTotalAllowance(employee.getRiceSubsidy(),
+                                                                                employee.getPhoneAllowance(), 
+                                                                                employee.getClothingAllowance());
+            BigDecimal grossSalary = SalaryCalculator.calculateGrossSalary(baseSalary, totalAllowance);
+            BigDecimal sss = DeductionCalculator.calculateSSS(grossSalary);
+            BigDecimal philhealth = DeductionCalculator.calculatePhilHealth(grossSalary);            
+            BigDecimal pagibig = DeductionCalculator.calculatePagIbig(grossSalary);
+            BigDecimal govermentContribution = DeductionCalculator.calculateGovernmentContribution(sss, philhealth, pagibig);
+            BigDecimal tax = TaxCalculator.calculateWithHoldingTax(grossSalary, govermentContribution);
+            BigDecimal totalDeduction = DeductionCalculator.calculateTotalDeductions(govermentContribution, tax);
             
             
             // Construct a row using the aggregated values.
             Object[] row = {
-                employee.getEmployeeID(),
+                employee.getEmployeeId(),
                 employee.getFirstName() + " " + employee.getLastName(),
                 sss,
                 philhealth,
@@ -212,24 +213,24 @@ public class PayrollService {
             
             List<DailyAttendance> filteredRecords = attendanceService.getFilteredDailyAttendance(employee, payPeriod);
             
-            double payableHours = AttendanceCalculator.calculatePayableHours(filteredRecords);
-            double baseSalary = SalaryCalculator.calculateBasicSalary(payableHours, Double.parseDouble(employee.getHourlyRate().replace(",", "")));
-            double totalAllowance = AllowanceCalculator.calculateTotalAllowance(Double.parseDouble(employee.getRiceSubsidy().replace(",", "")),
-                                                                                Double.parseDouble(employee.getPhoneAllowance().replace(",", "")), 
-                                                                                Double.parseDouble(employee.getClothingAllowance().replace(",", "")));
-            double grossSalary = SalaryCalculator.calculateGrossSalary(baseSalary, totalAllowance);
-            double sss = DeductionCalculator.calculateSSS(grossSalary);
-            double philhealth = DeductionCalculator.calculatePhilHealth(grossSalary);            
-            double pagibig = DeductionCalculator.calculatePagIbig(grossSalary);
-            double govermentContribution = DeductionCalculator.calculateGovernmentContribution(sss, philhealth, pagibig);
-            double tax = TaxCalculator.calculateWithHoldingTax(grossSalary, govermentContribution);
-            double totalDeduction = DeductionCalculator.calculateTotalDeductions(govermentContribution, tax);
-            double netSalary = SalaryCalculator.calculateNetSalary(grossSalary, totalDeduction, tax);
+            BigDecimal payableHours = BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(filteredRecords));
+            BigDecimal baseSalary = SalaryCalculator.calculateBasicSalary(payableHours, employee.getHourlyRate());
+            BigDecimal totalAllowance = AllowanceCalculator.calculateTotalAllowance(employee.getRiceSubsidy(),
+                                                                                employee.getPhoneAllowance(), 
+                                                                                employee.getClothingAllowance());
+            BigDecimal grossSalary = SalaryCalculator.calculateGrossSalary(baseSalary, totalAllowance);
+            BigDecimal sss = DeductionCalculator.calculateSSS(grossSalary);
+            BigDecimal philhealth = DeductionCalculator.calculatePhilHealth(grossSalary);            
+            BigDecimal pagibig = DeductionCalculator.calculatePagIbig(grossSalary);
+            BigDecimal govermentContribution = DeductionCalculator.calculateGovernmentContribution(sss, philhealth, pagibig);
+            BigDecimal tax = TaxCalculator.calculateWithHoldingTax(grossSalary, govermentContribution);
+            BigDecimal totalDeduction = DeductionCalculator.calculateTotalDeductions(govermentContribution, tax);
+            BigDecimal netSalary = SalaryCalculator.calculateNetSalary(grossSalary, totalDeduction, tax);
             
             
             // Construct a row using the aggregated values.
             Object[] row = {
-                employee.getEmployeeID(),
+                employee.getEmployeeId(),
                 employee.getFirstName() + " " + employee.getLastName(),
                 payableHours,
                 baseSalary,

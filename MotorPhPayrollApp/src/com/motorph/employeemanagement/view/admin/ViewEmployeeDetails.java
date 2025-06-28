@@ -4,161 +4,293 @@
  */
 package com.motorph.employeemanagement.view.admin;
 
-import com.motorph.employeemanagement.model.PersonalInformation;
-import com.motorph.employeemanagement.service.InformationService;
-import com.motorph.employeemanagement.model.GovernmentInformation;
-import com.motorph.employeemanagement.model.EmploymentInformation;
+import com.motorph.database.connection.DatabaseService;
 import com.motorph.employeemanagement.model.Employee;
-import com.motorph.employeemanagement.service.EmployeeService;
-import com.motorph.usermanagement.model.Admin;
-import com.motorph.usermanagement.model.NonAdmin;
-import com.motorph.usermanagement.model.Access;
-import com.motorph.common.util.Formatter;
-import com.motorph.validation.ComponentsValidator;
-import com.motorph.usermanagement.util.ValidationUtils;
-import com.motorph.common.ui.dialog.MessageDialog;
-import com.motorph.usermanagement.model.User;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import com.motorph.employeemanagement.service.EmployeeUpdateService;
+import com.motorph.employeemanagement.service.EmployeeCreationService;
+import com.motorph.employeemanagement.service.EmployeeRetrievalService;
+import com.motorph.usermanagement.model.*;
+import com.motorph.database.execution.SQLExecutor;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.math.BigDecimal;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-/**
- *
- * @author Charm
- */
-public class ViewEmployeeDetails extends javax.swing.JFrame {
-    SimpleDateFormat dateFormat = new SimpleDateFormat("M/dd/yyyy");
-    EmployeeService employeeManager;
-    String employeeID; // Employee ID for lookup
-    Employee employee; // Employee object (not currently used in the provided code)
-    boolean isNewEmployee; // Flag to determine if it's a new employee record
-    String[] employeeInformation; // Array to store employee details
-    User user;
-    PersonalInformation personalInformation;
-    GovernmentInformation governmentInformation;
-    EmploymentInformation employmentInformation;
 
-    /**
-     * Creates new form ViewEmployeeDetails
-     */
+/**
+ * JFrame for managing employee records.
+ * 
+ * This form supports two main functions:
+ * 1. Adding a new employee.
+ * 2. Viewing/editing details of an existing employee.
+ * 
+ * Access is restricted to admin users only.
+ * 
+ * Dependencies:
+ * - EmployeeRetrievalService: fetches employee data.
+ * - EmployeeCreationService: handles new employee creation.
+ * - EmployeeUpdateService: updates existing employee records.
+ */
+
+public class ViewEmployeeDetails extends javax.swing.JFrame {
+
+    private final Connection connection = DatabaseService.connectToMotorPH();
+    private final EmployeeRetrievalService retrievalService;
+    private final EmployeeCreationService creationService;
+    private final EmployeeUpdateService updateService;
+
+    private User user;
+    private Employee currentEmployee;
+    
     public ViewEmployeeDetails() {
         initComponents();
-        jLabelErrorMessage.setVisible(false);
-        jButton1EditProfile.setVisible(false);
-        this.isNewEmployee = true;
-        jButton2SaveChanges.setText("Add Employee"); // Change button text to indicate adding a new employee     
+        this.user = null;
+
+        this.retrievalService = new EmployeeRetrievalService(new SQLExecutor(connection));
+        this.creationService = new EmployeeCreationService(connection);
+        this.updateService = new EmployeeUpdateService(connection);
+
+        this.currentEmployee = null; // Indicates adding new record mode
+        jButton2SaveChanges.setText("Add Employee");
     }
     
-    public ViewEmployeeDetails(Admin admin) {
+        /**
+    * Constructor for adding a new employee.Initializes UI components and services for employee creation.
+    *
+    *
+     * @param employeeID 
+    */
+    public ViewEmployeeDetails(int employeeID) {
         initComponents();
-        jLabelErrorMessage.setVisible(false);
-        jButton1EditProfile.setVisible(false);
-        this.isNewEmployee = true; 
-        this.user = admin;
-        admin.addLogoutListener(this);
+
+        this.retrievalService = new EmployeeRetrievalService(new SQLExecutor(connection));
+        this.creationService = new EmployeeCreationService(connection);
+        this.updateService = new EmployeeUpdateService(connection);
+
+        this.currentEmployee = null; // Indicates adding new record mode
+        jButton2SaveChanges.setText("Add Employee");
         
-        jButton2SaveChanges.setText("Add Employee"); // Change button text to indicate adding a new employee     
-    }
-    
-     /**
-     * Constructor for viewing or editing an existing employee's details.
-     * Loads employee information based on the provided Employee ID.
-     *
-     * @param user
-     * @param employeeID ID of the employee to be viewed/edited.
-     */
-    public ViewEmployeeDetails(User user, String employeeID)  {
-        initComponents();
-        jLabelErrorMessage.setVisible(false);
-        jButton1EditProfile.setVisible(false);
-        isNewEmployee = false;
-        this.employeeID = employeeID;     
-        this.employee = new EmployeeService().getEmployeeInformation(employeeID);
-        this.user = user;
-        user.addLogoutListener(this);
-        
-//        // Populate the text fields with the existing employee data
-//        jTextField1LastName.setText(this.employee.getLastName());
-//        jTextField2FirstName.setText(this.employee.getFirstName());
-//        ((JTextField)jDateChooserBirthday.getDateEditor().getUiComponent()).setText(this.employee.getBirthday());        
-//        jTextField4Address.setText(this.employee.getAddress());
-//        jTextField5PhoneNumber.setText(this.employee.getPhoneNumber());
-//        jTextField6SSS.setText(this.employee.getSSSNumber());
-//        jTextField7Philhealth.setText(this.employee.getPhilhealthNumber());
-//        jTextField8TIN.setText(this.employee.getTinNumber());
-//        jTextField13Pagibig.setText(this.employee.getPagibigNumber());
-//        jTextField15Status.setText(this.employee.getEmploymentStatus());
-//        jTextField16Position.setText(this.employee.getPosition());
-//        jTextField10ImmediateSupervisor.setText(this.employee.getImmediateSupervisor());
-//        jTextField11BasicSalary.setText(Formatter.formatAmount(this.employee.getBasicSalary()));
-//        jTextField12RiceSubsidy.setText(Formatter.formatAmount(this.employee.getRiceSubsidy()));
-//        jTextField14PhoneAllowance.setText(Formatter.formatAmount(this.employee.getPhoneAllowance()));
-//        jTextField9ClothingAllowance.setText(Formatter.formatAmount(this.employee.getClothingAllowance()));
-//        jTextField17GrossSemi.setText(Formatter.formatAmount(this.employee.getGrossSemiMonthlyRate()));
-//        jTextField18HourlyRate.setText(Formatter.formatAmount(this.employee.getHourlyRate()));
-               
-        disableAllTextField(); // Disable text fields to prevent accidental modifications
-        
-        this.personalInformation = new InformationService().getPersonalInformation(employeeID);
-        this.governmentInformation = new InformationService().getGovernmentInformation(employeeID);
-        this.employmentInformation = new InformationService().getEmploymentInformation(employeeID);
-        viewPersonalInformation(this.personalInformation);
-        viewGovernmentInformation(this.governmentInformation);
-        viewEmploymentInformation(this.employmentInformation);
-        
-        if (this.user instanceof NonAdmin){
-            jPanelAdmin.setVisible(false);
-        }
-        
-        jDateChooserBirthday.getDateEditor().getUiComponent().addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                jDateChooserBirthday.setEnabled(true);
-            }
-        });
-        
-        jDateChooserDateHired.getDateEditor().getUiComponent().addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                jDateChooserBirthday.setEnabled(true);
-            }
-        });
-        
-    }
-    
-    public void viewPersonalInformation(PersonalInformation personalInformation){      
-    jTextField1LastName.setText(personalInformation.getLastName());
-    jTextField2FirstName.setText(personalInformation.getFirstName());
-    LocalDate date = this.personalInformation.getBirthday();
-    ((JTextField) jDateChooserBirthday.getDateEditor().getUiComponent()).setText(dateFormat.format(date));
-    jTextField4Address.setText(personalInformation.getAddress());
-    jTextField5PhoneNumber.setText(personalInformation.getPhoneNumber());
-    }
-    
-    public void viewGovernmentInformation(GovernmentInformation governmentInformation){      
-        jTextField6SSS.setText(governmentInformation.getSssNumber());
-        jTextField7Philhealth.setText(governmentInformation.getPhilhealthNumber());
-        jTextField13Pagibig.setText(governmentInformation.getPagibigNumber());
-        jTextField8TIN.setText(governmentInformation.getTaxIdentificationNumber());
-    }
-    
-    public void viewEmploymentInformation(EmploymentInformation employmentInformation){      
-        jTextField16Position.setText(employmentInformation.getJobTitle().getJobName());
-        jTextField15Status.setText(employmentInformation.getEmploymentType());
-        jTextField10ImmediateSupervisor.setText(employmentInformation.getImmediateSupervisor());
-        LocalDate date = this.employmentInformation.getDateHired();
-        ((JTextField) jDateChooserDateHired.getDateEditor().getUiComponent()).setText(dateFormat.format(date));
-        jTextField11BasicSalary.setText(employmentInformation.getBasicSalary());
-        jTextField12RiceSubsidy.setText(employmentInformation.getRiceSubsidy());
-        jTextField14PhoneAllowance.setText(employmentInformation.getPhoneAllowance());
-        jTextField9ClothingAllowance.setText(employmentInformation.getClothingAllowance());
-        jTextField17GrossSemi.setText(employmentInformation.getGrossSemiMonthlyRate());
-        jTextField18HourlyRate.setText(employmentInformation.getHourlyRate());
+        // Retrieve employee details from DB and populate fields
+        this.currentEmployee = retrievalService.getEmployeeById(employeeID);
+        loadEmployeeDetails(this.currentEmployee);
+        disableAllTextFields();
     }
 
+    /**
+    * Constructor for adding a new employee.
+    *
+    * Initializes UI components and services for employee creation.
+    * 
+    * @param admin The admin user performing the operation.
+    */
+    public ViewEmployeeDetails(Admin admin) {
+        initComponents();
+        this.user = admin;
+
+        this.retrievalService = new EmployeeRetrievalService(new SQLExecutor(connection));
+        this.creationService = new EmployeeCreationService(connection);
+        this.updateService = new EmployeeUpdateService(connection);
+
+        admin.addLogoutListener(this);
+
+        if (user instanceof NonAdmin) {
+            jPanelAdmin.setVisible(false);
+        }
+
+        this.currentEmployee = null; // Indicates adding new record mode
+        jButton2SaveChanges.setText("Add Employee");
+    }
+
+    /**
+    * Constructor for viewing/editing an existing employee's record.
+    *
+    * Fetches employee data from the database and displays it in the form.
+    * Fields are read-only by default to prevent unintended edits.
+    * 
+    * @param admin       The admin user performing the operation.
+    * @param employeeID  The ID of the employee whose details are to be displayed.
+    */
+    public ViewEmployeeDetails(Admin admin, int employeeID) {
+        initComponents();
+        this.user = admin;
+
+        this.retrievalService = new EmployeeRetrievalService(new SQLExecutor(connection));
+        this.creationService = new EmployeeCreationService(connection);
+        this.updateService = new EmployeeUpdateService(connection);
+
+        admin.addLogoutListener(this);
+
+        if (user instanceof NonAdmin) {
+            jPanelAdmin.setVisible(false);
+        }
+
+        // Retrieve employee details from DB and populate fields
+        this.currentEmployee = retrievalService.getEmployeeById(employeeID);
+        loadEmployeeDetails(this.currentEmployee);
+        disableAllTextFields();
+    }
+
+    /**
+    * Populates the form fields with the data of the specified employee.
+    *
+    * @param emp The employee whose details are to be loaded into the UI.
+    */
+    private void loadEmployeeDetails(Employee emp) {
+        jTextField2FirstName.setText(emp.getFirstName());
+        jTextField1LastName.setText(emp.getLastName());
+        jDateChooserBirthday.setDate(emp.getBirthday());
+        jTextField5PhoneNumber.setText(emp.getPhoneNumber());
+        jTextField6Email.setText(emp.getEmail());
+
+        jTextField5HouseNo.setText(emp.getHouseNumber());
+        jTextField7Street.setText(emp.getStreet());
+        jTextField8Barangay.setText(emp.getBarangay());
+        jTextField13Municipality.setText(emp.getMunicipality());
+        jTextField15Province.setText(emp.getProvince());
+        jTextField16PostalCode.setText(emp.getPostalCode());
+        jTextField10Country.setText(emp.getCountry());
+        jTextField10AddressType.setText(emp.getAddressType());
+
+        jTextField4SSS.setText(emp.getSssNumber());
+        jTextFieldPhilhealth.setText(emp.getPhilhealthNumber());
+        jTextField4Pagibig.setText(emp.getPagibigNumber());
+        jTextField4TIN.setText(emp.getTaxIdentificationNumber());
+
+        jTextField10EmployementType.setText(emp.getEmploymentType());
+        jTextField4EmployementStatus.setText(emp.getEmploymentStatus());
+        jDateChooserDateHired.setDate(emp.getDateHired());
+        jTextField4JobTitle.setText(emp.getJobTitle());
+        jTextField4Department.setText(emp.getDepartment());
+        jTextField4SupervisorId.setText(String.valueOf(emp.getSupervisorId()));
+
+        jTextField11SalaryGrade.setText(String.valueOf(emp.getSalaryGrade()));
+        jTextField11BasicSalary.setText(emp.getBasicSalary().toString());
+        jTextField12RiceSubsidy.setText(emp.getRiceSubsidy().toString());
+        jTextField14PhoneAllowance.setText(emp.getPhoneAllowance().toString());
+        jTextField9ClothingAllowance.setText(emp.getClothingAllowance().toString());
+        jTextField17GrossSemi.setText(emp.getGrossSemiMonthlyRate().toString());
+        jTextField18HourlyRate.setText(emp.getHourlyRate().toString());
+    }
+
+    /**
+     * Saves the employee form data.
+     * If currentEmployee is null, it creates a new employee.
+     * Otherwise, it updates the existing employee.
+     *
+     * @throws SQLException if an error occurs during the save operation.
+     */
+    private void saveEmployee() throws SQLException {
+        Employee emp = collectEmployeeFromFields();
+
+        if (currentEmployee == null) {
+            addEmployee(emp);
+        } else {
+            updateEmployee(emp);
+        }
+    }
+
+    /**
+     * Adds a new employee to the database.
+     *
+     * @param emp Employee object containing new employee data.
+     * @throws SQLException if an error occurs during insertion.
+     */
+    private void addEmployee(Employee emp) throws SQLException {
+        creationService.addEmployee(emp);
+    }
+
+    /**
+     * Updates an existing employee in the database.
+     *
+     * @param emp Employee object containing updated data.
+     * @throws SQLException if an error occurs during update.
+     */
+    private void updateEmployee(Employee emp) throws SQLException {
+        emp.setEmployeeId(currentEmployee.getEmployeeId());
+        updateService.updateEmployee(emp);
+    }
+
+    /**
+     * Collects data from form fields and creates an Employee object.
+     *
+     * @return A populated Employee object.
+     */
+    private Employee collectEmployeeFromFields() {
+        Employee emp = new Employee();
+
+            emp.setFirstName(jTextField2FirstName.getText().trim());
+            emp.setLastName(jTextField1LastName.getText().trim());
+            emp.setBirthday(jDateChooserBirthday.getDate());
+            emp.setPhoneNumber(jTextField5PhoneNumber.getText().trim());
+            emp.setEmail(jTextField6Email.getText().trim());
+
+            emp.setHouseNumber(jTextField5HouseNo.getText().trim());
+            emp.setStreet(jTextField7Street.getText().trim());
+            emp.setBarangay(jTextField8Barangay.getText().trim());
+            emp.setMunicipality(jTextField13Municipality.getText().trim());
+            emp.setProvince(jTextField15Province.getText().trim());
+            emp.setPostalCode(jTextField16PostalCode.getText().trim());
+            emp.setCountry(jTextField10Country.getText().trim());
+            emp.setAddressType(jTextField10AddressType.getText().trim());
+
+            emp.setSssNumber(jTextField4SSS.getText().trim());
+            emp.setPhilhealthNumber(jTextFieldPhilhealth.getText().trim());
+            emp.setPagibigNumber(jTextField4Pagibig.getText().trim());
+            emp.setTaxIdentificationNumber(jTextField4TIN.getText().trim());
+
+            emp.setEmploymentType(jTextField10EmployementType.getText().trim());
+            emp.setEmploymentStatus(jTextField4EmployementStatus.getText().trim());
+            emp.setDateHired(jDateChooserDateHired.getDate());
+            emp.setJobTitle(jTextField4JobTitle.getText().trim());
+            emp.setDepartment(jTextField4Department.getText().trim());
+            emp.setSupervisorId(Integer.parseInt(jTextField4SupervisorId.getText().trim()));
+
+            emp.setSalaryGrade(Integer.parseInt(jTextField11SalaryGrade.getText().trim()));
+            emp.setBasicSalary(new BigDecimal(jTextField11BasicSalary.getText().trim()));
+            emp.setRiceSubsidy(new BigDecimal(jTextField12RiceSubsidy.getText().trim()));
+            emp.setPhoneAllowance(new BigDecimal(jTextField14PhoneAllowance.getText().trim()));
+            emp.setClothingAllowance(new BigDecimal(jTextField9ClothingAllowance.getText().trim()));
+            emp.setGrossSemiMonthlyRate(new BigDecimal(jTextField17GrossSemi.getText().trim()));
+            emp.setHourlyRate(new BigDecimal(jTextField18HourlyRate.getText().trim()));
+
+            return emp;
+    }
+
+    //Disables all editable fields in the form to make it read-only.
+    private void disableAllTextFields() {
+        jTextField1LastName.setEnabled(false);
+        jTextField2FirstName.setEnabled(false);
+        jTextField5PhoneNumber.setEnabled(false);
+        jTextField6Email.setEnabled(false);
+        jTextField5HouseNo.setEnabled(false);
+        jTextField7Street.setEnabled(false);
+        jTextField8Barangay.setEnabled(false);
+        jTextField13Municipality.setEnabled(false);
+        jTextField15Province.setEnabled(false);
+        jTextField16PostalCode.setEnabled(false);
+        jTextField10Country.setEnabled(false);
+        jTextField10AddressType.setEnabled(false);
+        jTextField4SSS.setEnabled(false);
+        jTextFieldPhilhealth.setEnabled(false);
+        jTextField4Pagibig.setEnabled(false);
+        jTextField4TIN.setEnabled(false);
+        jTextField10EmployementType.setEnabled(false);
+        jTextField4EmployementStatus.setEnabled(false);
+        jTextField4JobTitle.setEnabled(false);
+        jTextField4Department.setEnabled(false);
+        jTextField4SupervisorId.setEnabled(false);
+        jTextField11SalaryGrade.setEnabled(false);
+        jTextField11BasicSalary.setEnabled(false);
+        jTextField12RiceSubsidy.setEnabled(false);
+        jTextField14PhoneAllowance.setEnabled(false);
+        jTextField9ClothingAllowance.setEnabled(false);
+        jTextField17GrossSemi.setEnabled(false);
+        jTextField18HourlyRate.setEnabled(false);
+
+        // Date choosers
+        jDateChooserBirthday.getDateEditor().setEnabled(false);
+        jDateChooserDateHired.getDateEditor().setEnabled(false);
+    }
+      
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -168,6 +300,7 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jTextField4Address6 = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jPanelAdmin = new javax.swing.JPanel();
         jButton1EmployeeInformation = new javax.swing.JButton();
@@ -181,43 +314,63 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
         jLabel1LastName = new javax.swing.JLabel();
         jLabel2FirstName = new javax.swing.JLabel();
         jLabel3Birthday = new javax.swing.JLabel();
-        jLabel4Address = new javax.swing.JLabel();
-        jTextField4Address = new javax.swing.JTextField();
+        jLabel4HouseNo = new javax.swing.JLabel();
+        jTextField4Department = new javax.swing.JTextField();
         jLabel5EditEmployeeDetails = new javax.swing.JLabel();
         jLabel6PhoneNumber = new javax.swing.JLabel();
         jTextField5PhoneNumber = new javax.swing.JTextField();
         jLabel7SSS = new javax.swing.JLabel();
-        jTextField6SSS = new javax.swing.JTextField();
+        jTextField6Email = new javax.swing.JTextField();
         jLabel8Philhealth = new javax.swing.JLabel();
-        jTextField7Philhealth = new javax.swing.JTextField();
+        jTextField7Street = new javax.swing.JTextField();
         jLabel9TIN = new javax.swing.JLabel();
-        jTextField8TIN = new javax.swing.JTextField();
+        jTextField8Barangay = new javax.swing.JTextField();
         jTextField9ClothingAllowance = new javax.swing.JTextField();
-        jLabel10ImmediateSupervisor = new javax.swing.JLabel();
-        jTextField10ImmediateSupervisor = new javax.swing.JTextField();
+        jLabel10JobTitle = new javax.swing.JLabel();
+        jTextField10AddressType = new javax.swing.JTextField();
         jLabel11BasicSalary = new javax.swing.JLabel();
         jTextField11BasicSalary = new javax.swing.JTextField();
         jLabel12RiceSubsidy = new javax.swing.JLabel();
         jTextField12RiceSubsidy = new javax.swing.JTextField();
         jLabel13Pagibig = new javax.swing.JLabel();
         jLabel14PhoneAllowance = new javax.swing.JLabel();
-        jTextField13Pagibig = new javax.swing.JTextField();
-        jLabel15Status = new javax.swing.JLabel();
+        jTextField13Municipality = new javax.swing.JTextField();
+        jLabel15EmployementType = new javax.swing.JLabel();
         jTextField14PhoneAllowance = new javax.swing.JTextField();
-        jTextField15Status = new javax.swing.JTextField();
-        jLabel16Position = new javax.swing.JLabel();
+        jTextField15Province = new javax.swing.JTextField();
+        jLabel16EmployementStatus = new javax.swing.JLabel();
         jLabel17ClothingAllowance = new javax.swing.JLabel();
-        jTextField16Position = new javax.swing.JTextField();
+        jTextField16PostalCode = new javax.swing.JTextField();
         jLabel19GrossSemi = new javax.swing.JLabel();
         jLabel20HourlyRate = new javax.swing.JLabel();
         jTextField17GrossSemi = new javax.swing.JTextField();
         jTextField18HourlyRate = new javax.swing.JTextField();
-        jButton1EditProfile = new javax.swing.JButton();
         jButton2SaveChanges = new javax.swing.JButton();
         jDateChooserBirthday = new com.toedter.calendar.JDateChooser();
-        jLabelErrorMessage = new javax.swing.JLabel();
-        jLabelDateHired = new javax.swing.JLabel();
+        jLabelSupervisorId = new javax.swing.JLabel();
         jDateChooserDateHired = new com.toedter.calendar.JDateChooser();
+        jLabel6PEmail = new javax.swing.JLabel();
+        jTextField5HouseNo = new javax.swing.JTextField();
+        jLabel11SalaryGrade = new javax.swing.JLabel();
+        jTextField11SalaryGrade = new javax.swing.JTextField();
+        jLabel11DateHired = new javax.swing.JLabel();
+        jLabel11Department = new javax.swing.JLabel();
+        jTextField10Country = new javax.swing.JTextField();
+        jTextField10EmployementType = new javax.swing.JTextField();
+        jLabel4AddressType = new javax.swing.JLabel();
+        jLabel4Country = new javax.swing.JLabel();
+        jTextField4EmployementStatus = new javax.swing.JTextField();
+        jTextField4SSS = new javax.swing.JTextField();
+        jTextField4SupervisorId = new javax.swing.JTextField();
+        jTextFieldPhilhealth = new javax.swing.JTextField();
+        jTextField4TIN = new javax.swing.JTextField();
+        jTextField4JobTitle = new javax.swing.JTextField();
+        jLabel4Street = new javax.swing.JLabel();
+        jLabel4Municipality = new javax.swing.JLabel();
+        jTextField4Pagibig = new javax.swing.JTextField();
+        jLabel4Barangay = new javax.swing.JLabel();
+        jLabel4Province = new javax.swing.JLabel();
+        jLabel4PostalCode = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -354,11 +507,11 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
 
         jLabel3Birthday.setText("Birthday");
 
-        jLabel4Address.setText("Address");
+        jLabel4HouseNo.setText("House No.");
 
-        jTextField4Address.addMouseListener(new java.awt.event.MouseAdapter() {
+        jTextField4Department.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTextField4AddressMouseClicked(evt);
+                jTextField4DepartmentMouseClicked(evt);
             }
         });
 
@@ -375,25 +528,25 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
 
         jLabel7SSS.setText("SSS #");
 
-        jTextField6SSS.addMouseListener(new java.awt.event.MouseAdapter() {
+        jTextField6Email.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTextField6SSSMouseClicked(evt);
+                jTextField6EmailMouseClicked(evt);
             }
         });
 
         jLabel8Philhealth.setText("Philhealth #");
 
-        jTextField7Philhealth.addMouseListener(new java.awt.event.MouseAdapter() {
+        jTextField7Street.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTextField7PhilhealthMouseClicked(evt);
+                jTextField7StreetMouseClicked(evt);
             }
         });
 
         jLabel9TIN.setText("TIN #");
 
-        jTextField8TIN.addMouseListener(new java.awt.event.MouseAdapter() {
+        jTextField8Barangay.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTextField8TINMouseClicked(evt);
+                jTextField8BarangayMouseClicked(evt);
             }
         });
 
@@ -403,11 +556,11 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
             }
         });
 
-        jLabel10ImmediateSupervisor.setText("Immediate Supervisor");
+        jLabel10JobTitle.setText("Job Title");
 
-        jTextField10ImmediateSupervisor.addMouseListener(new java.awt.event.MouseAdapter() {
+        jTextField10AddressType.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTextField10ImmediateSupervisorMouseClicked(evt);
+                jTextField10AddressTypeMouseClicked(evt);
             }
         });
 
@@ -431,13 +584,13 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
 
         jLabel14PhoneAllowance.setText("Phone Allowance");
 
-        jTextField13Pagibig.addMouseListener(new java.awt.event.MouseAdapter() {
+        jTextField13Municipality.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTextField13PagibigMouseClicked(evt);
+                jTextField13MunicipalityMouseClicked(evt);
             }
         });
 
-        jLabel15Status.setText("Status");
+        jLabel15EmployementType.setText("Employement Type");
 
         jTextField14PhoneAllowance.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -445,19 +598,19 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
             }
         });
 
-        jTextField15Status.addMouseListener(new java.awt.event.MouseAdapter() {
+        jTextField15Province.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTextField15StatusMouseClicked(evt);
+                jTextField15ProvinceMouseClicked(evt);
             }
         });
 
-        jLabel16Position.setText("Position");
+        jLabel16EmployementStatus.setText("Employement Status");
 
         jLabel17ClothingAllowance.setText("Clothing Allowance");
 
-        jTextField16Position.addMouseListener(new java.awt.event.MouseAdapter() {
+        jTextField16PostalCode.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTextField16PositionMouseClicked(evt);
+                jTextField16PostalCodeMouseClicked(evt);
             }
         });
 
@@ -477,13 +630,6 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
             }
         });
 
-        jButton1EditProfile.setText("Edit Profile");
-        jButton1EditProfile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1EditProfileActionPerformed(evt);
-            }
-        });
-
         jButton2SaveChanges.setText("Save Changes");
         jButton2SaveChanges.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -498,11 +644,7 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
             }
         });
 
-        jLabelErrorMessage.setForeground(java.awt.Color.red);
-        jLabelErrorMessage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelErrorMessage.setText("Error Message");
-
-        jLabelDateHired.setText("Date Hired");
+        jLabelSupervisorId.setText("Supervisor ID");
 
         jDateChooserDateHired.setDateFormatString("M/d/yyyy");
         jDateChooserDateHired.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -510,6 +652,94 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
                 jDateChooserDateHiredMouseClicked(evt);
             }
         });
+
+        jLabel6PEmail.setText("Email");
+
+        jTextField5HouseNo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextField5HouseNoMouseClicked(evt);
+            }
+        });
+
+        jLabel11SalaryGrade.setText("Salary Grade");
+
+        jTextField11SalaryGrade.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextField11SalaryGradeMouseClicked(evt);
+            }
+        });
+
+        jLabel11DateHired.setText("Date Hired");
+
+        jLabel11Department.setText("Department");
+
+        jTextField10Country.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextField10CountryMouseClicked(evt);
+            }
+        });
+
+        jTextField10EmployementType.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextField10EmployementTypeMouseClicked(evt);
+            }
+        });
+
+        jLabel4AddressType.setText("Address Type");
+
+        jLabel4Country.setText("Country");
+
+        jTextField4EmployementStatus.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextField4EmployementStatusMouseClicked(evt);
+            }
+        });
+
+        jTextField4SSS.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextField4SSSMouseClicked(evt);
+            }
+        });
+
+        jTextField4SupervisorId.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextField4SupervisorIdMouseClicked(evt);
+            }
+        });
+
+        jTextFieldPhilhealth.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextFieldPhilhealthMouseClicked(evt);
+            }
+        });
+
+        jTextField4TIN.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextField4TINMouseClicked(evt);
+            }
+        });
+
+        jTextField4JobTitle.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextField4JobTitleMouseClicked(evt);
+            }
+        });
+
+        jLabel4Street.setText("Street");
+
+        jLabel4Municipality.setText("Municipality");
+
+        jTextField4Pagibig.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextField4PagibigMouseClicked(evt);
+            }
+        });
+
+        jLabel4Barangay.setText("Barangay");
+
+        jLabel4Province.setText("Province");
+
+        jLabel4PostalCode.setText("Postal Code");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -520,71 +750,94 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
                 .addComponent(jPanelAdmin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelErrorMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel5EditEmployeeDetails, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6PEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6PhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2FirstName, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3Birthday, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(152, 152, 152)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jDateChooserBirthday, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jTextField5PhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel1LastName, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4HouseNo, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel4Street, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4Barangay, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4Municipality, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel15EmployementType, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel16EmployementStatus, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel4Province, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel4PostalCode, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4Country, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4AddressType, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jTextField2FirstName)
+                                    .addComponent(jTextField10AddressType)
+                                    .addComponent(jTextField16PostalCode)
+                                    .addComponent(jTextField15Province)
+                                    .addComponent(jTextField13Municipality)
+                                    .addComponent(jTextField8Barangay)
+                                    .addComponent(jTextField7Street)
+                                    .addComponent(jTextField6Email)
+                                    .addComponent(jTextField5HouseNo)
+                                    .addComponent(jTextField10Country)
+                                    .addComponent(jTextField10EmployementType)
+                                    .addComponent(jTextField4EmployementStatus, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
+                                    .addComponent(jTextField1LastName, javax.swing.GroupLayout.Alignment.TRAILING))))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel2FirstName, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-                                    .addComponent(jLabel1LastName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(44, 44, 44)
+                                .addGap(77, 77, 77)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jDateChooserBirthday, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(jTextField2FirstName, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                                        .addComponent(jTextField1LastName))))
-                            .addComponent(jLabel5EditEmployeeDetails, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel11BasicSalary, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel19GrossSemi)
+                                    .addComponent(jLabel20HourlyRate)
+                                    .addComponent(jLabel11SalaryGrade, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jLabel14PhoneAllowance, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel17ClothingAllowance))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(3, 3, 3)
+                                        .addComponent(jLabel12RiceSubsidy, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel11DateHired, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(layout.createSequentialGroup()
+                                .addGap(74, 74, 74)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel6PhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel4Address, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel3Birthday, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel8Philhealth, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel7SSS, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(jLabel9TIN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jLabel8Philhealth, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jLabel13Pagibig, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jLabel15Status, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jLabel16Position, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jLabel10ImmediateSupervisor, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addComponent(jLabelDateHired, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addGap(86, 86, 86))))
-                                .addGap(44, 44, 44)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(jTextField5PhoneNumber, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                                        .addGap(122, 122, 122)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel11BasicSalary, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jLabel12RiceSubsidy, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jLabel14PhoneAllowance, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jLabel17ClothingAllowance)
-                                            .addComponent(jLabel19GrossSemi)
-                                            .addComponent(jLabel20HourlyRate))
-                                        .addGap(25, 25, 25)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(jTextField11BasicSalary, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
-                                            .addComponent(jTextField12RiceSubsidy)
-                                            .addComponent(jTextField9ClothingAllowance)
-                                            .addComponent(jTextField17GrossSemi)
-                                            .addComponent(jTextField18HourlyRate)
-                                            .addComponent(jTextField14PhoneAllowance)))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(jButton1EditProfile)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jButton2SaveChanges))
-                                    .addComponent(jTextField4Address, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jTextField7Philhealth, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                                    .addComponent(jTextField6SSS, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                                    .addComponent(jTextField8TIN, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                                    .addComponent(jTextField13Pagibig, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                                    .addComponent(jTextField15Status, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                                    .addComponent(jTextField16Position, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                                    .addComponent(jTextField10ImmediateSupervisor, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                                    .addComponent(jDateChooserDateHired, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap(50, Short.MAX_VALUE))
+                                    .addComponent(jLabel13Pagibig, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel9TIN, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel10JobTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabelSupervisorId, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel11Department, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextField4Pagibig, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField4Department, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField4SSS, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField4SupervisorId, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextFieldPhilhealth, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField4TIN, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField4JobTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jDateChooserDateHired, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGap(94, 94, 94)
+                                    .addComponent(jButton2SaveChanges, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE))
+                                .addComponent(jTextField18HourlyRate, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jTextField17GrossSemi, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jTextField9ClothingAllowance, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jTextField14PhoneAllowance, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jTextField12RiceSubsidy, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jTextField11BasicSalary, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jTextField11SalaryGrade, javax.swing.GroupLayout.Alignment.LEADING)))))
+                .addGap(0, 44, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -598,81 +851,127 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
                         .addGap(20, 20, 20)
                         .addComponent(jLabel5EditEmployeeDetails)
                         .addGap(18, 18, 18)
-                        .addComponent(jLabelErrorMessage, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1LastName)
-                            .addComponent(jTextField1LastName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2FirstName)
-                            .addComponent(jTextField2FirstName, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel3Birthday)
-                            .addComponent(jDateChooserBirthday, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField4Address, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4Address))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField11BasicSalary, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel6PhoneNumber)
-                                .addComponent(jTextField5PhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel11BasicSalary)))
+                            .addComponent(jTextField2FirstName, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField4SSS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel7SSS))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel7SSS)
-                                    .addComponent(jLabel12RiceSubsidy)
-                                    .addComponent(jTextField12RiceSubsidy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel1LastName)
+                                    .addComponent(jTextField1LastName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jTextFieldPhilhealth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel8Philhealth))
                                 .addGap(18, 18, 18)
-                                .addComponent(jTextField6SSS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel8Philhealth)
-                            .addComponent(jTextField7Philhealth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel14PhoneAllowance)
-                            .addComponent(jTextField14PhoneAllowance, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel9TIN)
-                            .addComponent(jTextField8TIN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel17ClothingAllowance)
-                            .addComponent(jTextField9ClothingAllowance, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel13Pagibig)
-                            .addComponent(jTextField13Pagibig, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel19GrossSemi)
-                            .addComponent(jTextField17GrossSemi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel15Status)
-                            .addComponent(jTextField15Status, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel20HourlyRate)
-                            .addComponent(jTextField18HourlyRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel16Position)
-                            .addComponent(jTextField16Position, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel10ImmediateSupervisor)
-                            .addComponent(jTextField10ImmediateSupervisor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabelDateHired)
-                            .addComponent(jDateChooserDateHired, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton2SaveChanges)
-                            .addComponent(jButton1EditProfile))
-                        .addGap(15, 15, 15))))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jDateChooserBirthday, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel3Birthday))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jTextField4Pagibig, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel13Pagibig)))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextField5PhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel6PhoneNumber)
+                                    .addComponent(jTextField4TIN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel9TIN))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextField6Email, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel6PEmail))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextField5HouseNo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4HouseNo))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextField7Street, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4Street))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jTextField8Barangay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4Barangay))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextField13Municipality, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4Municipality))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(jTextField15Province, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel4Province))
+                                        .addGap(18, 18, 18)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(jTextField16PostalCode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel4PostalCode))
+                                        .addGap(18, 18, 18)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(jTextField10Country, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel4Country))
+                                        .addGap(18, 18, 18)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(jTextField10AddressType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel4AddressType))
+                                        .addGap(18, 18, 18)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(jTextField10EmployementType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel15EmployementType))
+                                        .addGap(40, 40, 40))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel16EmployementStatus)
+                                        .addComponent(jTextField4EmployementStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(143, 143, 143)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextField4JobTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel10JobTitle))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextField4SupervisorId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabelSupervisorId))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextField4Department, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel11Department))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel11DateHired)
+                                    .addComponent(jDateChooserDateHired, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(21, 21, 21)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextField11SalaryGrade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel11SalaryGrade))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextField11BasicSalary, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel11BasicSalary))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextField12RiceSubsidy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel12RiceSubsidy))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextField14PhoneAllowance, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel14PhoneAllowance))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextField9ClothingAllowance, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel17ClothingAllowance))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel19GrossSemi, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jTextField17GrossSemi, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel20HourlyRate)
+                                    .addComponent(jTextField18HourlyRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(17, 17, 17)
+                        .addComponent(jButton2SaveChanges)
+                        .addContainerGap())))
         );
 
         pack();
@@ -688,55 +987,21 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
         user.logout(this);
     }//GEN-LAST:event_jButton6LogOutActionPerformed
 
-    /**
-     * Saves changes to an employee record or adds a new employee.
-     * If adding a new employee, the record is appended to the employee list.
-     * If updating, the corresponding record is modified.
-     */
     private void jButton2SaveChangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2SaveChangesActionPerformed
-        String validateRequiredTextFields = ComponentsValidator.validateRequiredJTextField(getAllTextField());
-        if (!validateRequiredTextFields.isEmpty()) {
-            MessageDialog.showErrorMessage(validateRequiredTextFields);
-            return;
+    try {
+        saveEmployee();  // Attempt to save the employee (either create or update)
+
+        JOptionPane.showMessageDialog(this, "Action completed successfully."); // Notify the user
+
+        if (currentEmployee != null) {
+            disableAllTextFields(); // Disable fields again after update
+        } else {
+            clearAllTextFields(); // Clear the form after adding a new employee
         }
 
-        String validateRequiredJDateChooser = ComponentsValidator.validateRequiredJDateChooser(jDateChooserBirthday);
-        if (!validateRequiredJDateChooser.isEmpty()) {
-            MessageDialog.showErrorMessage(validateRequiredJDateChooser);
-            return;
-        }
-
-        StringBuilder validationErrors = validateAllTextField();
-        if (!validationErrors.toString().isEmpty()) {
-            MessageDialog.showErrorMessage(validationErrors.toString());
-            System.out.print("Still have Error");
-            return;
-        }       
-        
-        employeeManager = new EmployeeService();
-        
-        if (isNewEmployee) {
-            Employee newEmployee = getEmployee(); 
-            employeeManager.addEmployee(newEmployee);
-            this.employeeID = newEmployee.getEmployeeID();
-            
-            employeeManager.addEmployeeInformation(getPersonalInformation());
-            
-//            employeeManager.addEmployeeInformation(getPersonalInformation(), getEmploymentInformation(), getGovernmentInformation());
-            
-            clearAllTextField(); // Prevent further edits
-
-            JOptionPane.showMessageDialog(null, "Successfully Added Employee"); // Confirmation message
-            return; // Exit method, keeping the form in adding mode
-        }
-
-//        employeeManager.updateInformation(getEmployee());
-        employeeManager.updateInformation(getEmployee(), getPersonalInformation(), getEmploymentInformation(), getGovernmentInformation());
-            
-        disableAllTextField(); // Disable text fields after saving
-            
-        JOptionPane.showMessageDialog(null, "Successfully Updated"); // Confirmation message
-        
+     } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error saving employee data. Please review your input and try again.");  // Show a generic error message
+    }             
     }//GEN-LAST:event_jButton2SaveChangesActionPerformed
 
     private void jTextField1LastNameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField1LastNameMouseClicked
@@ -747,41 +1012,41 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
         jTextField2FirstName.setEnabled(true);
     }//GEN-LAST:event_jTextField2FirstNameMouseClicked
 
-    private void jTextField4AddressMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField4AddressMouseClicked
-        jTextField4Address.setEnabled(true);
-    }//GEN-LAST:event_jTextField4AddressMouseClicked
+    private void jTextField4DepartmentMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField4DepartmentMouseClicked
+        jTextField4Department.setEnabled(true);
+    }//GEN-LAST:event_jTextField4DepartmentMouseClicked
 
     private void jTextField5PhoneNumberMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField5PhoneNumberMouseClicked
         jTextField5PhoneNumber.setEnabled(true);
     }//GEN-LAST:event_jTextField5PhoneNumberMouseClicked
 
-    private void jTextField6SSSMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField6SSSMouseClicked
-        jTextField6SSS.setEnabled(true);
-    }//GEN-LAST:event_jTextField6SSSMouseClicked
+    private void jTextField6EmailMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField6EmailMouseClicked
+        jTextField6Email.setEnabled(true);
+    }//GEN-LAST:event_jTextField6EmailMouseClicked
 
-    private void jTextField7PhilhealthMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField7PhilhealthMouseClicked
-        jTextField7Philhealth.setEnabled(true);
-    }//GEN-LAST:event_jTextField7PhilhealthMouseClicked
+    private void jTextField7StreetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField7StreetMouseClicked
+        jTextField7Street.setEnabled(true);
+    }//GEN-LAST:event_jTextField7StreetMouseClicked
 
-    private void jTextField8TINMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField8TINMouseClicked
-        jTextField8TIN.setEnabled(true);
-    }//GEN-LAST:event_jTextField8TINMouseClicked
+    private void jTextField8BarangayMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField8BarangayMouseClicked
+        jTextField8Barangay.setEnabled(true);
+    }//GEN-LAST:event_jTextField8BarangayMouseClicked
 
-    private void jTextField13PagibigMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField13PagibigMouseClicked
-        jTextField13Pagibig.setEnabled(true);
-    }//GEN-LAST:event_jTextField13PagibigMouseClicked
+    private void jTextField13MunicipalityMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField13MunicipalityMouseClicked
+        jTextField13Municipality.setEnabled(true);
+    }//GEN-LAST:event_jTextField13MunicipalityMouseClicked
 
-    private void jTextField15StatusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField15StatusMouseClicked
-        jTextField15Status.setEnabled(true);
-    }//GEN-LAST:event_jTextField15StatusMouseClicked
+    private void jTextField15ProvinceMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField15ProvinceMouseClicked
+        jTextField15Province.setEnabled(true);
+    }//GEN-LAST:event_jTextField15ProvinceMouseClicked
 
-    private void jTextField16PositionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField16PositionMouseClicked
-        jTextField16Position.setEnabled(true);
-    }//GEN-LAST:event_jTextField16PositionMouseClicked
+    private void jTextField16PostalCodeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField16PostalCodeMouseClicked
+        jTextField16PostalCode.setEnabled(true);
+    }//GEN-LAST:event_jTextField16PostalCodeMouseClicked
 
-    private void jTextField10ImmediateSupervisorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField10ImmediateSupervisorMouseClicked
-        jTextField10ImmediateSupervisor.setEnabled(true);
-    }//GEN-LAST:event_jTextField10ImmediateSupervisorMouseClicked
+    private void jTextField10AddressTypeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField10AddressTypeMouseClicked
+        jTextField10AddressType.setEnabled(true);
+    }//GEN-LAST:event_jTextField10AddressTypeMouseClicked
 
     private void jTextField11BasicSalaryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField11BasicSalaryMouseClicked
         jTextField11BasicSalary.setEnabled(true);
@@ -823,7 +1088,7 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton4AttendanceActionPerformed
 
     private void jDateChooserBirthdayMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jDateChooserBirthdayMouseClicked
-//        jDateChooserBirthday.setEnabled(true);        
+        jDateChooserBirthday.getDateEditor().setEnabled(true);
     }//GEN-LAST:event_jDateChooserBirthdayMouseClicked
 
     private void jButton3EmployeeRequestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3EmployeeRequestActionPerformed
@@ -831,30 +1096,86 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_jButton3EmployeeRequestActionPerformed
 
-    private void jButton1EditProfileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1EditProfileActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1EditProfileActionPerformed
-
     private void jDateChooserDateHiredMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jDateChooserDateHiredMouseClicked
-        // TODO add your handling code here:
+        jDateChooserDateHired.getDateEditor().setEnabled(true);
     }//GEN-LAST:event_jDateChooserDateHiredMouseClicked
 
-//    /**
+    private void jTextField5HouseNoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField5HouseNoMouseClicked
+        jTextField5HouseNo.setEnabled(true);
+    }//GEN-LAST:event_jTextField5HouseNoMouseClicked
+
+    private void jTextField11SalaryGradeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField11SalaryGradeMouseClicked
+        jTextField11SalaryGrade.setEnabled(true);
+    }//GEN-LAST:event_jTextField11SalaryGradeMouseClicked
+
+    private void jTextField10CountryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField10CountryMouseClicked
+        jTextField10Country.setEnabled(true);
+    }//GEN-LAST:event_jTextField10CountryMouseClicked
+
+    private void jTextField10EmployementTypeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField10EmployementTypeMouseClicked
+        jTextField10EmployementType.setEnabled(true);
+    }//GEN-LAST:event_jTextField10EmployementTypeMouseClicked
+
+    private void jTextField4EmployementStatusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField4EmployementStatusMouseClicked
+        jTextField4EmployementStatus.setEnabled(true);
+    }//GEN-LAST:event_jTextField4EmployementStatusMouseClicked
+
+    private void jTextField4SSSMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField4SSSMouseClicked
+        jTextField4SSS.setEnabled(true);
+    }//GEN-LAST:event_jTextField4SSSMouseClicked
+
+    private void jTextField4SupervisorIdMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField4SupervisorIdMouseClicked
+        jTextField4SupervisorId.setEnabled(true);
+    }//GEN-LAST:event_jTextField4SupervisorIdMouseClicked
+
+    private void jTextFieldPhilhealthMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldPhilhealthMouseClicked
+        jTextFieldPhilhealth.setEnabled(true);
+    }//GEN-LAST:event_jTextFieldPhilhealthMouseClicked
+
+    private void jTextField4TINMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField4TINMouseClicked
+        jTextField4TIN.setEnabled(true);
+    }//GEN-LAST:event_jTextField4TINMouseClicked
+
+    private void jTextField4JobTitleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField4JobTitleMouseClicked
+        jTextField4JobTitle.setEnabled(true);
+    }//GEN-LAST:event_jTextField4JobTitleMouseClicked
+
+    private void jTextField4PagibigMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField4PagibigMouseClicked
+        jTextField4Pagibig.setEnabled(true);
+    }//GEN-LAST:event_jTextField4PagibigMouseClicked
+//    /*
 //     * @param args the command line arguments
 //     */
 //    public static void main(String args[]) {
-//        /* Set the Nimbus look and feel */
-//  
-//
-//        /* Create and display the form */
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                new ViewEmployeeDetails().setVisible(true);
+//    try {
+//        for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//            if ("Nimbus".equals(info.getName())) {
+//                javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                break;
 //            }
-//        });
+//        }
+//    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+//        java.util.logging.Logger.getLogger(ViewEmployeeDetails.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 //    }
-    
-        /**
+//
+//    java.awt.EventQueue.invokeLater(() -> {
+//        try {
+//            Connection conn = DriverManager.getConnection(
+//                "jdbc:mysql://localhost:3306/payrollsystem_db", "root", "admin"
+//            );
+//
+//            // Temporary!!! Dummy admin for testing purposes only
+//            Admin dummyAdmin = new Admin("adminUsername", "adminPassword");
+//
+//            // For Add New Record mode:
+//            new ViewEmployeeDetails(dummyAdmin, conn).setVisible(true);
+//
+//        } catch (SQLException e) {
+//            javax.swing.JOptionPane.showMessageDialog(null, "Database connection failed: " + e.getMessage());
+//        }
+//    });
+//}
+    /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
@@ -888,9 +1209,7 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1EditProfile;
     private javax.swing.JButton jButton1EmployeeInformation;
     private javax.swing.JButton jButton2SaveChanges;
     private javax.swing.JButton jButton3EmployeeRequest;
@@ -900,88 +1219,105 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
     private javax.swing.JButton jButton6LogOut;
     private com.toedter.calendar.JDateChooser jDateChooserBirthday;
     private com.toedter.calendar.JDateChooser jDateChooserDateHired;
-    private javax.swing.JLabel jLabel10ImmediateSupervisor;
+    private javax.swing.JLabel jLabel10JobTitle;
     private javax.swing.JLabel jLabel11BasicSalary;
+    private javax.swing.JLabel jLabel11DateHired;
+    private javax.swing.JLabel jLabel11Department;
+    private javax.swing.JLabel jLabel11SalaryGrade;
     private javax.swing.JLabel jLabel12RiceSubsidy;
     private javax.swing.JLabel jLabel13Pagibig;
     private javax.swing.JLabel jLabel14PhoneAllowance;
-    private javax.swing.JLabel jLabel15Status;
-    private javax.swing.JLabel jLabel16Position;
+    private javax.swing.JLabel jLabel15EmployementType;
+    private javax.swing.JLabel jLabel16EmployementStatus;
     private javax.swing.JLabel jLabel17ClothingAllowance;
     private javax.swing.JLabel jLabel19GrossSemi;
     private javax.swing.JLabel jLabel1LastName;
     private javax.swing.JLabel jLabel20HourlyRate;
     private javax.swing.JLabel jLabel2FirstName;
     private javax.swing.JLabel jLabel3Birthday;
-    private javax.swing.JLabel jLabel4Address;
+    private javax.swing.JLabel jLabel4AddressType;
+    private javax.swing.JLabel jLabel4Barangay;
+    private javax.swing.JLabel jLabel4Country;
+    private javax.swing.JLabel jLabel4HouseNo;
+    private javax.swing.JLabel jLabel4Municipality;
+    private javax.swing.JLabel jLabel4PostalCode;
+    private javax.swing.JLabel jLabel4Province;
+    private javax.swing.JLabel jLabel4Street;
     private javax.swing.JLabel jLabel5EditEmployeeDetails;
+    private javax.swing.JLabel jLabel6PEmail;
     private javax.swing.JLabel jLabel6PhoneNumber;
     private javax.swing.JLabel jLabel7SSS;
     private javax.swing.JLabel jLabel8Philhealth;
     private javax.swing.JLabel jLabel9TIN;
-    private javax.swing.JLabel jLabelDateHired;
-    private javax.swing.JLabel jLabelErrorMessage;
+    private javax.swing.JLabel jLabelSupervisorId;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanelAdmin;
-    private javax.swing.JTextField jTextField10ImmediateSupervisor;
+    private javax.swing.JTextField jTextField10AddressType;
+    private javax.swing.JTextField jTextField10Country;
+    private javax.swing.JTextField jTextField10EmployementType;
     private javax.swing.JTextField jTextField11BasicSalary;
+    private javax.swing.JTextField jTextField11SalaryGrade;
     private javax.swing.JTextField jTextField12RiceSubsidy;
-    private javax.swing.JTextField jTextField13Pagibig;
+    private javax.swing.JTextField jTextField13Municipality;
     private javax.swing.JTextField jTextField14PhoneAllowance;
-    private javax.swing.JTextField jTextField15Status;
-    private javax.swing.JTextField jTextField16Position;
+    private javax.swing.JTextField jTextField15Province;
+    private javax.swing.JTextField jTextField16PostalCode;
     private javax.swing.JTextField jTextField17GrossSemi;
     private javax.swing.JTextField jTextField18HourlyRate;
     private javax.swing.JTextField jTextField1LastName;
     private javax.swing.JTextField jTextField2FirstName;
-    private javax.swing.JTextField jTextField4Address;
+    private javax.swing.JTextField jTextField4Address6;
+    private javax.swing.JTextField jTextField4Department;
+    private javax.swing.JTextField jTextField4EmployementStatus;
+    private javax.swing.JTextField jTextField4JobTitle;
+    private javax.swing.JTextField jTextField4Pagibig;
+    private javax.swing.JTextField jTextField4SSS;
+    private javax.swing.JTextField jTextField4SupervisorId;
+    private javax.swing.JTextField jTextField4TIN;
+    private javax.swing.JTextField jTextField5HouseNo;
     private javax.swing.JTextField jTextField5PhoneNumber;
-    private javax.swing.JTextField jTextField6SSS;
-    private javax.swing.JTextField jTextField7Philhealth;
-    private javax.swing.JTextField jTextField8TIN;
+    private javax.swing.JTextField jTextField6Email;
+    private javax.swing.JTextField jTextField7Street;
+    private javax.swing.JTextField jTextField8Barangay;
     private javax.swing.JTextField jTextField9ClothingAllowance;
+    private javax.swing.JTextField jTextFieldPhilhealth;
     // End of variables declaration//GEN-END:variables
-    
+ 
     /**
-     * Disables all text fields to prevent editing.
-     * This is used when viewing an existing employee record.
-     */
-    public void disableAllTextField(){
-        jTextField1LastName.setEnabled(false);
-        jTextField2FirstName.setEnabled(false);
-        jDateChooserBirthday.setEnabled(false);
-        jTextField4Address.setEnabled(false);
-        jTextField5PhoneNumber.setEnabled(false);
-        jTextField6SSS.setEnabled(false);
-        jTextField7Philhealth.setEnabled(false);
-        jTextField8TIN.setEnabled(false);
-        jTextField13Pagibig.setEnabled(false);
-        jTextField15Status.setEnabled(false);
-        jTextField16Position.setEnabled(false);
-        jTextField10ImmediateSupervisor.setEnabled(false);
-        jDateChooserDateHired.setEnabled(false);
-        jTextField11BasicSalary.setEnabled(false);
-        jTextField12RiceSubsidy.setEnabled(false);
-        jTextField14PhoneAllowance.setEnabled(false);
-        jTextField9ClothingAllowance.setEnabled(false);
-        jTextField17GrossSemi.setEnabled(false);
-        jTextField18HourlyRate.setEnabled(false);
-    }
-    
-    public void clearAllTextField(){
-        jTextField1LastName.setText("");
+    * Clears all input fields in the employee form.
+    *
+    * Used after successfully adding a new employee
+    * to reset the form for the next entry.
+    */
+    private void clearAllTextFields() {
         jTextField2FirstName.setText("");
+        jTextField1LastName.setText("");
         jDateChooserBirthday.setDate(null);
-        jTextField4Address.setText("");
         jTextField5PhoneNumber.setText("");
-        jTextField6SSS.setText("");
-        jTextField7Philhealth.setText("");
-        jTextField8TIN.setText("");
-        jTextField13Pagibig.setText("");
-        jTextField15Status.setText("");
-        jTextField16Position.setText("");
-        jTextField10ImmediateSupervisor.setText("");
-        jDateChooserDateHired.setDate(null);       
+        jTextField6Email.setText("");
+
+        jTextField5HouseNo.setText("");
+        jTextField7Street.setText("");
+        jTextField8Barangay.setText("");
+        jTextField13Municipality.setText("");
+        jTextField15Province.setText("");
+        jTextField16PostalCode.setText("");
+        jTextField10Country.setText("");
+        jTextField10AddressType.setText("");
+
+        jTextField4SSS.setText("");
+        jTextFieldPhilhealth.setText("");
+        jTextField4Pagibig.setText("");
+        jTextField4TIN.setText("");
+
+        jTextField10EmployementType.setText("");
+        jTextField4EmployementStatus.setText("");
+        jDateChooserDateHired.setDate(null);
+        jTextField4JobTitle.setText("");
+        jTextField4Department.setText("");
+        jTextField4SupervisorId.setText("");
+
+        jTextField11SalaryGrade.setText("");
         jTextField11BasicSalary.setText("");
         jTextField12RiceSubsidy.setText("");
         jTextField14PhoneAllowance.setText("");
@@ -989,141 +1325,5 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
         jTextField17GrossSemi.setText("");
         jTextField18HourlyRate.setText("");
     }
-    
-    /**
-     * Gathers all employee details from input fields and returns them as an array.
-     *
-     * @return String array containing employee details.
-     */
-    public Employee getEmployee(){
-        String[] i = {this.employeeID, 
-                    jTextField1LastName.getText(),
-                    jTextField2FirstName.getText(),
-                    ((JTextField)jDateChooserBirthday.getDateEditor().getUiComponent()).getText(),
-                    jTextField4Address.getText(),
-                    Formatter.formatPhoneNumber(jTextField5PhoneNumber.getText()),
-                    Formatter.formatSSS(jTextField6SSS.getText()),
-                    jTextField7Philhealth.getText(),
-                    Formatter.formatTIN(jTextField8TIN.getText()),
-                    jTextField13Pagibig.getText(),
-                    jTextField15Status.getText(),
-                    jTextField16Position.getText(),
-                    jTextField10ImmediateSupervisor.getText(),
-                    jTextField11BasicSalary.getText(),
-                    jTextField12RiceSubsidy.getText(),
-                    jTextField14PhoneAllowance.getText(),
-                    jTextField9ClothingAllowance.getText(),
-                    jTextField17GrossSemi.getText(),
-                    jTextField18HourlyRate.getText()
-                    };        
-        return this.employee = new Employee(i);
-    }
-    
-//    public PersonalInformation getPersonalInformation() {
-//        String[] i = {this.employeeID,
-//            jTextField1LastName.getText(),
-//            jTextField2FirstName.getText(),
-//            ((JTextField) jDateChooserBirthday.getDateEditor().getUiComponent()).getText().trim(),
-//            jTextField4Address.getText(),
-//            Formatter.formatPhoneNumber(jTextField5PhoneNumber.getText())
-//        };
-//        return this.personalInformation = new PersonalInformation(this.employeeID, i);
-//    }
-    
-    public PersonalInformation getPersonalInformation() {
-        return this.personalInformation = new PersonalInformation(this.employeeID, 
-                                                                jTextField2FirstName.getText(),
-                                                                jTextField1LastName.getText(),                                                                
-                                                                jDateChooserBirthday.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
-                                                                jTextField5PhoneNumber.getText(),                                                                
-                                                                jTextField4Address.getText()
-                                                                );
-    }
-
-    public GovernmentInformation getGovernmentInformation() {
-        String[] i = {this.employeeID,
-            Formatter.formatSSS(jTextField6SSS.getText()),
-            jTextField7Philhealth.getText(),
-            Formatter.formatTIN(jTextField8TIN.getText()),
-            jTextField13Pagibig.getText()
-        };
-        return this.governmentInformation = new GovernmentInformation(this.employeeID, i);
-    }
-
-    public EmploymentInformation getEmploymentInformation() {
-        String[] i = {this.employeeID,
-            jTextField16Position.getText(),            
-            jTextField15Status.getText(),
-            "Active",            
-            ((JTextField) jDateChooserDateHired.getDateEditor().getUiComponent()).getText().trim(),
-            jTextField10ImmediateSupervisor.getText(),
-            jTextField11BasicSalary.getText(),
-            jTextField12RiceSubsidy.getText(),
-            jTextField14PhoneAllowance.getText(),
-            jTextField9ClothingAllowance.getText(),
-            jTextField17GrossSemi.getText(),
-            jTextField18HourlyRate.getText()
-        };
-        return this.employmentInformation = new EmploymentInformation(this.employeeID, i);
-    }
-    
-    public JTextField[] getAllTextField(){
-        JTextField[] textFields = {
-            jTextField1LastName,
-            jTextField2FirstName,
-            jTextField4Address,
-            jTextField5PhoneNumber,
-//            jTextField6SSS,
-//            jTextField7Philhealth,
-//            jTextField8TIN,
-//            jTextField13Pagibig,
-//            jTextField15Status,
-//            jTextField16Position,
-//            jTextField10ImmediateSupervisor,
-//            jTextField11BasicSalary,
-//            jTextField12RiceSubsidy,
-//            jTextField14PhoneAllowance,
-//            jTextField9ClothingAllowance,
-//            jTextField17GrossSemi,
-//            jTextField18HourlyRate
-        };
-        return textFields;            
-    }
-    
-    public StringBuilder validateAllTextField(){
-        StringBuilder errors = new StringBuilder();
-    
-        appendError(errors, ValidationUtils.isValidPhoneNumber(jTextField5PhoneNumber.getText()));
-        appendError(errors, ValidationUtils.isValidBirthday(jDateChooserBirthday, "M/d/yyyy"));
-//        appendError(errors, Input.isValidGovernmentIDNumber(jTextField6SSS, "SSS", 10));
-//        appendError(errors, Input.isValidGovernmentIDNumber(jTextField7Philhealth, "PhilHealth", 12));
-//        appendError(errors, Input.isValidGovernmentIDNumber(jTextField8TIN, "TIN", 12));
-//        appendError(errors, Input.isValidGovernmentIDNumber(jTextField13Pagibig, "Pag-IBIG", 12));
-//        appendError(errors, Input.isValidAmount(jTextField11BasicSalary.getText(), "Basic Salary"));
-//        appendError(errors, Input.isValidAmount(jTextField12RiceSubsidy.getText(), "Rice Subsidy"));
-//        appendError(errors, Input.isValidAmount(jTextField14PhoneAllowance.getText(), "Phone Allowance"));
-//        appendError(errors, Input.isValidAmount(jTextField9ClothingAllowance.getText(), "Clothing Allowance"));
-//        appendError(errors, Input.isValidAmount(jTextField17GrossSemi.getText(), "Gross Semi-monthly Rate"));
-//        appendError(errors, Input.isValidAmount(jTextField18HourlyRate.getText(), "Hourly Rate"));
-//        appendError(errors, Input.isValidDateHired(jDateChooserDateHired, "M/d/yyyy"));
-        
-
-        return errors;         
-    }
-    
-    // Helper method to append error messages only if they exist
-    private void appendError(StringBuilder errors, String errorMessage) {
-        if (!errorMessage.isEmpty()) {
-            errors.append(errorMessage).append("\n");
-        }
-    }
-
-    public String[] getEmployeeInformation() {
-        return employeeInformation;
-    }
-
-    public void setEmployeeInformation(String[] employeeInformtation) {
-        this.employeeInformation = employeeInformtation;
-    } 
-    
 }
+

@@ -18,7 +18,7 @@ import java.time.LocalTime;
 
 public class Overtime implements Identifiable{
     private String overtimeID;
-    private String employeeID;
+    private int employeeID;
     private LocalDate date;
     private LocalTime startTime;
     private LocalTime endTime;
@@ -34,7 +34,7 @@ public class Overtime implements Identifiable{
     public Overtime(DailyAttendance attendance) {
         if (attendance.hasOvertime()) {
             this.date = attendance.getDate();
-            this.employeeID = attendance.getEmployee().getEmployeeID();
+            this.employeeID = attendance.getEmployee().getEmployeeId();
             LocalTime timeIn = attendance.getTimeIn();
             LocalTime timeOut = attendance.getTimeOut();
 
@@ -61,7 +61,7 @@ public class Overtime implements Identifiable{
                 this.overtimeID = IDManager.generateID(entityManager.getEntityType().getIdPrefix());
                 IDManager.saveIDCounters();
                 
-                this.employeeID = overtimeData[0];
+                this.employeeID = Integer.parseInt(overtimeData[0]);
                 this.date = Parser.parseLocalDate(overtimeData[1], null);
                 this.startTime = Parser.parseValue(overtimeData[2], null, LocalTime::parse);
                 this.endTime = Parser.parseValue(overtimeData[3], null, LocalTime::parse);
@@ -73,7 +73,7 @@ public class Overtime implements Identifiable{
             case 8 -> {
                 // Existing overtime entry (ID is provided)
                 this.overtimeID = overtimeData[0];
-                this.employeeID = overtimeData[1];
+                this.employeeID = Integer.parseInt(overtimeData[1]);
                 this.date = Parser.parseLocalDate(overtimeData[2], null);
                 this.startTime = Parser.parseLocalTime(overtimeData[3], null, "H:mm");
                 this.endTime = Parser.parseLocalTime(overtimeData[4], null, "H:mm");
@@ -91,7 +91,7 @@ public class Overtime implements Identifiable{
         return overtimeID;
     }
 
-    public String getEmployeeID() {
+    public int getEmployeeID() {
         return employeeID;
     }
     

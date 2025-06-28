@@ -56,7 +56,7 @@ public class Access {
         employeeInformation.setVisible(true);
         return employeeInformation;
     }
-    
+
     // Self Service Portal access for Admin 
     public static JFrame accessSelfServicePortal(Admin admin) {
         if (admin == null) {

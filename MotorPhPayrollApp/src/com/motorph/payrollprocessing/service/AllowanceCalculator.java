@@ -4,6 +4,8 @@
  */
 package com.motorph.payrollprocessing.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 /**
@@ -26,8 +28,8 @@ public class AllowanceCalculator {
      * @param clothing the clothing allowance.
      * @return the calculated total allowance.
      */
-    public static double calculateTotalAllowance(double rice, double phone, double clothing) {
+    public static BigDecimal calculateTotalAllowance(BigDecimal rice, BigDecimal phone, BigDecimal clothing) {
         // Calculate the sum of allowances and divide by 2.
-        return Double.parseDouble(decimalFormat.format((rice + phone + clothing) / 2));// Format the calculated allowance and parse it back to a double.
+        return rice.add(phone).add(clothing).divide(BigDecimal.valueOf(2), 2, RoundingMode.HALF_UP);// Format the calculated allowance and parse it back to a double.
     }
 }

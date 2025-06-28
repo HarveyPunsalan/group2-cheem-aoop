@@ -15,6 +15,7 @@ import com.motorph.payrollprocessing.model.PayrollSummary;
 import com.motorph.payrollprocessing.model.PayPeriod;
 import com.motorph.usermanagement.model.Admin;
 import com.motorph.usermanagement.model.Access;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 
@@ -39,12 +40,12 @@ public class PayrollSummaryPage extends javax.swing.JFrame {
         
         jLabelPayPeriod.setText("Payroll Summary for the period of " + payPeriod.getStartDate().format(formatterDate1) + " - " + payPeriod.getEndDate().format(formatterDate2));
         payrollSummary = PayrollCalculator.calculatePayrollSummary(payrollService.generatePayrollRecord(payPeriod));
-        jLabelTotalBasicSalaryResult.setText(Double.toString(payrollSummary.getTotalBasicSalary()));
-        jLabelTotalGrossSalaryResult.setText(Double.toString(payrollSummary.getTotalGrossSalary()));        
-        jLabelTotalGovernmentContributionResult.setText(Double.toString(payrollSummary.getTotalGovernmentContribution()));
-        jLabelTotalWithholdingTaxResult.setText(Double.toString(payrollSummary.getTotalWithholdingTax()));
-        jLabelTotalDeductionResult.setText(Double.toString(payrollSummary.getTotalDeductions()));
-        jLabelTotalNetSalaryResult.setText(Double.toString(payrollSummary.getTotalNetSalary()));
+        jLabelTotalBasicSalaryResult.setText(payrollSummary.getTotalBasicSalary().toString());
+        jLabelTotalGrossSalaryResult.setText(payrollSummary.getTotalGrossSalary().toString());        
+        jLabelTotalGovernmentContributionResult.setText(payrollSummary.getTotalGovernmentContribution().toString());
+        jLabelTotalWithholdingTaxResult.setText(payrollSummary.getTotalWithholdingTax().toString());
+        jLabelTotalDeductionResult.setText(payrollSummary.getTotalDeductions().toString());
+        jLabelTotalNetSalaryResult.setText(payrollSummary.getTotalNetSalary().toString());
 
         
     }
@@ -57,12 +58,12 @@ public class PayrollSummaryPage extends javax.swing.JFrame {
         
         jLabelPayPeriod.setText("Payroll Summary for the period of " + payPeriod.getStartDate().format(formatterDate1) + " - " + payPeriod.getEndDate().format(formatterDate2));
         payrollSummary = PayrollCalculator.calculatePayrollSummary(payrollService.generatePayrollRecord(payPeriod));
-        jLabelTotalBasicSalaryResult.setText(Double.toString(payrollSummary.getTotalBasicSalary()));
-        jLabelTotalGrossSalaryResult.setText(Double.toString(payrollSummary.getTotalGrossSalary()));        
-        jLabelTotalGovernmentContributionResult.setText(Double.toString(payrollSummary.getTotalGovernmentContribution()));
-        jLabelTotalWithholdingTaxResult.setText(Double.toString(payrollSummary.getTotalWithholdingTax()));
-        jLabelTotalDeductionResult.setText(Double.toString(payrollSummary.getTotalDeductions()));
-        jLabelTotalNetSalaryResult.setText(Double.toString(payrollSummary.getTotalNetSalary()));
+        jLabelTotalBasicSalaryResult.setText(payrollSummary.getTotalBasicSalary().toString());
+        jLabelTotalGrossSalaryResult.setText(payrollSummary.getTotalGrossSalary().toString());        
+        jLabelTotalGovernmentContributionResult.setText(payrollSummary.getTotalGovernmentContribution().toString());
+        jLabelTotalWithholdingTaxResult.setText(payrollSummary.getTotalWithholdingTax().toString());
+        jLabelTotalDeductionResult.setText(payrollSummary.getTotalDeductions().toString());
+        jLabelTotalNetSalaryResult.setText(payrollSummary.getTotalNetSalary().toString());
 
     }
 

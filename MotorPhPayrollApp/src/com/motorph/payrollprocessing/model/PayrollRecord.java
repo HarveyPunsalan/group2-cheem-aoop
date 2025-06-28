@@ -6,6 +6,7 @@ package com.motorph.payrollprocessing.model;
 
 import com.motorph.employeemanagement.model.Employee;
 import com.motorph.attendancemanagement.model.PayPeriodAttendance;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -20,22 +21,22 @@ public class PayrollRecord {
     private PayPeriod payPeriodID;
     private Employee employeeID;
     private PayPeriodAttendance payPeriodAttendance;
-    private double basicSalary;
-    private double overtimePay;
+    private BigDecimal basicSalary;
+    private BigDecimal overtimePay;
     private Allowance allowance;
-    private double grossSalary;
+    private BigDecimal grossSalary;
     private Deduction deduction;
-    private double governmentContribution, withHoldingTax, totalDeduction;
-    private double netSalary;
+    private BigDecimal governmentContribution, withHoldingTax, totalDeduction;
+    private BigDecimal netSalary;
     private LocalDate createdDate;
     private LocalDate submittedDate;
 
     public PayrollRecord() {
     }
     
-    public PayrollRecord(double basicSalary, double grossSalary,
-                         double governmentContribution, double withHoldingTax,
-                         double totalDeduction, double netSalary) {
+    public PayrollRecord(BigDecimal basicSalary, BigDecimal grossSalary,
+                         BigDecimal governmentContribution, BigDecimal withHoldingTax,
+                         BigDecimal totalDeduction, BigDecimal netSalary) {
         this.basicSalary = basicSalary;
         this.grossSalary = grossSalary;
         this.governmentContribution = governmentContribution;
@@ -57,14 +58,14 @@ public class PayrollRecord {
         this.payPeriodID = new PayPeriod(payrollData[1]);
         
         // Assuming Employee has a constructor that takes a String (e.g., employee ID)
-        this.employeeID = new Employee(payrollData[3]);
+        this.employeeID = new Employee();
         
         // Assuming PayPeriodAttendance has a similar constructor
         this.payPeriodAttendance = new PayPeriodAttendance(payrollData[4]);
         
         // Convert numeric values from String to double
-        this.basicSalary = Double.parseDouble(payrollData[5]);
-        this.overtimePay = Double.parseDouble(payrollData[6]);
+        this.basicSalary = new BigDecimal(payrollData[5]);
+        this.overtimePay = new BigDecimal(payrollData[6]);
         
         // For allowance, assume the data is a comma-separated string "allowanceID,allowanceName,description"
         String[] allowanceParts = payrollData[7].split(",");
@@ -74,7 +75,7 @@ public class PayrollRecord {
             this.allowance = null; // Alternatively, handle the error as needed
         }
         
-        this.grossSalary = Double.parseDouble(payrollData[8]);
+        this.grossSalary = new BigDecimal(payrollData[8]);
         
         // For deduction, assume the data is a comma-separated string "deductionID,deductionName,description"
         String[] deductionParts = payrollData[9].split(",");
@@ -84,8 +85,8 @@ public class PayrollRecord {
             this.deduction = null; // Alternatively, handle the error as needed
         }
         
-        this.totalDeduction = Double.parseDouble(payrollData[10]);
-        this.netSalary = Double.parseDouble(payrollData[11]);
+        this.totalDeduction = new BigDecimal(payrollData[10]);
+        this.netSalary = new BigDecimal(payrollData[11]);
         
         try {
             this.createdDate = LocalDate.parse(payrollData[12], formatterDate);
@@ -112,11 +113,11 @@ public class PayrollRecord {
         return payPeriodAttendance;
     }
 
-    public double getBasicSalary() {
+    public BigDecimal getBasicSalary() {
         return basicSalary;
     }
 
-    public double getOvertimePay() {
+    public BigDecimal getOvertimePay() {
         return overtimePay;
     }
 
@@ -124,7 +125,7 @@ public class PayrollRecord {
         return allowance;
     }
 
-    public double getGrossSalary() {
+    public BigDecimal getGrossSalary() {
         return grossSalary;
     }
 
@@ -132,19 +133,19 @@ public class PayrollRecord {
         return deduction;
     }
 
-    public double getGovernmentContribution() {
+    public BigDecimal getGovernmentContribution() {
         return governmentContribution;
     }
 
-    public double getWithHoldingTax() {
+    public BigDecimal getWithHoldingTax() {
         return withHoldingTax;
     }   
     
-    public double getTotalDeduction() {
+    public BigDecimal getTotalDeduction() {
         return totalDeduction;
     }
 
-    public double getNetSalary() {
+    public BigDecimal getNetSalary() {
         return netSalary;
     }
 

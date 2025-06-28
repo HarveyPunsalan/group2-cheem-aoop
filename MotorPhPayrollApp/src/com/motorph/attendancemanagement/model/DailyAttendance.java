@@ -44,7 +44,7 @@ public class DailyAttendance {
         
         try {
             this.attendanceID = dailyAttendanceData[0];
-            this.employee = new Employee(dailyAttendanceData[1]); // Assuming Employee constructor takes an ID
+            this.employee = new Employee(); // Assuming Employee constructor takes an ID
             this.date = LocalDate.parse(dailyAttendanceData[2], formatterDate);
             this.timeIn = LocalTime.parse(dailyAttendanceData[3], formatterTime);
             this.timeOut = LocalTime.parse(dailyAttendanceData[4], formatterTime);

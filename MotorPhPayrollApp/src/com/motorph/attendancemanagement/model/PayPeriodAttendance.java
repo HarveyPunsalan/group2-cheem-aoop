@@ -38,7 +38,7 @@ public class PayPeriodAttendance {
         
         try {
             this.payPeriodAttendanceID = data[0];
-            this.employeeID = new Employee(data[1]);
+            this.employeeID = new Employee();
             
             // Create a PayPeriod from start and end date strings.
             // This assumes you have a PayPeriod constructor that accepts two date strings.
@@ -55,7 +55,7 @@ public class PayPeriodAttendance {
             
             // approvedBy may be empty
             if (data[10] != null && !data[10].trim().isEmpty()) {
-                this.approvedBy = new Employee(data[10]);
+                this.approvedBy = new Employee();
             } else {
                 this.approvedBy = null;
             }
