@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.motorph.employeemanagement.service;
+package com.motorph.employeemanagement.service.csvversion;
 
 import CSVFileManager.CsvFile;
 import java.util.List;
@@ -77,7 +77,7 @@ public class EmployeeIDRegistry {
      * @param newStatus the new status to set (e.g., "Terminated").
      * @return true if the status was updated; false otherwise.
      */
-    public static boolean updateEmployeeStatus(String employeeID, String newStatus) {
+    public static boolean updateEmployeeStatus(int employeeID, String newStatus) {
         boolean updated = false;
         
         // Iterate through each record in the employeeIDList.

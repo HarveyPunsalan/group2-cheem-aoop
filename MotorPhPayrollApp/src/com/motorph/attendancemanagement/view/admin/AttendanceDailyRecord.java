@@ -6,7 +6,7 @@ package com.motorph.attendancemanagement.view.admin;
 
 import com.motorph.employeemanagement.view.admin.EmployeeInformation;
 import com.motorph.employeemanagement.model.Employee;
-import com.motorph.employeemanagement.service.EmployeeService;
+import com.motorph.employeemanagement.service.csvversion.EmployeeService;
 import com.motorph.attendancemanagement.service.AttendanceService;
 import com.motorph.attendancemanagement.service.AttendanceCalculator;
 import com.motorph.attendancemanagement.model.DailyAttendance;
@@ -42,7 +42,7 @@ public class AttendanceDailyRecord extends javax.swing.JFrame {
     
     public AttendanceDailyRecord(Employee employee) {
         initComponents();
-        this.employeeID = employeeService.getEmployeeInformation(employee.getEmployeeID());
+        this.employeeID = employeeService.getEmployeeInformation(employee.getEmployeeId());
         jComboBoxAttendancePeriod.setModel(payPeriodList.getComboBoxModel());
         jComboBoxAttendancePeriod.setRenderer(new PromptComboBoxRenderer("Select Pay Period") );
         jComboBoxAttendancePeriod.setSelectedIndex(-1);
@@ -54,7 +54,7 @@ public class AttendanceDailyRecord extends javax.swing.JFrame {
     
     public AttendanceDailyRecord(Admin admin, Employee employee) {
         initComponents();
-        this.employeeID = employeeService.getEmployeeInformation(employee.getEmployeeID());
+        this.employeeID = employeeService.getEmployeeInformation(employee.getEmployeeId());
         this.user = admin;
         admin.addLogoutListener(this);
         
@@ -66,7 +66,7 @@ public class AttendanceDailyRecord extends javax.swing.JFrame {
         setResultFields(defaultResults);
     }
     
-    public AttendanceDailyRecord(Admin admin, String employeeID, PayPeriod selectedPayPeriod) {
+    public AttendanceDailyRecord(Admin admin, int employeeID, PayPeriod selectedPayPeriod) {
         initComponents();
         this.employeeID = employeeService.getEmployeeInformation(employeeID);
         this.employee = employeeService.getEmployeeInformation(employeeID);

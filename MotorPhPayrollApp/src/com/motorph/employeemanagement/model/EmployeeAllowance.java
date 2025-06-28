@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Class.EMS;
+package com.motorph.employeemanagement.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,18 +15,14 @@ import java.time.LocalDate;
  * and effective/creation dates. It supports both insertion and retrieval from a data source.</p>
  * 
  */
-public class EmployeeAllowance extends Information {
+public class EmployeeAllowance {
+    private int employeeID;
     private int employeeAllowanceID;
     private Allowance allowance;
     private BigDecimal amount;
     private LocalDate effectiveDate;
     private LocalDate createdDate;
     private String allowanceFrequency;
-
-    //Default constructor
-    public EmployeeAllowance() {
-        super(0); 
-    }
 
     /**
      * Constructor used for inserting a new allowance record.
@@ -40,7 +36,7 @@ public class EmployeeAllowance extends Information {
      */
     public EmployeeAllowance(int employeeID, Allowance allowance, BigDecimal amount,
                              LocalDate effectiveDate, LocalDate createdDate, String allowanceFrequency) {
-        super(employeeID);
+        this.employeeID = employeeID;
         this.allowance = allowance;
         this.amount = amount;
         this.effectiveDate = effectiveDate;
@@ -61,7 +57,7 @@ public class EmployeeAllowance extends Information {
      */
     public EmployeeAllowance(int employeeAllowanceID, int employeeID, Allowance allowance, BigDecimal amount,
                              LocalDate effectiveDate, LocalDate createdDate, String allowanceFrequency) {
-        super(employeeID);
+        this.employeeID = employeeID;
         this.employeeAllowanceID = employeeAllowanceID;
         this.allowance = allowance;
         this.amount = amount;

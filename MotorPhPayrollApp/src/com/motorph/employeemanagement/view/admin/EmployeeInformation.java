@@ -4,41 +4,103 @@
  */
 package com.motorph.employeemanagement.view.admin;
 
-import com.motorph.employeemanagement.service.InformationService;
+import com.motorph.database.connection.DatabaseService;
 import com.motorph.employeemanagement.model.Employee;
-import com.motorph.employeemanagement.service.EmployeeService;
-import com.motorph.usermanagement.model.Admin;
-import com.motorph.usermanagement.model.Access;
+import com.motorph.employeemanagement.service.EmployeeRetrievalService;
+import com.motorph.employeemanagement.service.EmployeeDeletionService;
+import com.motorph.usermanagement.model.*;
+import com.motorph.database.execution.SQLExecutor;
+import java.sql.Connection;
+import java.util.*;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import java.sql.SQLException;
+
 /**
- *
- * @author Charm
+ * Frame for Admin users to view and manage employee information.
+ * Allows retrieval of active employees and populates a JTable with their details.
  */
 public class EmployeeInformation extends javax.swing.JFrame {
-    Admin admin;    
-    EmployeeService employeeService = new EmployeeService();
-    InformationService informationService =  new InformationService();
+
+    private final Admin admin; // The currently logged-in admin user
+    private final Connection connection; // Database connection used for operations
+    private final EmployeeRetrievalService retrievalService; // Service to fetch employee data
+    private final EmployeeDeletionService deletionService; // Service to delete employee records
     
-    /**
-     * Creates new form EmployeeInformation
-     * Initializes the frame and populates the employee table.
-     */       
-    public EmployeeInformation() { 
-        initComponents();
-        jTable1EmployeeList.setModel(informationService.getEmployeeInformationTableModel()); // Populate table with employee data
+    public EmployeeInformation() {
+        initComponents(); // Initialize Swing GUI components
+        this.admin = null;
+        this.connection = DatabaseService.connectToMotorPH();
+
+        // Initialize services with a shared SQLExecutor
+        this.retrievalService = new EmployeeRetrievalService(new SQLExecutor((connection)));
+        this.deletionService = new EmployeeDeletionService(connection);
+
+        // Load active employees into the table upon opening the frame
+        refreshEmployeeTable();
     }
     
     /**
-     * Constructor that takes an admin user as a parameter.
-     * This could be used to manage role-based access control in the future.
+     * Constructs the EmployeeInformation frame.
      *
-     * @param admin The logged-in admin userS
+     * @param admin the current Admin user
+     * @param connection the database connection to be used for services
      */
     public EmployeeInformation(Admin admin) {
-        initComponents();
+        initComponents(); // Initialize Swing GUI components
         this.admin = admin;
-        admin.addLogoutListener(this);
-        jTable1EmployeeList.setModel(informationService.getEmployeeInformationTableModel()); // Populate table with employee data
+        this.connection = DatabaseService.connectToMotorPH();
+
+        admin.addLogoutListener(this); // Register logout listener to handle session events
+
+        // Initialize services with a shared SQLExecutor
+        this.retrievalService = new EmployeeRetrievalService(new SQLExecutor((java.sql.Connection) connection));
+        this.deletionService = new EmployeeDeletionService((java.sql.Connection) connection);
+
+        // Load active employees into the table upon opening the frame
+        refreshEmployeeTable();
+    }
+
+     /**
+     * Retrieves the list of active employees from the database and updates the JTable.
+     */
+    private void refreshEmployeeTable() {
+        try {
+            List<Employee> employees = retrievalService.getActiveEmployees(); // Fetch the list of active employees from the service
+            jTable1EmployeeList.setModel(mapToTableModel(employees)); // Convert the list into a table model and update the JTable
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error loading employees: " + e.getMessage()); // Show error dialog if retrieval fails
+        }
+    }
+
+    /**
+     * Converts a list of Employee objects into a DefaultTableModel suitable for JTable display.
+     *
+     * @param employees List of active employees to display
+     * @return a non-editable table model containing employee data
+     */
+    private DefaultTableModel mapToTableModel(List<Employee> employees) {
+        String[] columns = {"ID", "First Name", "Last Name", "Birthday", "Phone", "Email"};
+        Object[][] data = new Object[employees.size()][columns.length];
+
+        // Populate the table data array with employee info
+        for (int i = 0; i < employees.size(); i++) {
+            Employee emp = employees.get(i);
+            data[i][0] = emp.getEmployeeId();
+            data[i][1] = emp.getFirstName();
+            data[i][2] = emp.getLastName();
+            data[i][3] = emp.getBirthday();
+            data[i][4] = emp.getPhoneNumber();
+            data[i][5] = emp.getEmail();
+        }
+
+        // Return a table model that disallows editing any cell
+        return new DefaultTableModel(data, columns) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
     }
 
     /**
@@ -63,7 +125,7 @@ public class EmployeeInformation extends javax.swing.JFrame {
         jButton1AddNewRecord = new javax.swing.JButton();
         jButton1ViewEmployeeDetails = new javax.swing.JButton();
         jButton2DeleteEmployeeRecord = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        jButton1ViewAttendance = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -88,11 +150,6 @@ public class EmployeeInformation extends javax.swing.JFrame {
         jButton1EmployeeInformation.setForeground(new java.awt.Color(255, 255, 255));
         jButton1EmployeeInformation.setText("Employee Information");
         jButton1EmployeeInformation.setBorder(null);
-        jButton1EmployeeInformation.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1EmployeeInformationActionPerformed(evt);
-            }
-        });
 
         jButton3EmployeeRequest.setBackground(new java.awt.Color(0, 102, 153));
         jButton3EmployeeRequest.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -205,11 +262,11 @@ public class EmployeeInformation extends javax.swing.JFrame {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "Employee ID", "Last Name", "First Name", "Birthdate", "Address", "Phone Number"
+                "Employee ID", "First Name", "Last Name", "Birthday", "Phone Number", "Email"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false
@@ -223,6 +280,7 @@ public class EmployeeInformation extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        jTable1EmployeeList.setColumnSelectionAllowed(true);
         jTable1EmployeeList.setShowGrid(true);
         jTable1EmployeeList.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(jTable1EmployeeList);
@@ -257,10 +315,10 @@ public class EmployeeInformation extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("View Attendance");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButton1ViewAttendance.setText("View Attendance");
+        jButton1ViewAttendance.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jButton1ViewAttendanceActionPerformed(evt);
             }
         });
 
@@ -279,7 +337,7 @@ public class EmployeeInformation extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton1)
+                        .addComponent(jButton1ViewAttendance)
                         .addGap(59, 59, 59)
                         .addComponent(jButton1ViewEmployeeDetails)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -300,7 +358,7 @@ public class EmployeeInformation extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButton1ViewEmployeeDetails)
                             .addComponent(jButton2DeleteEmployeeRecord)
-                            .addComponent(jButton1))
+                            .addComponent(jButton1ViewAttendance))
                         .addContainerGap())
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
@@ -310,22 +368,40 @@ public class EmployeeInformation extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1AddNewRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1AddNewRecordActionPerformed
-        Access.accessViewEmployeeDetails(this.admin); 
+        // Instantiate the details frame in "add new employee" mode
+        ViewEmployeeDetails addFrame = new ViewEmployeeDetails((Admin) admin);
+        addFrame.setVisible(true); // Show the new frame
+
         this.setVisible(false); // Hide the current frame
     }//GEN-LAST:event_jButton1AddNewRecordActionPerformed
     
     private void jButton1ViewEmployeeDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ViewEmployeeDetailsActionPerformed
-        // Ensure a record is selected before proceeding
+        // Check if a row is selected; abort if none is selected
         if (!isSelectRecord()) {
             return;
         }
         
-        int rowIndex = jTable1EmployeeList.getSelectedRow(); // Get selected row index
-        String employeeID = jTable1EmployeeList.getValueAt(rowIndex, 0).toString(); // Retrieve employee ID
+        try {
+        // Get the index of the selected row in the JTable
+        int rowIndex = jTable1EmployeeList.getSelectedRow();
         
-        // Open the employee details view with the selected employee's data
-        Access.accessViewEmployeeDetails(this.admin, employeeID);
-        this.setVisible(false); // Hide the current frame
+        // Retrieve the employee ID from the selected row (column 0)
+        String employeeID = jTable1EmployeeList.getValueAt(rowIndex, 0).toString();
+
+        // Open the ViewEmployeeDetails frame in "View Mode" (fields are non-editable)
+//        ViewEmployeeDetails detailsPage = new ViewEmployeeDetails((Admin) admin, Integer.parseInt(employeeID));
+        ViewEmployeeDetails detailsPage = new ViewEmployeeDetails(Integer.parseInt(employeeID));
+        detailsPage.setVisible(true);
+
+        // Close the current frame
+        this.dispose();
+
+    }catch (Exception e) { // Catch-all for unexpected issues
+        JOptionPane.showMessageDialog(this, "Unexpected error: " + e.getMessage(),
+            "Error", JOptionPane.ERROR_MESSAGE);
+    }
+        // Display a message if there's a problem with the database query
+        
     }//GEN-LAST:event_jButton1ViewEmployeeDetailsActionPerformed
 
     private void jButton6LogOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6LogOutActionPerformed
@@ -333,33 +409,47 @@ public class EmployeeInformation extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton6LogOutActionPerformed
 
     private void jButton2DeleteEmployeeRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2DeleteEmployeeRecordActionPerformed
-        // Ensure a record is selected before proceeding
-        if (!isSelectRecord()) {
-            return;
+         if (!isSelectRecord()) { // Check if a record is selected in the JTable
+            return; // If no selection, exit the method (prevent further execution)
         }
+
+        // Show a confirmation dialog to prevent accidental deletion
+        int result = JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure to delete the Employee Record?",
+                "Confirmation",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE);
+
+        // If user cancels (selects "No"), abort deletion
+        if (result != JOptionPane.YES_OPTION) return;
         
-        // Show confirmation dialog before deleting the record
-        int result = JOptionPane.showConfirmDialog(null, "Are you sure to delete the Employee Record", "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (result == JOptionPane.NO_OPTION || result == JOptionPane.CLOSED_OPTION) {
-                return; // Cancel the deletion if the user selects "No"
-            }
-            
-        int rowIndex = jTable1EmployeeList.getSelectedRow(); // Get selected row index
-        String employeeID = jTable1EmployeeList.getValueAt(rowIndex, 0).toString(); // Retrieve Employee ID
-                      
-        jTable1EmployeeList.removeAll();// Clear the table model before updating the data
+        // Get the index of the selected row
+        int rowIndex = jTable1EmployeeList.getSelectedRow();
         
-        employeeService.deleteEmployee(employeeID);
-        
-        InformationService deleteInformationService = new InformationService();
-//        jTable1EmployeeList.setModel(employeeService.getEmployeeTableModel()); // Refresh the table model with the updated data
-        jTable1EmployeeList.setModel(deleteInformationService.getEmployeeInformationTableModel()); // Refresh the table model with the updated data
-        
-        JOptionPane.showMessageDialog(null, "Successfully Deleted"); // Notify user of successful deletion
+        // Extract the employee ID from the selected row (first column)
+        int employeeId = Integer.parseInt(jTable1EmployeeList.getValueAt(rowIndex, 0).toString());
+
+        try {
+            deletionService.deleteEmployee(employeeId); // Attempt to delete the employee from the database
+            refreshEmployeeTable(); // Refresh the JTable to reflect the deletion
+            JOptionPane.showMessageDialog(this, "Successfully Deleted"); // Notify the user of successful deletion
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Failed to delete employee: " + e.getMessage()); // Handle any SQL/database errors during deletion
+        }
+    }
+
+    /**
+    * Utility method to check if a row is selected in the employee JTable.
+    *
+    * @return true if a row is selected, false otherwise
+    */
+    private boolean isSelectRecord() {
+        return jTable1EmployeeList.getSelectedRow() >= 0;
     }//GEN-LAST:event_jButton2DeleteEmployeeRecordActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // Ensure a record is selected before proceeding
+    private void jButton1ViewAttendanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ViewAttendanceActionPerformed
+        /* Ensure a record is selected before proceeding
         if (!isSelectRecord()) {
             return;
         }
@@ -371,20 +461,16 @@ public class EmployeeInformation extends javax.swing.JFrame {
         String lastName = jTable1EmployeeList.getValueAt(rowIndex, 1).toString();
         String firstName = jTable1EmployeeList.getValueAt(rowIndex, 2).toString();        
         String birthday = jTable1EmployeeList.getValueAt(rowIndex, 3).toString();
-        String address = jTable1EmployeeList.getValueAt(rowIndex, 4).toString();
-        String phone = jTable1EmployeeList.getValueAt(rowIndex, 5).toString();
+        String phoneNumber = jTable1EmployeeList.getValueAt(rowIndex, 5).toString();
+        String email = jTable1EmployeeList.getValueAt(rowIndex, 6).toString();
 
         // Create an Employee object with all details
-        Employee selectedEmployee = new Employee(employeeId, lastName, firstName, birthday, address, phone);
+        Employee selectedEmployee = new Employee(employeeId, firstName, lastName, birthday, phoneNumber, email);
         
 //        Access.accessDTR(this.admin, selectedEmployee);
         Access.accessDTR(selectedEmployee);
-        this.setVisible(false); // Hide the current frame
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jButton1EmployeeInformationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1EmployeeInformationActionPerformed
-
-    }//GEN-LAST:event_jButton1EmployeeInformationActionPerformed
+        this.setVisible(false); // Hide the current frame*/
+    }//GEN-LAST:event_jButton1ViewAttendanceActionPerformed
 
     private void jButton3SelfServicePortalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3SelfServicePortalActionPerformed
         Access.accessProfilePage(this.admin);
@@ -442,9 +528,9 @@ public class EmployeeInformation extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton1AddNewRecord;
     private javax.swing.JButton jButton1EmployeeInformation;
+    private javax.swing.JButton jButton1ViewAttendance;
     private javax.swing.JButton jButton1ViewEmployeeDetails;
     private javax.swing.JButton jButton2DeleteEmployeeRecord;
     private javax.swing.JButton jButton3EmployeeRequest;
@@ -458,18 +544,5 @@ public class EmployeeInformation extends javax.swing.JFrame {
     private javax.swing.JTable jTable1EmployeeList;
     // End of variables declaration//GEN-END:variables
 
-    /**
-     * Validates if exactly one employee record is selected in the table.
-     * Displays an error message if no or multiple selections are made.
-     *
-     * @return true if one record is selected, false otherwise
-     */
-    private boolean isSelectRecord() {
-        if((jTable1EmployeeList.getSelectedRowCount() != 1)) { // Ensure exactly one row is selected
-            JOptionPane.showMessageDialog(null, "Please select 1 Employee Record");
-            return false;            
-        }
-        return true;
-    }
+}    
 
-}

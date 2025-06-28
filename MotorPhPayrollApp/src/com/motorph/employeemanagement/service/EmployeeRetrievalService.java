@@ -2,14 +2,17 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Class.EMS;
+package com.motorph.employeemanagement.service;
 
 import com.motorph.database.execution.SQLExecutor;
 import com.motorph.database.execution.Script;
+import com.motorph.employeemanagement.model.Employee;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This service class is responsible for retrieving employee data from the database.
@@ -53,12 +56,17 @@ public class EmployeeRetrievalService {
      * @return Employee object containing full profile, or null if not found
      * @throws SQLException if a database error occurs during retrieval
      */
-    public Employee getEmployeeById(int id) throws SQLException {
-        List<Employee> employees = executor.executeQuery(
-            Script.GET_EMPLOYEE_BY_ID,
-            List.of(id),
-            this::mapFullEmployee
-        );
+    public Employee getEmployeeById(int id) {
+        List<Employee> employees = null;
+        try {
+            employees = executor.executeQuery(
+                    Script.GET_EMPLOYEE_BY_ID,
+                    List.of(id),
+                    this::mapFullEmployee
+            );
+        } catch (SQLException ex) {
+            Logger.getLogger(EmployeeRetrievalService.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         return employees.isEmpty() ? null : employees.get(0);
     }

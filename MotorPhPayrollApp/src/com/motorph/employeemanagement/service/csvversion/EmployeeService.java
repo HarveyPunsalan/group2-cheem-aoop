@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
-package com.motorph.employeemanagement.service;
+package com.motorph.employeemanagement.service.csvversion;
 
 import com.motorph.employeemanagement.model.PersonalInformation;
 import com.motorph.employeemanagement.model.GovernmentInformation;
@@ -24,7 +24,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class EmployeeService {
     private List<Employee> employeeList; // List of Employee objects loaded from the CSV file.      
-    private Map<String, Employee> employeeMapByEmployeeID; // Map of employees keyed by employee ID for quick lookup.
+    private Map<Integer, Employee> employeeMapByEmployeeID; // Map of employees keyed by employee ID for quick lookup.
     
     /**
      * Constructs an EmployeeService instance.
@@ -33,8 +33,8 @@ public class EmployeeService {
      * then creates a map keyed by employee ID for efficient access.</p>
      */    
     public EmployeeService() {
-        this.employeeList = CsvFile.EMPLOYEEINFORMATION.readFile(Employee::new); // Load employee information from the CSV file using Employee's constructor.
-        this.employeeMapByEmployeeID = CollectionUtils.listToMap(employeeList, Employee::getEmployeeID); // Convert the list of employees into a map where the key is the employee ID.
+//        this.employeeList = CsvFile.EMPLOYEEINFORMATION.readFile(Employee::new); // Load employee information from the CSV file using Employee's constructor.
+//        this.employeeMapByEmployeeID = CollectionUtils.listToMap(employeeList, Employee::getEmployeeID); // Convert the list of employees into a map where the key is the employee ID.
     }
     
     /**
@@ -52,7 +52,7 @@ public class EmployeeService {
      * @param employeeID the unique identifier for the employee.
      * @return the Employee object if found; otherwise, null.
      */ 
-    public Employee getEmployeeInformation(String employeeID){        
+    public Employee getEmployeeInformation(int employeeID){        
         return employeeMapByEmployeeID.get(employeeID); // Return the Employee object from the map using the employeeID as the key.
     } 
       
@@ -66,13 +66,13 @@ public class EmployeeService {
      */
     public void updateInformation(Employee updatedEmployee){
         // Check if the employee exists in the map.
-        if (!employeeMapByEmployeeID.containsKey(updatedEmployee.getEmployeeID())) return; // Employee not found; exit the method.
+        if (!employeeMapByEmployeeID.containsKey(updatedEmployee.getEmployeeId())) return; // Employee not found; exit the method.
         
-        employeeMapByEmployeeID.replace(updatedEmployee.getEmployeeID(), updatedEmployee); // Update the employee information in the map.
+        employeeMapByEmployeeID.replace(updatedEmployee.getEmployeeId(), updatedEmployee); // Update the employee information in the map.
         
         // Update the employee information in the list while preserving order.
         for (int i = 0; i < employeeList.size(); i++) {
-            if (employeeList.get(i).getEmployeeID().equals(updatedEmployee.getEmployeeID())) {
+            if (employeeList.get(i).getEmployeeId() == updatedEmployee.getEmployeeId()) {
                 employeeList.set(i, updatedEmployee);
                 break;
             }
@@ -92,18 +92,18 @@ public class EmployeeService {
                                     EmploymentInformation updatedEmploymentInformation, 
                                     GovernmentInformation updatedGovernmentInformation) {
         // Check if the employee exists in the map.
-        if (!employeeMapByEmployeeID.containsKey(updatedEmployee.getEmployeeID())) return; // Employee not found; exit the method.
+        if (!employeeMapByEmployeeID.containsKey(updatedEmployee.getEmployeeId())) return; // Employee not found; exit the method.
         
         InformationService informationService = new InformationService();        
         informationService.updatePersonalInformation(updatedPersonalInformation);
         informationService.updateEmploymentInformation(updatedEmploymentInformation);
         informationService.updateGovernmentInformation(updatedGovernmentInformation);
         
-        employeeMapByEmployeeID.replace(updatedEmployee.getEmployeeID(), updatedEmployee); // Update the employee information in the map.
+        employeeMapByEmployeeID.replace(updatedEmployee.getEmployeeId(), updatedEmployee); // Update the employee information in the map.
         
         // Update the employee information in the list while preserving order.
         for (int i = 0; i < employeeList.size(); i++) {
-            if (employeeList.get(i).getEmployeeID().equals(updatedEmployee.getEmployeeID())) {
+            if (employeeList.get(i).getEmployeeId() == updatedEmployee.getEmployeeId()) {
                 employeeList.set(i, updatedEmployee);
                 break;
             }
@@ -127,7 +127,7 @@ public class EmployeeService {
      *
      * @param employeeID the unique identifier of the employee to delete.
      */
-    public void deleteEmployee(String employeeID) {
+    public void deleteEmployee(int employeeID) {
         // Check if the employee exists in the map (optional logging, currently commented out).
         if (!employeeMapByEmployeeID.containsKey(employeeID)) return; // Employee not found; exit the method.
         
@@ -136,7 +136,7 @@ public class EmployeeService {
         informationService.deleteEmploymentInformation(employeeID);
         informationService.deleteGovernmentInformation(employeeID);
         
-        employeeList.removeIf(emp -> emp.getEmployeeID().equals(employeeID)); // Remove the employee from the list based on the employeeID.
+        employeeList.removeIf(emp -> emp.getEmployeeId() == employeeID); // Remove the employee from the list based on the employeeID.
 
         EmployeeIDRegistry.updateEmployeeStatus(employeeID, "Terminated"); // Update the employee's status to "Terminated" in the Employee ID registry.
 
@@ -161,13 +161,13 @@ public class EmployeeService {
      */  
     public void addEmployee(Employee employee){        
         String newID = EmployeeIDRegistry.generateNewEmployeeID(); // Generate a new unique employee ID and set it on the employee object.
-        employee.setEmployeeID(newID);
+        employee.setEmployeeId(Integer.parseInt(newID));
             
         CsvFile.EMPLOYEEINFORMATION.appendFile(employee.getEmployeeInformation()); // Append the employee's information to the CSV file.
 
         // Update in-memory structures
         employeeList.add(employee);
-        employeeMapByEmployeeID.put(employee.getEmployeeID(), employee);     
+        employeeMapByEmployeeID.put(employee.getEmployeeId(), employee);     
     }
     
     public void addEmployeeInformation(PersonalInformation newPersonalInformation,
@@ -204,7 +204,7 @@ public class EmployeeService {
         // Define a function that maps an Employee to a row of String values.
         Function<Employee, String[]> rowMapper = (Employee emp) -> {
             return new String[] {
-                emp.getEmployeeID(), emp.getLastName(), emp.getFirstName(), emp.getBirthday(), emp.getAddress(),
+                String.valueOf(emp.getEmployeeId()), emp.getLastName(), emp.getFirstName(), emp.getBirthday().toString(), emp.getEmail(),
                 emp.getPhoneNumber()
             };
         };

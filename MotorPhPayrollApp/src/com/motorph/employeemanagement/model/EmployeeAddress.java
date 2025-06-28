@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Class.EMS;
+package com.motorph.employeemanagement.model;
 
 /**
  * Represents the address information of an employee.
@@ -12,7 +12,8 @@ package Class.EMS;
  * (without address ID) and retrieval (with address ID).</p>
  *
  */
-public class EmployeeAddress extends Information {
+public class EmployeeAddress {
+    private int employeeID;
     private int addressID; 
     private String houseNumber;
     private String street;
@@ -22,11 +23,6 @@ public class EmployeeAddress extends Information {
     private String postalCode;
     private String country;
     private AddressType addressType;
-
-    //Default constructor
-    public EmployeeAddress() {
-        super(0);
-    }
 
     /**
      * Constructor for creating a new address record (without address ID).
@@ -44,7 +40,7 @@ public class EmployeeAddress extends Information {
     public EmployeeAddress(int employeeID, String houseNumber, String street, String barangay,
                            String municipality, String province, String postalCode,
                            String country, AddressType addressType) {
-        super(employeeID);
+        this.employeeID = employeeID;
         this.houseNumber = houseNumber;
         this.street = street;
         this.barangay = barangay;
@@ -72,7 +68,7 @@ public class EmployeeAddress extends Information {
     public EmployeeAddress(int addressID, int employeeID, String houseNumber, String street, String barangay,
                            String municipality, String province, String postalCode,
                            String country, AddressType addressType) {
-        super(employeeID);
+        this.employeeID = employeeID;
         this.addressID = addressID;
         this.houseNumber = houseNumber;
         this.street = street;

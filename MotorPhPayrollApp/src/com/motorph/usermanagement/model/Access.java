@@ -44,7 +44,7 @@ public class Access {
     }
     
     // Access method for Admin
-    public static JFrame accessDTR(Admin admin, String employeeID, PayPeriod selectedPayPeriod) {
+    public static JFrame accessDTR(Admin admin, int employeeID, PayPeriod selectedPayPeriod) {
         AttendanceDailyRecord dailiyAttendanceRecord = new AttendanceDailyRecord(admin, employeeID, selectedPayPeriod);
         dailiyAttendanceRecord.setVisible(true);
         return dailiyAttendanceRecord;
@@ -72,15 +72,15 @@ public class Access {
     }
 
     // Access method for all type Users    
-    public static JFrame accessViewEmployeeDetails(User user, String employeeID) {
-        ViewEmployeeDetails employeeDetails = new ViewEmployeeDetails(user, employeeID);
+    public static JFrame accessViewEmployeeDetails(User user, int employeeID) {
+        ViewEmployeeDetails employeeDetails = new ViewEmployeeDetails((Admin) user, employeeID);
         employeeDetails.setVisible(true);
         return employeeDetails;
     }
     
     // Access method for all type Users    
-    public static JFrame accessViewEmployeeDetails(User user) {
-        ViewEmployeeDetails employeeDetails = new ViewEmployeeDetails((Admin) user);
+    public static JFrame accessViewEmployeeDetails(int employeeID) {
+        ViewEmployeeDetails employeeDetails = new ViewEmployeeDetails(employeeID);
         employeeDetails.setVisible(true);
         return employeeDetails;
     }

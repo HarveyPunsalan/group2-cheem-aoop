@@ -17,7 +17,7 @@ import java.time.LocalDate;
 
 public class Leave implements Identifiable {
     private String leaveID;
-    private String employeeID;    
+    private int employeeID;    
     private LocalDate startDate;
     private LocalDate endDate;
     private String leaveType;
@@ -41,7 +41,7 @@ public class Leave implements Identifiable {
                 this.leaveID = IDManager.generateID(entityManager.getEntityType().getIdPrefix());
                 IDManager.saveIDCounters();
                 
-                this.employeeID = leaveData[0];
+                this.employeeID = Integer.parseInt(leaveData[0]);
                 this.startDate = Parser.parseLocalDate(leaveData[1], null);
                 this.endDate = Parser.parseLocalDate(leaveData[2], null);
                 this.leaveType = leaveData[3];
@@ -53,7 +53,7 @@ public class Leave implements Identifiable {
             case 8 -> {
                 // Existing leave request (ID is provided)
                 this.leaveID = leaveData[0];
-                this.employeeID = leaveData[1];
+                this.employeeID = Integer.parseInt(leaveData[1]);
                 this.startDate = Parser.parseLocalDate(leaveData[2], null);
                 this.endDate = Parser.parseLocalDate(leaveData[3], null);
                 this.leaveType = leaveData[4];
@@ -71,7 +71,7 @@ public class Leave implements Identifiable {
         return leaveID;
     }
 
-    public String getEmployeeID() {
+    public int getEmployeeID() {
         return employeeID;
     }
 

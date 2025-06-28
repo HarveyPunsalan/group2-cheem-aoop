@@ -6,7 +6,7 @@ package com.motorph.payrollprocessing.view.selfservice;
 
 import com.motorph.usermanagement.view.LoginPage;
 import com.motorph.employeemanagement.model.Employee;
-import com.motorph.employeemanagement.service.EmployeeService;
+import com.motorph.employeemanagement.service.csvversion.EmployeeService;
 import com.motorph.payrollprocessing.service.PayrollService;
 import com.motorph.payrollprocessing.service.TaxCalculator;
 import com.motorph.payrollprocessing.service.AllowanceCalculator;
@@ -20,6 +20,7 @@ import com.motorph.usermanagement.model.NonAdmin;
 import com.motorph.usermanagement.model.User;
 import com.motorph.usermanagement.model.Access;
 import com.motorph.common.ui.renderer.PromptComboBoxRenderer;
+import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 /**
  *
@@ -53,7 +54,7 @@ public class EmployeePayslip extends javax.swing.JFrame {
                 jButton3AdminPortal.setVisible(false);
         }
         
-        jLabelInputID5.setText(user.getEmployeeID());      
+        jLabelInputID5.setText(String.valueOf(user.getEmployeeID()));      
         jLabelInputName5.setText(employee.getFirstName() + " " + employee.getLastName()); 
         jLabelInputPayPeriod5.setText("");
         
@@ -629,23 +630,23 @@ public class EmployeePayslip extends javax.swing.JFrame {
         jLabelInputPayPeriod5.setText(selectedPayPeriod.getStartDate().format(formatterDate1) + " - " + selectedPayPeriod.getEndDate().format(formatterDate2));
         
         Employee employee = employeeService.getEmployeeInformation(this.user.getEmployeeID());
-        double payableHours = AttendanceCalculator.calculatePayableHours(attendanceService.getFilteredDailyAttendance(employee, selectedPayPeriod));
-        double hourlyRate = Double.parseDouble(employee.getHourlyRate().replace(",", ""));
-        double rice = Double.parseDouble(employee.getRiceSubsidy().replace(",", ""));
-        double phone = Double.parseDouble(employee.getPhoneAllowance().replace(",", ""));
-        double clothing = Double.parseDouble(employee.getClothingAllowance().replace(",", ""));
-        double basicSalary = SalaryCalculator.calculateBasicSalary(payableHours, Double.parseDouble(employee.getHourlyRate().replace(",", "")));
-        double totalAllowance = AllowanceCalculator.calculateTotalAllowance(Double.parseDouble(employee.getRiceSubsidy().replace(",", "")),
-                                                                            Double.parseDouble(employee.getPhoneAllowance().replace(",", "")), 
-                                                                            Double.parseDouble(employee.getClothingAllowance().replace(",", "")));
-        double grossSalary = SalaryCalculator.calculateGrossSalary(basicSalary, totalAllowance);
-        double sss = DeductionCalculator.calculateSSS(grossSalary);
-        double philhealth = DeductionCalculator.calculatePhilHealth(grossSalary);            
-        double pagibig = DeductionCalculator.calculatePagIbig(grossSalary);
-        double govermentContribution = DeductionCalculator.calculateGovernmentContribution(sss, philhealth, pagibig);
-        double tax = TaxCalculator.calculateWithHoldingTax(grossSalary, govermentContribution);
-        double totalDeduction = DeductionCalculator.calculateTotalDeductions(govermentContribution, tax);
-        double netSalary = SalaryCalculator.calculateNetSalary(grossSalary, totalDeduction, tax);
+        BigDecimal payableHours = BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(attendanceService.getFilteredDailyAttendance(employee, selectedPayPeriod)));
+        BigDecimal hourlyRate = employee.getHourlyRate();
+        BigDecimal rice = employee.getRiceSubsidy();
+        BigDecimal phone = employee.getPhoneAllowance();
+        BigDecimal clothing = employee.getClothingAllowance();
+        BigDecimal basicSalary = SalaryCalculator.calculateBasicSalary(payableHours, employee.getHourlyRate());
+        BigDecimal totalAllowance = AllowanceCalculator.calculateTotalAllowance(employee.getRiceSubsidy(),
+                                                                            employee.getPhoneAllowance(), 
+                                                                            employee.getClothingAllowance());
+        BigDecimal grossSalary = SalaryCalculator.calculateGrossSalary(basicSalary, totalAllowance);
+        BigDecimal sss = DeductionCalculator.calculateSSS(grossSalary);
+        BigDecimal philhealth = DeductionCalculator.calculatePhilHealth(grossSalary);            
+        BigDecimal pagibig = DeductionCalculator.calculatePagIbig(grossSalary);
+        BigDecimal govermentContribution = DeductionCalculator.calculateGovernmentContribution(sss, philhealth, pagibig);
+        BigDecimal tax = TaxCalculator.calculateWithHoldingTax(grossSalary, govermentContribution);
+        BigDecimal totalDeduction = DeductionCalculator.calculateTotalDeductions(govermentContribution, tax);
+        BigDecimal netSalary = SalaryCalculator.calculateNetSalary(grossSalary, totalDeduction, tax);
         
         setEarningResults(new Object[] {payableHours, hourlyRate, basicSalary, rice, phone, clothing, grossSalary});
         setDeductionResults(new Object[] {tax, sss, philhealth, pagibig, totalDeduction});
@@ -764,7 +765,7 @@ public class EmployeePayslip extends javax.swing.JFrame {
         jTextFieldTotalDeductions.setText(payrollData[4].toString());
     }
     
-    public void setNetSalaryResult(double payrollData){
+    public void setNetSalaryResult(BigDecimal payrollData){
         jTextFieldNetSalary.setText(String.valueOf(payrollData));
     }
 }

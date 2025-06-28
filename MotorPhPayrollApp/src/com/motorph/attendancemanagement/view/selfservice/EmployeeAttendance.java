@@ -5,7 +5,7 @@
 package com.motorph.attendancemanagement.view.selfservice;
 
 import com.motorph.usermanagement.view.LoginPage;
-import com.motorph.employeemanagement.service.EmployeeService;
+import com.motorph.employeemanagement.service.csvversion.EmployeeService;
 import com.motorph.payrollprocessing.service.PayrollService;
 import com.motorph.payrollprocessing.model.PayPeriod;
 import com.motorph.attendancemanagement.service.AttendanceService;

@@ -36,7 +36,7 @@ public class DatabaseDemo {
                     Script.SELECT_ALL_EMPLOYEES, //SELECT_ALL_EMPLOYEES
                     //List.of("10001"),
                     resultSet -> new PersonalInformation(
-                            resultSet.getString("employee_id"),
+                            resultSet.getInt("employee_id"),
                             resultSet.getString("first_name"),
                             resultSet.getString("last_name"),
                             resultSet.getObject("birthday", LocalDate.class),

@@ -23,7 +23,7 @@ import javax.swing.JOptionPane;
  * It contains common attributes and methods that all user types share.
  */
 public class User {  
-    protected String employeeID;
+    protected int employeeID;
     protected String username;
     protected String password;
     protected String roleID;
@@ -39,7 +39,7 @@ public class User {
     public User(String[] userData){
         this.username = userData[0];
         this.password = userData[1];
-        this.employeeID = userData[2];
+        this.employeeID = Integer.parseInt(userData[2]);
         this.roleID = userData[3];
     }
     /**
@@ -134,7 +134,7 @@ public class User {
      * Retrieves the employee ID of the user.
      * @return The employee ID
      */
-    public String getEmployeeID() {
+    public int getEmployeeID() {
         return employeeID;
     }
     

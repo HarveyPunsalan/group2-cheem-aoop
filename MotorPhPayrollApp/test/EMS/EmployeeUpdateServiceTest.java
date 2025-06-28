@@ -4,6 +4,9 @@
  */
 package Class.EMS;
 
+import com.motorph.employeemanagement.model.Employee;
+import com.motorph.employeemanagement.service.EmployeeRetrievalService;
+import com.motorph.employeemanagement.service.EmployeeUpdateService;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

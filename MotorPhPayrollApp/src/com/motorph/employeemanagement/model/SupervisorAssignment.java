@@ -2,23 +2,19 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Class.EMS;
+package com.motorph.employeemanagement.model;
 
 import java.time.LocalDate;
 
 /**
  * Represents the supervisor assignment of an employee.
  */
-public class SupervisorAssignment extends Information {
+public class SupervisorAssignment {
+    private int employeeID;
     private int supervisorAssignmentID; // Unique identifier for the assignment record
     private int supervisorID;  // employee ID of the assigned supervisor        
     private LocalDate startDate; // Date the supervision began
     private LocalDate endDate; // Date the supervision ended (nullable if ongoing)
-
-    //Default constructor
-    public SupervisorAssignment() {
-        super(0);
-    }
 
     /**
      * Constructor used for inserting new supervisor assignment records.
@@ -29,7 +25,7 @@ public class SupervisorAssignment extends Information {
      * @param endDate      the date the assignment ended (nullable)
      */
     public SupervisorAssignment(int employeeID, int supervisorID, LocalDate startDate, LocalDate endDate) {
-        super(employeeID);
+        this.employeeID = employeeID;
         this.supervisorID = supervisorID;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -46,7 +42,7 @@ public class SupervisorAssignment extends Information {
      */
     public SupervisorAssignment(int supervisorAssignmentID, int employeeID, int supervisorID,
                                 LocalDate startDate, LocalDate endDate) {
-        super(employeeID);
+        this.employeeID = employeeID;
         this.supervisorAssignmentID = supervisorAssignmentID;
         this.supervisorID = supervisorID;
         this.startDate = startDate;

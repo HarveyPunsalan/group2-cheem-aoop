@@ -4,6 +4,8 @@
  */
 package com.motorph.payrollprocessing.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 /**
@@ -19,8 +21,8 @@ public class SalaryCalculator {
      * @param hourlyRate
      * @return 
      */
-    public static double calculateBasicSalary(double hoursWorked, double hourlyRate) {
-        return Double.parseDouble(decimalFormat.format(hoursWorked * hourlyRate));
+    public static BigDecimal calculateBasicSalary(BigDecimal hoursWorked, BigDecimal hourlyRate) {
+        return new BigDecimal(decimalFormat.format(hoursWorked.multiply(hourlyRate)));
     }
 
     /**
@@ -29,8 +31,8 @@ public class SalaryCalculator {
      * @param totalAllowance
      * @return 
      */
-    public static double calculateGrossSalary(double basicSalary, double totalAllowance) {
-        return Double.parseDouble(decimalFormat.format(basicSalary + totalAllowance));
+    public static BigDecimal calculateGrossSalary(BigDecimal basicSalary, BigDecimal totalAllowance) {
+        return basicSalary.add(totalAllowance);
     } 
     
     /**
@@ -41,7 +43,7 @@ public class SalaryCalculator {
      * @param withHtax
      * @return 
      */
-    public static double calculateNetSalary(double grossSalary, double totalDeductions, double withHtax) {
-            return Double.parseDouble(decimalFormat.format(grossSalary - (totalDeductions + withHtax)));
+    public static BigDecimal calculateNetSalary(BigDecimal grossSalary, BigDecimal totalDeductions, BigDecimal withHtax) {
+            return grossSalary.subtract(totalDeductions.add(withHtax)).setScale(2, RoundingMode.HALF_UP);
     }
 }

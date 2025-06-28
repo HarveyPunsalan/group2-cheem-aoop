@@ -4,9 +4,7 @@
  */
 package com.motorph.usermanagement.view;
 
-import com.motorph.usermanagement.model.Admin;
-import com.motorph.usermanagement.model.NonAdmin;
-import com.motorph.usermanagement.model.User;
+import com.motorph.usermanagement.model.*;
 import com.motorph.validation.Input;
 /**
  *
@@ -141,7 +139,7 @@ public class LoginPage extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(37, Short.MAX_VALUE)
+                .addContainerGap(32, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabelLogo)
                     .addComponent(jLabel1))

@@ -4,6 +4,8 @@
  */
 package Class.EMS;
 
+import com.motorph.employeemanagement.model.Employee;
+import com.motorph.employeemanagement.service.EmployeeRetrievalService;
 import com.motorph.database.execution.SQLExecutor;
 import java.sql.Connection;
 import java.io.IOException;

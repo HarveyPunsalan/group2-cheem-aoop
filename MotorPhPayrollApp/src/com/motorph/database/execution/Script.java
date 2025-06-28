@@ -63,7 +63,7 @@ public enum Script {
     /** Retrieves allowance name and amount for a specific employee. */
     GET_EMPLOYEE_ALLOWANCES(
         "SELECT a.allowance_name, ea.amount " +
-        "FROM employee_allowance ea " +
+        "FROM employee_default_allowance ea " +
         "JOIN allowance a ON ea.allowance_id = a.allowance_id " +
         "WHERE ea.employee_id = ?"),
 
@@ -111,7 +111,7 @@ public enum Script {
 
     /** Updates the allowance amount for a specific employee and allowance type. */
     UPDATE_ALLOWANCE("""
-        UPDATE employee_allowance
+        UPDATE employee_default_allowance
         SET amount = ?
         WHERE employee_id = ? AND allowance_id = ?
     """);

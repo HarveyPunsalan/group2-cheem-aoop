@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.motorph.employeemanagement.service;
+package com.motorph.employeemanagement.service.csvversion;
 
 import com.motorph.employeemanagement.model.PersonalInformation;
 import com.motorph.employeemanagement.model.GovernmentInformation;
@@ -31,9 +31,9 @@ public class InformationService {
     private List<PersonalInformation> personalRecord;
     private List<EmploymentInformation> employmentRecord;
     private List<GovernmentInformation> governmentRecord;
-    private Map<String, PersonalInformation> personalRecordMapByEmployeeID;
-    private Map<String, EmploymentInformation> employmentRecordMapByEmployeeID;
-    private Map<String, GovernmentInformation> gorvernmentRecordMapByEmployeeID;
+    private Map<Integer, PersonalInformation> personalRecordMapByEmployeeID;
+    private Map<Integer, EmploymentInformation> employmentRecordMapByEmployeeID;
+    private Map<Integer, GovernmentInformation> gorvernmentRecordMapByEmployeeID;
     
     private SQLExecutor executor;
     
@@ -50,7 +50,7 @@ public class InformationService {
             this.personalRecord = executor.executeQuery(
                 Script.SELECT_ALL_EMPLOYEES,
                 resultSet -> new PersonalInformation(
-                    resultSet.getString("employee_id"),                    
+                    resultSet.getInt("employee_id"),                    
                     resultSet.getString("first_name"),
                     resultSet.getString("last_name"),
                     resultSet.getObject("birthday", LocalDate.class),
@@ -63,8 +63,8 @@ public class InformationService {
             throw new RuntimeException("Failed to initialize InformationService", ex);
         }
 //        personalRecord = CsvFile.PERSONAL_RECORD.readFile(row -> new PersonalInformation(row[0], row));
-        employmentRecord = CsvFile.EMPLOYMENT_RECORD.readFile(row -> new EmploymentInformation(row[0], row));     
-        governmentRecord = CsvFile.GOVERNMENT_RECORD.readFile(row -> new GovernmentInformation(row[0], row));
+//        employmentRecord = CsvFile.EMPLOYMENT_RECORD.readFile(row -> new EmploymentInformation(row[0], row));     
+//        governmentRecord = CsvFile.GOVERNMENT_RECORD.readFile(row -> new GovernmentInformation(row[0], row));
         
         this.personalRecordMapByEmployeeID = CollectionUtils.listToMap(personalRecord, PersonalInformation::getEmployeeID);
         this.employmentRecordMapByEmployeeID = CollectionUtils.listToMap(employmentRecord, EmploymentInformation::getEmployeeID);
@@ -117,7 +117,7 @@ public class InformationService {
         
         // Update the record in the list, preserving the order.
         for (int i = 0; i < personalRecord.size(); i++) {
-            if (personalRecord.get(i).getEmployeeID().equals(updatedPersonalInformation.getEmployeeID())) {
+            if (personalRecord.get(i).getEmployeeID() == updatedPersonalInformation.getEmployeeID()) {
                 personalRecord.set(i, updatedPersonalInformation);
                 break;
             }
@@ -149,7 +149,7 @@ public class InformationService {
         
         // Update the record in the list while preserving the order.
         for (int i = 0; i < employmentRecord.size(); i++) {
-            if (employmentRecord.get(i).getEmployeeID().equals(updatedEmploymentInformation.getEmployeeID())) {
+            if (employmentRecord.get(i).getEmployeeID() == updatedEmploymentInformation.getEmployeeID()) {
                 employmentRecord.set(i, updatedEmploymentInformation);
                 break;
             }
@@ -180,7 +180,7 @@ public class InformationService {
         
         // Update the government record in the list while preserving order.
         for (int i = 0; i < governmentRecord.size(); i++) {
-            if (governmentRecord.get(i).getEmployeeID().equals(updatedGovernmentInformation.getEmployeeID())) {
+            if (governmentRecord.get(i).getEmployeeID() == updatedGovernmentInformation.getEmployeeID()) {
                 governmentRecord.set(i, updatedGovernmentInformation);
                 break;
             }
@@ -195,11 +195,11 @@ public class InformationService {
         CsvFile.GOVERNMENT_RECORD.writeFile(updatedGovernmentInformationRecord); // Write the updated records back to the CSV file.
     }
     
-    public void deletePersonalInformation(String employeeID){
+    public void deletePersonalInformation(int employeeID){
         // Check if the employee exists in the map (optional logging, currently commented out).
         if (!personalRecordMapByEmployeeID.containsKey(employeeID)) return; // Employee not found; exit the method.
 
-        personalRecord.removeIf(emp -> emp.getEmployeeID().equals(employeeID)); // Remove the employee from the list based on the employeeID.
+        personalRecord.removeIf(emp -> emp.getEmployeeID() == employeeID); // Remove the employee from the list based on the employeeID.
 
         // Convert the remaining employees into a List of String arrays for CSV writing.
         List<String[]> updatedPersonalRecord = new ArrayList<>();
@@ -212,11 +212,11 @@ public class InformationService {
         CsvFile.PERSONAL_RECORD.writeFile(updatedPersonalRecord);
     }
     
-    public void deleteEmploymentInformation(String employeeID){
+    public void deleteEmploymentInformation(int employeeID){
         // Check if the employee exists in the map (optional logging, currently commented out).
         if (!employmentRecordMapByEmployeeID.containsKey(employeeID)) return; // Employee not found; exit the method.
 
-        employmentRecord.removeIf(emp -> emp.getEmployeeID().equals(employeeID)); // Remove the employee from the list based on the employeeID.
+        employmentRecord.removeIf(emp -> emp.getEmployeeID() == employeeID); // Remove the employee from the list based on the employeeID.
 
         // Convert the remaining employees into a List of String arrays for CSV writing.
         List<String[]> updatedEmploymentInformation = new ArrayList<>();
@@ -229,11 +229,11 @@ public class InformationService {
         CsvFile.EMPLOYMENT_RECORD.writeFile(updatedEmploymentInformation);
     }
     
-    public void deleteGovernmentInformation(String employeeID){
+    public void deleteGovernmentInformation(int employeeID){
         // Check if the employee exists in the map (optional logging, currently commented out).
         if (!gorvernmentRecordMapByEmployeeID.containsKey(employeeID)) return; // Employee not found; exit the method.
 
-        governmentRecord.removeIf(emp -> emp.getEmployeeID().equals(employeeID)); // Remove the employee from the list based on the employeeID.
+        governmentRecord.removeIf(emp -> emp.getEmployeeID() == employeeID); // Remove the employee from the list based on the employeeID.
 
         // Convert the remaining employees into a List of String arrays for CSV writing.
         List<String[]> updatedGovernmentInformation= new ArrayList<>();
@@ -279,7 +279,7 @@ public class InformationService {
      * @param employeeID the unique identifier of the employee.
      * @return the PersonalInformation object if found; otherwise, null.
      */ 
-    public PersonalInformation getPersonalInformation(String employeeID){        
+    public PersonalInformation getPersonalInformation(int employeeID){        
         return personalRecordMapByEmployeeID.get(employeeID); // Return the PersonalInformation from the lookup map using the employeeID.
     }
     
@@ -289,7 +289,7 @@ public class InformationService {
      * @param employeeID the unique identifier of the employee.
      * @return the EmploymentInformation object if found; otherwise, null.
      */   
-    public EmploymentInformation getEmploymentInformation(String employeeID){        
+    public EmploymentInformation getEmploymentInformation(int employeeID){        
         return employmentRecordMapByEmployeeID.get(employeeID); // Return the EmploymentInformation from the lookup map using the employeeID.
     } 
     
@@ -299,7 +299,7 @@ public class InformationService {
      * @param employeeID the unique identifier of the employee.
      * @return the GovernmentInformation object if found; otherwise, null.
      */
-    public GovernmentInformation getGovernmentInformation(String employeeID){        
+    public GovernmentInformation getGovernmentInformation(int employeeID){        
         return gorvernmentRecordMapByEmployeeID.get(employeeID); // Return the GovernmentInformation from the lookup map using the employeeID.
     } 
         

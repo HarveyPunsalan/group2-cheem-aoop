@@ -2,9 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Class.EMS;
+package com.motorph.employeemanagement.service;
 
 import com.motorph.database.execution.Script;
+import com.motorph.employeemanagement.model.Employee;
 import java.math.BigDecimal;
 import java.sql.*;
 

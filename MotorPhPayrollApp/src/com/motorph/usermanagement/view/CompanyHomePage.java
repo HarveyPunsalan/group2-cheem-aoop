@@ -8,8 +8,7 @@ package com.motorph.usermanagement.view;
  *
  * @author Charm
  */
-import com.motorph.usermanagement.model.Admin;
-import com.motorph.usermanagement.model.Access;
+import com.motorph.usermanagement.model.*;
 
 public class CompanyHomePage extends javax.swing.JFrame {
     Admin admin;
