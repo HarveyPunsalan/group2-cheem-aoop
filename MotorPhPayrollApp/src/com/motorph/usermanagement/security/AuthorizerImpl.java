@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 /**
  * This provides role-based access control and permission checking functionality.
  * 
- * @author harvey punsalan
+ * @author Harvey
  */
 public class AuthorizerImpl implements Authorizer {
     private static final Logger logger = Logger.getLogger(AuthorizerImpl.class.getName());
@@ -60,7 +60,7 @@ public class AuthorizerImpl implements Authorizer {
         boolean hasPermission = userPermissions.stream()
                 .anyMatch(permission -> permissionName.equalsIgnoreCase(permission.getAccessName()));
         
-        logger.fine("Permission check for user " + user.getUsername() + 
+        logger.fine(() -> "Permission check for user " + user.getUsername() + 
                    " and permission " + permissionName + ": " + hasPermission);
         
         return hasPermission;
@@ -108,11 +108,11 @@ public class AuthorizerImpl implements Authorizer {
             int roleId = user.getRoleId();
             List<Permission> permissions = permissionDAO.findByRole(roleId);
             
-            logger.fine("Retrieved " + permissions.size() + " permissions for user " + user.getUsername());
+            logger.fine(() -> "Retrieved " + permissions.size() + " permissions for user " + user.getUsername());
             
             return permissions;
         } catch (Exception e) {
-            logger.warning("Error getting permissions for user " + user.getUsername() + ": " + e.getMessage());
+            logger.warning(() -> "Error getting permissions for user " + user.getUsername() + ": " + e.getMessage());
             return List.of();
         }
     }
@@ -126,9 +126,9 @@ public class AuthorizerImpl implements Authorizer {
         // Get user's permissions
         List<Permission> userPermissions = getUserPermissions(user);
         
-        // Since Permission class uses resourceId and actionId, we need to modify this approach
-        // For now, we'll check against the access name which should contain resource+action info
-        // You may need to adjust this based on your actual permission naming convention
+        // Since Permission class uses resourceId and actionId, i need to modify this approach
+        // For now, ill check against the access name which should contain resource+action info
+        // i may need to adjust this based on my actual permission naming convention
         String combinedPermission = resourceName + "_" + actionName;
         
         boolean hasAccess = userPermissions.stream()
@@ -137,7 +137,7 @@ public class AuthorizerImpl implements Authorizer {
                     permission.getAccessName().toLowerCase().contains(resourceName.toLowerCase()) &&
                     permission.getAccessName().toLowerCase().contains(actionName.toLowerCase()));
         
-        logger.fine("Resource access check for user " + user.getUsername() + 
+        logger.fine(() -> "Resource access check for user " + user.getUsername() + 
                    " on resource " + resourceName + " with action " + actionName + ": " + hasAccess);
         
         return hasAccess;
@@ -156,7 +156,7 @@ public class AuthorizerImpl implements Authorizer {
                                 HR_ADMIN_ROLE.equalsIgnoreCase(role.getRoleName()))
                     .orElse(false);
         } catch (Exception e) {
-            logger.warning("Error checking admin status for user " + user.getUsername() + ": " + e.getMessage());
+            logger.warning(() -> "Error checking admin status for user " + user.getUsername() + ": " + e.getMessage());
             return false;
         }
     }   

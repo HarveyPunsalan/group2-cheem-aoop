@@ -4,11 +4,11 @@
  */
 package com.motorph.usermanagement.model;
 
-/**
- * @author Harvey 
- *
+/** 
  * Represents an Admin user in the system.
  * Extends User class and provides admin-specific functionality
+ * 
+ * @author Harvey
  */
 public class Admin extends User {
     // Additional fields for role information (not stored in User base class)

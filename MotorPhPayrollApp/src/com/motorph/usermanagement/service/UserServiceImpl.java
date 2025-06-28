@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * Contains business logic for user management operations.
  * Coordinates between DAOs and applies business rules.
  * 
- * @author harvey punsalan
+ * @author Harvey 
  */
 public class UserServiceImpl implements UserService {
     private static final Logger logger = Logger.getLogger(UserServiceImpl.class.getName());

@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 /**
  *
- * @author harvey punsalan
+ * @author Harvey
  */
 
 public class LoginPage extends javax.swing.JFrame {
@@ -35,7 +35,6 @@ public class LoginPage extends javax.swing.JFrame {
         setupInitialState();
         this.userService = new UserServiceImpl();
     }
-    
     /**
      * Initialize component states
      */
@@ -43,7 +42,6 @@ public class LoginPage extends javax.swing.JFrame {
         jButton2ForgotPassword.setVisible(false);
         jLabelIncorrectCredentials.setVisible(false);
     }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -119,7 +117,7 @@ public class LoginPage extends javax.swing.JFrame {
                                         .addComponent(jLabel3Password, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(10, 10, 10)))
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jTextField1Username, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
+                                    .addComponent(jTextField1Username)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGap(6, 6, 6)
                                         .addComponent(jLabelIncorrectCredentials))
@@ -149,7 +147,7 @@ public class LoginPage extends javax.swing.JFrame {
                 .addContainerGap(98, Short.MAX_VALUE))
         );
 
-        jLabelLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/MotorPH Logo.png"))); // NOI18N
+        jLabelLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/MotorPH Logo.png"))); // NOI18N
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setText("MotorPH Payroll App");
@@ -174,7 +172,7 @@ public class LoginPage extends javax.swing.JFrame {
                 .addComponent(jLabelLogo)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1)
-                .addContainerGap(100, Short.MAX_VALUE))
+                .addContainerGap(97, Short.MAX_VALUE))
         );
 
         pack();
@@ -187,7 +185,7 @@ public class LoginPage extends javax.swing.JFrame {
         String username = getUsername();
         String password = getPassword();
         
-        // System Admin bypass (temporary - remove after setting up proper users)
+        // System Admin bypass (temporary - temporary for system admin only remove after setting up proper users
         if (isSystemAdminBypass(username, password)) {
             handleSystemAdminBypass();
             return;
@@ -201,16 +199,14 @@ public class LoginPage extends javax.swing.JFrame {
         // Authenticate user
         authenticateUser(username, password);
     }
-    
     /**
      * Check for system admin bypass credentials
      */
     private boolean isSystemAdminBypass(String username, String password) {
         return "systemadmin".equals(username) && "systemtest123".equals(password);
-    }
-    
+    } 
     /**
-     * Handle system admin bypass login
+     * Handle SystemAdmin bypass login
      */
     private void handleSystemAdminBypass() {
         logger.info("Temporary SystemAdmin bypass activated");
@@ -226,7 +222,6 @@ public class LoginPage extends javax.swing.JFrame {
             openSystemAdminDashboard();
         }
     }
-    
     /**
      * Validate user input
      */
@@ -243,7 +238,6 @@ public class LoginPage extends javax.swing.JFrame {
         
         return true;
     }
-    
     /**
      * Authenticate user and handle login
      */
@@ -264,8 +258,7 @@ public class LoginPage extends javax.swing.JFrame {
         } catch (Exception e) {
             handleUnexpectedError(e);
         }
-    }
-    
+    } 
     /**
      * Handle successful login
      */
@@ -293,8 +286,7 @@ public class LoginPage extends javax.swing.JFrame {
                 "Logged In", 
                 JOptionPane.INFORMATION_MESSAGE);
         }
-    }
-    
+    } 
     /**
      * Handle failed login
      */
@@ -304,7 +296,6 @@ public class LoginPage extends javax.swing.JFrame {
         clearPassword();
         jTextField1Username.requestFocus();
     }
-    
     /**
      * Handle database errors
      */
@@ -316,7 +307,6 @@ public class LoginPage extends javax.swing.JFrame {
             "System Error", 
             JOptionPane.ERROR_MESSAGE);
     }
-    
     /**
      * Handle unexpected errors
      */
@@ -328,7 +318,6 @@ public class LoginPage extends javax.swing.JFrame {
             "System Error", 
             JOptionPane.ERROR_MESSAGE);
     }
-    
     /**
      * Handle dashboard opening errors
      */
@@ -340,8 +329,7 @@ public class LoginPage extends javax.swing.JFrame {
             "\n\nPlease contact your system administrator.", 
             "Dashboard Error", 
             JOptionPane.ERROR_MESSAGE);
-    }
-    
+    }  
     /**
      * Opens the appropriate dashboard based on user role
      */
@@ -363,8 +351,7 @@ public class LoginPage extends javax.swing.JFrame {
             logger.log(Level.SEVERE, "Failed to open dashboard for user: " + user.getUsername(), e);
             throw new Exception("Failed to open dashboard: " + getErrorMessage(e), e);
         }
-    }
-    
+    }   
     /**
      * Open System Admin dashboard
      */
@@ -381,17 +368,21 @@ public class LoginPage extends javax.swing.JFrame {
                 JOptionPane.ERROR_MESSAGE);
         }
     }
-    
     /**
-     * Open Admin dashboard
+     * Open Admin dashboard 
      */
     private void openAdminDashboard(User user) throws Exception {
         logger.info(() -> "Opening admin dashboard for user: " + user.getUsername());
+        
+        // Create Admin object from authenticated user
         Admin admin = new Admin(user);
+        
+        // Open the CompanyHomePage (Admin Dashboard)
         CompanyHomePage adminDashboard = new CompanyHomePage(admin);
         adminDashboard.setVisible(true);
+        
+        logger.info(() -> "Admin dashboard opened for user: " + user.getUsername());
     }
-    
     /**
      * Open regular user dashboard
      */
@@ -399,7 +390,7 @@ public class LoginPage extends javax.swing.JFrame {
         logger.info(() -> "Opening user dashboard for user: " + user.getUsername());
         NonAdmin nonAdmin = new NonAdmin(user);
         
-        // TODO: Implement specific user dashboard
+        // TODO: Implement specific user dashboard - for now show message
         JOptionPane.showMessageDialog(null, 
             "User dashboard would open here.\n" +
             "User: " + user.getUsername() + " (Regular User)\n" +
@@ -407,35 +398,38 @@ public class LoginPage extends javax.swing.JFrame {
             "User Dashboard", 
             JOptionPane.INFORMATION_MESSAGE);
     }
-    
     /**
      * Determines if the user has SystemAdmin role
      */
     private boolean isSystemAdminRole(User user) {
         return user.getRoleId() == SYSTEM_ADMIN_ROLE_ID;
     }
-    
     /**
-     * Determines if the user has regular admin role
-     * Updated to check multiple possible admin role IDs
+     * Determines if the user has admin role - FIXED for your requirements
+     * This will check if manuel.garcia (employee #1) should get admin access
      */
     private boolean isAdminRole(User user) {
-        // Check for multiple admin role possibilities
         int roleId = user.getRoleId();
+        int employeeId = user.getEmployeeId();
+        String username = user.getUsername();
         
-        // Log the role ID for debugging
-        logger.info(() -> "Checking admin role for user: " + user.getUsername() + " with role ID: " + roleId);
+        // Log the details for debugging
+        logger.info(() -> String.format("Checking admin role for user: %s, employeeId: %d, roleId: %d", 
+                                      username, employeeId, roleId));
         
-        // Check common admin role IDs
-        return roleId == ADMIN_ROLE_ID || 
-               roleId == 2 ||  // Alternative admin role ID
-               roleId == 3;    // Another possible admin role ID
+        // Check if this is manuel.garcia with employee ID 1 (your specific requirement)
+        boolean isManuelGarcia = "manuel.garcia".equals(username) && employeeId == 1;
         
-        // You can also check by role name if available in your User model
-        // Uncomment and modify if your User class has a getRoleName() method:
-        // String roleName = user.getRoleName();
-        // return "ADMIN".equalsIgnoreCase(roleName) || 
-        //        "Administrator".equalsIgnoreCase(roleName);       
+        // Check standard admin role IDs
+        boolean hasAdminRoleId = (roleId == ADMIN_ROLE_ID);
+        
+        // Return true if either condition is met
+        boolean isAdmin = isManuelGarcia || hasAdminRoleId;
+        
+        logger.info(() -> String.format("Admin check result for %s: %s (manuel.garcia: %s, adminRole: %s)", 
+                                      username, isAdmin, isManuelGarcia, hasAdminRoleId));
+        
+        return isAdmin;       
     }//GEN-LAST:event_jButton1LogInActionPerformed
 
     private void jTextField1UsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1UsernameActionPerformed
@@ -492,8 +486,6 @@ public class LoginPage extends javax.swing.JFrame {
     public void setIncorrectCredentialsVisible(boolean visible) {
         jLabelIncorrectCredentials.setVisible(visible);
     }
-    
-    
     /**
      * @param args the command line arguments
      */
@@ -528,7 +520,6 @@ public class LoginPage extends javax.swing.JFrame {
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1LogIn;
     private javax.swing.JButton jButton2ForgotPassword;

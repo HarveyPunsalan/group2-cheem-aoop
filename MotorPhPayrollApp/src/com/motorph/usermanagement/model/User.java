@@ -23,7 +23,7 @@ public class User {
     protected int userId;                           // Primary key from DB
     protected int employeeId;                    // Links to employee record 
     protected String username;                  // Unique login name
-    protected String passwordHashed;         // Stored as a hashed string (e.g., BCrypt)
+    protected String passwordHashed;         // Stored as a hashed string 
     protected int roleId;                            // Role (e.g., admin, employee, etc.)
     
     // Account management fields
@@ -33,7 +33,6 @@ public class User {
     
     // Used only at runtime
     protected boolean authenticationResult;  // Login attempt result
-    
     /**
      * Default constructor useful when creating a blank user object
      * Typically used by DAO classes during object construction.
@@ -42,7 +41,6 @@ public class User {
         this.isActive = true; // By default, new users are active
         this.accountCreated = Timestamp.valueOf(LocalDateTime.now());
     }
-    
     /**
      * Constructor used when loading user data from the database. 
      * Used primarily by DAO mapping operations.
@@ -84,7 +82,6 @@ public class User {
         this.employeeId = employeeId;
         this.roleId = roleId;
     }
-
     /**
      * Updates the user's last login time to now.
      * Call this right after a successful login.
@@ -92,7 +89,6 @@ public class User {
     public void updateLastLogin() {
         this.lastLogin = Timestamp.valueOf(LocalDateTime.now());
     }
-    
     /**
      * Checks if the user account is currently active and can log in.
      * Inactive accounts are blocked from system access.
@@ -102,7 +98,6 @@ public class User {
     public boolean canLogin() {
         return this.isActive;
     }
-    
     /**
      * Deactivates the user account without deleting it.
      * Useful for temporarily suspending access while preserving audit trails.
@@ -110,7 +105,6 @@ public class User {
     public void deactivateAccount() {
         this.isActive = false;
     }
-    
     /**
      * Reactivates a previously deactivated user account.
      */
@@ -119,7 +113,6 @@ public class User {
     }
     
     // ----- Getters -----
-    
     /**
      * @return Database primary key for this user
      */
@@ -135,7 +128,7 @@ public class User {
     }
     
     /**
-     * @return Associated employee identifier - NOW RETURNS INT
+     * @return Now returns int
      */
     public int getEmployeeId() {
         return employeeId;
@@ -240,7 +233,6 @@ public class User {
     }
     
      // ----- Utility methods -----
-    
     /**
      * Adds a window listener to handle logout confirmation when user tries to close the window.
      * Prevents accidental application closure and ensures proper logout flow.
@@ -256,7 +248,6 @@ public class User {
             }
         });
     }
-    
     /**
      * Handles user logout with confirmation dialog.
      * Closes current session and returns to login screen.
@@ -273,7 +264,6 @@ public class User {
             new LoginPage().setVisible(true); // Return to login screen
         }
     }
-    
     /**
      * Returns string representation of User for debugging purposes.
      * Excludes sensitive information like passwords.

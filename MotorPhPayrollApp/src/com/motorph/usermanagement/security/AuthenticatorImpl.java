@@ -20,7 +20,7 @@ public class AuthenticatorImpl implements Authenticator {
     private static final int BCRYPT_ROUNDS = 12; // BCrypt work factor
     private final SecureRandom secureRandom;
     private final UserDAO userDAO;
-    private final PasswordEncoder passwordEncoder; // Added PasswordEncoder injection
+    private final PasswordEncoder passwordEncoder; // Added PasswordEncoder 
     
     // Password security requirements
     private static final int MIN_PASSWORD_LENGTH = 8;
@@ -30,13 +30,13 @@ public class AuthenticatorImpl implements Authenticator {
     private static final Pattern SPECIAL_CHAR_PATTERN = Pattern.compile("[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]");
     
     /**
-     * Constructor initializes secure random generator and injects dependencies.
+     * Constructor initializes secure random generator 
      */
     public AuthenticatorImpl() {
         this.secureRandom = new SecureRandom();
-        this.userDAO = new UserDAOImpl(); // Inject UserDAO
-        this.passwordEncoder = new PasswordEncoder(); // Inject PasswordEncoder
-        logger.info("AuthenticatorImpl initialized with BCrypt rounds: " + BCRYPT_ROUNDS);
+        this.userDAO = new UserDAOImpl(); // 
+        this.passwordEncoder = new PasswordEncoder(); // 
+        logger.info(() -> "AuthenticatorImpl initialized with BCrypt rounds: " + BCRYPT_ROUNDS);
     }
     
     /**
@@ -46,7 +46,7 @@ public class AuthenticatorImpl implements Authenticator {
         this.secureRandom = new SecureRandom();
         this.userDAO = userDAO;
         this.passwordEncoder = passwordEncoder;
-        logger.info("AuthenticatorImpl initialized with injected dependencies");
+        logger.info(() -> "AuthenticatorImpl initialized with injected dependencies");
     }
     
     @Override
@@ -74,7 +74,7 @@ public class AuthenticatorImpl implements Authenticator {
         
         try {
             boolean isValid = BCrypt.checkpw(plainPassword, hashedPassword);
-            logger.fine("Password verification result: " + isValid);
+            logger.fine(() -> "Password verification result: " + isValid);
             return isValid;
         } catch (Exception e) {
             logger.log(Level.WARNING, "Password verification failed due to exception", e);
@@ -96,11 +96,11 @@ public class AuthenticatorImpl implements Authenticator {
         if (isHashedPassword(storedPassword)) {
             // Use BCrypt verification for hashed passwords
             boolean isValid = verifyPassword(plainPassword, storedPassword);
-            logger.fine("BCrypt authentication result for user " + userId + ": " + isValid);
+            logger.fine(() -> "BCrypt authentication result for user " + userId + ": " + isValid);
             return isValid;
         } else {
-            // Handle plain text password (legacy data) - THIS IS THE KEY FIX
-            logger.info("Found plain text password for user " + userId + ", attempting migration");
+            // Handle plain text password (legacy data) 
+            logger.info(() -> "Found plain text password for user " + userId + ", attempting migration");
             
             if (plainPassword.equals(storedPassword)) {
                 // Password matches, now hash it and update in database
@@ -109,9 +109,9 @@ public class AuthenticatorImpl implements Authenticator {
                     boolean updated = userDAO.updatePassword(userId, newHashedPassword);
                     
                     if (updated) {
-                        logger.info("Successfully migrated plain text password to hashed for user ID: " + userId);
+                        logger.info(() -> "Successfully migrated plain text password to hashed for user ID: " + userId);
                     } else {
-                        logger.warning("Failed to migrate password for user ID: " + userId);
+                        logger.warning(() -> "Failed to migrate password for user ID: " + userId);
                     }
                     
                     return true; // Authentication successful
@@ -121,7 +121,7 @@ public class AuthenticatorImpl implements Authenticator {
                     return true; // Still authenticate, but migration failed
                 }
             } else {
-                logger.fine("Plain text password authentication failed for user " + userId);
+                logger.fine(() -> "Plain text password authentication failed for user " + userId);
                 return false;
             }
         }
@@ -137,7 +137,7 @@ public class AuthenticatorImpl implements Authenticator {
             java.util.Optional<com.motorph.usermanagement.model.User> userOpt = userDAO.findByUsername(username);
             
             if (!userOpt.isPresent()) {
-                logger.warning("Authentication failed: user not found - " + username);
+                logger.warning(() -> "Authentication failed: user not found - " + username);
                 return false;
             }
             
@@ -150,7 +150,7 @@ public class AuthenticatorImpl implements Authenticator {
                 // Update last login timestamp
                 try {
                     userDAO.updateLastLogin(user.getUserId());
-                    logger.info("Updated last login for user: " + username);
+                    logger.info(() -> "Updated last login for user: " + username);
                 } catch (Exception e) {
                     logger.log(Level.WARNING, "Failed to update last login for user: " + username, e);
                 }

@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  * This handles all business logic related to permission management operations.
  * Coordinates between DAOs and applies business validation rules.
  * 
- * @author harvey punsalan
+ * @author Harvey
  */
 public class PermissionServiceImpl implements PermissionService {
     private static final Logger logger = Logger.getLogger(PermissionServiceImpl.class.getName());

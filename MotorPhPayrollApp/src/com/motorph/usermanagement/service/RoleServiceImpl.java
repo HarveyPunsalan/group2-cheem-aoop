@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 /**
  *
- * @author harvey punsalan
+ * @author Harvey
  */
 public class RoleServiceImpl implements RoleService {
     private static final Logger logger = Logger.getLogger(RoleServiceImpl.class.getName());
@@ -34,6 +34,7 @@ public class RoleServiceImpl implements RoleService {
     
     /**
      * Constructor for dependency injection.
+     * @param roleDAO
      */
     public RoleServiceImpl(RoleDAO roleDAO) {
         this.roleDAO = roleDAO;

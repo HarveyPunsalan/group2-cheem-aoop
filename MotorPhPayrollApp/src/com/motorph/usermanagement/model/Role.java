@@ -18,7 +18,7 @@ public class Role {
     private String roleDescription;        // Detailed description of role purpose
     
     /**
-     * Default constructor for ORM and DAO operations
+     * Default constructor for DAO operations
      */
     public Role() {}
     

@@ -11,7 +11,7 @@ import com.motorph.employeemanagement.model.Employee;
 import Class.EntityManagement.EntityManager;
 import Class.EntityManagement.EntityType;
 import Class.IDManagement.IDManager;
-import com.motorph.validation.Input;
+import com.motorph.usermanagement.util.DateUtils;
 import com.motorph.common.ui.renderer.PromptComboBoxRenderer;
 import com.motorph.attendancemanagement.service.AttendanceService;
 import com.motorph.attendancemanagement.model.DailyAttendance;
@@ -63,7 +63,7 @@ public class RequestCenter extends javax.swing.JFrame {
         jComboBoxLeaveType.setSelectedIndex(-1);
         jTextFieldTotalDays.setText("0");
         
-        Input.addDateValidation(jDateChooser1StartDate, jDateChooser2EndDate, jTextFieldTotalDays); // Attach validation
+        DateUtils.addDateValidation(jDateChooser1StartDate, jDateChooser2EndDate, jTextFieldTotalDays); // Attach validation
     }
     
     public RequestCenter(User user) {
@@ -89,7 +89,7 @@ public class RequestCenter extends javax.swing.JFrame {
         jComboBoxLeaveType.setSelectedIndex(-1);        
         jTextFieldTotalDays.setText("0");
         
-        Input.addDateValidation(jDateChooser1StartDate, jDateChooser2EndDate, jTextFieldTotalDays); // Attach validation
+        DateUtils.addDateValidation(jDateChooser1StartDate, jDateChooser2EndDate, jTextFieldTotalDays); // Attach validation
     }
 
     /**

@@ -8,6 +8,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.sql.Timestamp;
+import com.toedter.calendar.JDateChooser;
+import javax.swing.JTextField;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 
 /**
  * Utility class for date and time operations used in the user management system
@@ -176,6 +183,86 @@ public class DateUtils {
             return days + " day" + (days == 1 ? "" : "s") + " ago";
         } else {
             return formatForDisplay(timestamp);
+        }
+    }
+    
+    /**
+     * This method replaces the old Input.addDateValidation functionality
+     * 
+     * @param startDateChooser The start date chooser component
+     * @param endDateChooser The end date chooser component  
+     * @param totalDaysField The text field to display calculated days
+     */
+    public static void addDateValidation(JDateChooser startDateChooser, 
+                                       JDateChooser endDateChooser, 
+                                       JTextField totalDaysField) {
+        
+        // Property change listener for start date
+        PropertyChangeListener startDateListener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if ("date".equals(evt.getPropertyName())) {
+                    calculateAndUpdateDays(startDateChooser, endDateChooser, totalDaysField);
+                }
+            }
+        };
+        
+        // Property change listener for end date
+        PropertyChangeListener endDateListener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if ("date".equals(evt.getPropertyName())) {
+                    calculateAndUpdateDays(startDateChooser, endDateChooser, totalDaysField);
+                }
+            }
+        };
+        
+        // Add listeners to both date choosers
+        startDateChooser.addPropertyChangeListener(startDateListener);
+        endDateChooser.addPropertyChangeListener(endDateListener);
+    }
+    
+    /**
+     * Calculates the number of days between two dates and updates the total days field
+     * 
+     * @param startDateChooser The start date chooser
+     * @param endDateChooser The end date chooser
+     * @param totalDaysField The field to update with calculated days
+     */
+    private static void calculateAndUpdateDays(JDateChooser startDateChooser, 
+                                             JDateChooser endDateChooser, 
+                                             JTextField totalDaysField) {
+        try {
+            Date startDate = startDateChooser.getDate();
+            Date endDate = endDateChooser.getDate();
+            
+            if (startDate != null && endDate != null) {
+                // Convert to LocalDate for easier calculation
+                LocalDate start = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate end = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                
+                // Calculate days between (inclusive of both start and end dates)
+                long daysBetween = ChronoUnit.DAYS.between(start, end) + 1;
+                
+                // Ensure we don't have negative days
+                if (daysBetween < 0) {
+                    totalDaysField.setText("0");
+                    // Optionally show error message
+                    javax.swing.JOptionPane.showMessageDialog(null, 
+                        "End date cannot be before start date!", 
+                        "Invalid Date Range", 
+                        javax.swing.JOptionPane.WARNING_MESSAGE);
+                } else {
+                    totalDaysField.setText(String.valueOf(daysBetween));
+                }
+            } else {
+                // If either date is null, reset to 0
+                totalDaysField.setText("0");
+            }
+        } catch (Exception e) {
+            // Handle any calculation errors
+            totalDaysField.setText("0");
+            System.err.println("Error calculating date difference: " + e.getMessage());
         }
     }
 }

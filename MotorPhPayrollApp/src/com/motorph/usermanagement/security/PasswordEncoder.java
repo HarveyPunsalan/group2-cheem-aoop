@@ -10,7 +10,7 @@ import java.security.SecureRandom;
 import java.util.Base64;
 /**
  *
- * @author harvey punsalan
+ * @author Harvey 
  */
 public class PasswordEncoder {
     private static final String ALGORITHM = "SHA-256";
@@ -18,6 +18,7 @@ public class PasswordEncoder {
     
     /**
      * Encodes a plain text password with salt
+     * @return 
      */
     public String encode(String plainPassword) {
         try {

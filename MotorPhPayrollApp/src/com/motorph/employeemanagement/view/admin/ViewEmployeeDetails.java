@@ -15,7 +15,7 @@ import com.motorph.usermanagement.model.NonAdmin;
 import com.motorph.usermanagement.model.Access;
 import com.motorph.common.util.Formatter;
 import com.motorph.validation.ComponentsValidator;
-import com.motorph.validation.Input;
+import com.motorph.usermanagement.util.ValidationUtils;
 import com.motorph.common.ui.dialog.MessageDialog;
 import com.motorph.usermanagement.model.User;
 import java.awt.event.MouseAdapter;
@@ -1093,8 +1093,8 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
     public StringBuilder validateAllTextField(){
         StringBuilder errors = new StringBuilder();
     
-        appendError(errors, Input.isValidPhoneNumber(jTextField5PhoneNumber.getText()));
-        appendError(errors, Input.isValidBirthday(jDateChooserBirthday, "M/d/yyyy"));
+        appendError(errors, ValidationUtils.isValidPhoneNumber(jTextField5PhoneNumber.getText()));
+        appendError(errors, ValidationUtils.isValidBirthday(jDateChooserBirthday, "M/d/yyyy"));
 //        appendError(errors, Input.isValidGovernmentIDNumber(jTextField6SSS, "SSS", 10));
 //        appendError(errors, Input.isValidGovernmentIDNumber(jTextField7Philhealth, "PhilHealth", 12));
 //        appendError(errors, Input.isValidGovernmentIDNumber(jTextField8TIN, "TIN", 12));
