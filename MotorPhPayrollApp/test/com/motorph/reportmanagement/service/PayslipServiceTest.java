@@ -4,7 +4,7 @@
  */
 package com.motorph.reportmanagement.service;
 
-import com.motorph.databasemanagement.connection.DatabaseService;
+import com.motorph.database.connection.DatabaseService;
 import com.motorph.reportmanagement.util.ReportParameterBuilder;
 import java.util.HashMap;
 import java.util.Map;

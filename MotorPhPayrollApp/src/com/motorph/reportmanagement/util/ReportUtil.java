@@ -4,7 +4,7 @@
  */
 package com.motorph.reportmanagement.util;
 
-import com.motorph.databasemanagement.connection.DatabaseService;
+import com.motorph.database.connection.DatabaseService;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;

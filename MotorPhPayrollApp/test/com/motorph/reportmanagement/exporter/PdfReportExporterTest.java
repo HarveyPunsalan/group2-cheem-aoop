@@ -4,7 +4,7 @@
  */
 package com.motorph.reportmanagement.exporter;
 
-import com.motorph.databasemanagement.connection.DatabaseService;
+import com.motorph.database.connection.DatabaseService;
 import com.motorph.reportmanagement.config.ReportConstants;
 import com.motorph.reportmanagement.service.PayrollBiWeeklySummaryReportService;
 import com.motorph.reportmanagement.service.PayslipService;
