@@ -8,7 +8,7 @@ package com.motorph.usermanagement.exception;
  * Exception thrown when a user attempts to perform an action they don't have permission for
  * This is used by the authorization system to enforce access control
  * 
- * @author harvey punsalan
+ * @author Harvey
  */
 public class InsufficientPermissionException extends Exception {
     private static final long serialVersionUID = 1L;

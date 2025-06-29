@@ -17,7 +17,7 @@ import com.toedter.calendar.JDateChooser;
  * Utility class providing common validation methods for user input.
  * Contains methods for validating usernames, passwords, and other user data
  * 
- * @author harvey punsalan
+ * @author Harvey 
  */
 
 public class ValidationUtils {
@@ -157,54 +157,49 @@ public class ValidationUtils {
         
         // Validate based on ID type
         switch (idType.toUpperCase()) {
-            case "SSS":
-                if (!SSS_PATTERN.matcher(idNumber.trim()).matches()) {
-                    return "Invalid SSS format. Use format: XX-XXXXXXX-X or 10 digits.";
-                }
-                if (cleanId.length() != 10) {
-                    return "SSS number must be exactly 10 digits.";
-                }
-                break;
-                
-            case "PHILHEALTH":
-                if (!PHILHEALTH_PATTERN.matcher(idNumber.trim()).matches()) {
-                    return "Invalid PhilHealth format. Use format: XX-XXXXXXXXX-X or 12 digits.";
-                }
-                if (cleanId.length() != 12) {
-                    return "PhilHealth number must be exactly 12 digits.";
-                }
-                break;
-                
-            case "TIN":
-                if (!TIN_PATTERN.matcher(idNumber.trim()).matches()) {
-                    return "Invalid TIN format. Use format: XXX-XXX-XXX-XXX or 12 digits.";
-                }
-                if (cleanId.length() != 12) {
-                    return "TIN number must be exactly 12 digits.";
-                }
-                break;
-                
-            case "PAG-IBIG":
-                if (!PAGIBIG_PATTERN.matcher(idNumber.trim()).matches()) {
-                    return "Invalid Pag-IBIG format. Use format: XXXX-XXXX-XXXX or 12 digits.";
-                }
-                if (cleanId.length() != 12) {
-                    return "Pag-IBIG number must be exactly 12 digits.";
-                }
-                break;
-                
-            default:
-                // Generic validation for other ID types
-                if (cleanId.length() != expectedLength) {
-                    return idType + " number must be exactly " + expectedLength + " digits.";
-                }
-                if (!cleanId.matches("\\d+")) {
-                    return idType + " number must contain only digits.";
-                }
+        case "SSS" -> {
+            if (!SSS_PATTERN.matcher(idNumber.trim()).matches()) {
+                return "Invalid SSS format. Use format: XX-XXXXXXX-X or 10 digits.";
+            }
+            if (cleanId.length() != 10) {
+                return "SSS number must be exactly 10 digits.";
+            }
         }
-        
-        return "";
+        case "PHILHEALTH" -> {
+            if (!PHILHEALTH_PATTERN.matcher(idNumber.trim()).matches()) {
+                return "Invalid PhilHealth format. Use format: XX-XXXXXXXXX-X or 12 digits.";
+            }
+            if (cleanId.length() != 12) {
+                return "PhilHealth number must be exactly 12 digits.";
+            }
+        }
+        case "TIN" -> {
+            if (!TIN_PATTERN.matcher(idNumber.trim()).matches()) {
+                return "Invalid TIN format. Use format: XXX-XXX-XXX-XXX or 12 digits.";
+            }
+            if (cleanId.length() != 12) {
+                return "TIN number must be exactly 12 digits.";
+            }
+        }
+        case "PAG-IBIG" -> {
+            if (!PAGIBIG_PATTERN.matcher(idNumber.trim()).matches()) {
+                return "Invalid Pag-IBIG format. Use format: XXXX-XXXX-XXXX or 12 digits.";
+            }
+            if (cleanId.length() != 12) {
+                return "Pag-IBIG number must be exactly 12 digits.";
+            }
+        }
+        default -> {
+            if (cleanId.length() != expectedLength) {
+                return idType + " number must be exactly " + expectedLength + " digits.";
+            }
+            if (!cleanId.matches("\\d+")) {
+                return idType + " number must contain only digits.";
+            }
+        }
     }
+    return "";
+}
     
     /**
      * Validates monetary amounts.

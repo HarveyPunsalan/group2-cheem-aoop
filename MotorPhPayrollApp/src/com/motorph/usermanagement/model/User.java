@@ -267,6 +267,8 @@ public class User {
     /**
      * Returns string representation of User for debugging purposes.
      * Excludes sensitive information like passwords.
+     * 
+     * @return a string containing basic user details
      */
     @Override
     public String toString() {

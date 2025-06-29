@@ -16,7 +16,7 @@ import java.util.Optional;
  * Service interface for Role-related business operations.
  * Defines the contract for role management functionality.
  * 
- * @author harvey punsalan
+ * @author Harvey 
  */
 public interface RoleService {
     /**

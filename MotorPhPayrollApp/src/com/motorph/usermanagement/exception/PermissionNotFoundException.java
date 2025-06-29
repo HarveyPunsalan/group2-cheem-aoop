@@ -8,7 +8,7 @@ package com.motorph.usermanagement.exception;
  * Exception thrown when a permission is not found in the system
  * This is used in permission management operations that require an existing permission
  * 
- * @author harvey punsalan
+ * @author Harvey
  */
 public class PermissionNotFoundException extends Exception {
     private static final long serialVersionUID = 1L;

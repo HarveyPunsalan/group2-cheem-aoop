@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.regex.Pattern;
 /**
  * This will provides secure password handling with salt generation and verification.
+ * 
  * @author Harvey 
  */
 public class AuthenticatorImpl implements Authenticator {
@@ -41,6 +42,9 @@ public class AuthenticatorImpl implements Authenticator {
     
     /**
      * Constructor with dependency injection (recommended for testing)
+     * 
+     * @param userDAO handles access to user data from the database
+     * @param passwordEncoder encodes and verifies user passwords
      */
     public AuthenticatorImpl(UserDAO userDAO, PasswordEncoder passwordEncoder) {
         this.secureRandom = new SecureRandom();
@@ -85,6 +89,11 @@ public class AuthenticatorImpl implements Authenticator {
     /**
      * Enhanced authentication method that handles both plain text and hashed passwords
      * This method will automatically migrate ALL plain text passwords to hashed ones
+     * 
+     * @param plainPassword the password entered by the user
+     * @param storedPassword the password currently stored in the system 
+     * @param userId the ID of the user attempting to log in
+     * @return true if the password is correct and the user is authenticated, false otherwise
      */
     public boolean authenticateAndMigrate(String plainPassword, String storedPassword, int userId) {
         if (plainPassword == null || storedPassword == null) {
@@ -130,6 +139,10 @@ public class AuthenticatorImpl implements Authenticator {
     /**
      * Main authentication method that should be used by your login system
      * This will ensure ALL users get their passwords migrated when they login
+     * 
+     * @param username the username of the user trying to log in
+     * @param plainPassword the password entered by the user in plain text
+     * @return true if the user is found and the password matches, false otherwise
      */
     public boolean authenticate(String username, String plainPassword) {
         try {

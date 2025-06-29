@@ -59,6 +59,8 @@ public class Admin extends User {
     /**
      * Static method to handle admin login via Access class
      * Maintains compatibility with existing UI code
+     * 
+     * @param admin the admin user who is logging in
      */
     public static void login(User admin) {
         Access.accessCompanyHomePage((Admin) admin);

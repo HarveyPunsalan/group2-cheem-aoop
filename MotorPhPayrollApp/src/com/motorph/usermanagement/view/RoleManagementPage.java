@@ -9,7 +9,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
 /**
  *
- * @author harvey punsalan
+ * @author Harvey
  */
 public class RoleManagementPage extends javax.swing.JPanel {
     private RoleController roleController;
@@ -216,11 +216,13 @@ public class RoleManagementPage extends javax.swing.JPanel {
         
         // Clear placeholder text when focused
         jTextFieldSearchRole.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
             public void focusGained(java.awt.event.FocusEvent evt) {
                 if (jTextFieldSearchRole.getText().equals("Enter role name to search")) {
                     jTextFieldSearchRole.setText("");
                 }
             }
+            @Override
             public void focusLost(java.awt.event.FocusEvent evt) {
                 if (jTextFieldSearchRole.getText().isEmpty()) {
                     jTextFieldSearchRole.setText("Enter role name to search");
@@ -345,7 +347,7 @@ public class RoleManagementPage extends javax.swing.JPanel {
         
         String roleName = (String) jTableInfoRole.getValueAt(selectedRow, 1);
         
-        // For now, just show a message. You can implement permission viewing later
+        // For now, just show a message. and can implement permission viewing later
         JOptionPane.showMessageDialog(this, "Viewing permissions for role: " + roleName, "View Permissions", JOptionPane.INFORMATION_MESSAGE);
     }
     

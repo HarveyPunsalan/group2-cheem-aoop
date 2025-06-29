@@ -8,7 +8,7 @@ package com.motorph.usermanagement.exception;
  * Exception thrown when attempting to create a role with a name that already exists
  * Helps maintain data integrity by preventing duplicate role names
  * 
- * @author harvey punsalan
+ * @author Harvey
  */
 public class DuplicateRoleException extends Exception {
     private static final long serialVersionUID = 1L;

@@ -18,7 +18,9 @@ public class PasswordEncoder {
     
     /**
      * Encodes a plain text password with salt
-     * @return 
+     * 
+     * @param plainPassword the password provided by the user in plain text
+     * @return the encoded password, including the salt, as a Base64 string
      */
     public String encode(String plainPassword) {
         try {
@@ -46,6 +48,10 @@ public class PasswordEncoder {
     
     /**
      * Verifies if a plain password matches the encoded password
+     * 
+     * @param plainPassword the password entered by the user in plain text
+     * @param encodedPassword the previously encoded password (including salt) from storage
+     * @return true if the password matches, false if not or if an error occurs
      */
     public boolean matches(String plainPassword, String encodedPassword) {
         try {

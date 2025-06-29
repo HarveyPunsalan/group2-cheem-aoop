@@ -318,13 +318,8 @@ public class CompanyHomePage extends javax.swing.JFrame {
     // Assuming you have a way to authenticate the user and create a valid User object
     // User loggedInUser = new Admin("adminUsername", "adminPassword");  // Example: Creating an Admin object
     /* Create and display the form */
-    java.awt.EventQueue.invokeLater(new Runnable() {
-        public void run() {
-            new CompanyHomePage().setVisible(true);
-            
-            // Pass the logged-in user to the constructor
-//            new CompanyHomePage(loggedInUser).setVisible(true); 
-        }
+    java.awt.EventQueue.invokeLater(() -> {
+        new CompanyHomePage().setVisible(true);
     });
   }
     // Variables declaration - do not modify//GEN-BEGIN:variables

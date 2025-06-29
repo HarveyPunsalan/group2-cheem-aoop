@@ -8,7 +8,7 @@ package com.motorph.usermanagement.exception;
  * Exception that wraps database-related exceptions like SQLException
  * This provides a consistent way to handle data access problems across the application
  * 
- * @author harvey punsalan
+ * @author Harvey
  */
 public class DataAccessException extends Exception {
     private static final long serialVersionUID = 1L;

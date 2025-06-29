@@ -40,7 +40,10 @@ public class PermissionServiceImpl implements PermissionService {
     }
     
     /**
-     * Constructor for dependency injection (useful for testing).
+     * Constructor for dependency injection (useful for testing)
+     * 
+     * @param permissionDAO provides access to permission-related database operations
+     * @param roleDAO provides access to role-related database operations
      */
     public PermissionServiceImpl(PermissionDAO permissionDAO, RoleDAO roleDAO) {
         this.permissionDAO = permissionDAO;

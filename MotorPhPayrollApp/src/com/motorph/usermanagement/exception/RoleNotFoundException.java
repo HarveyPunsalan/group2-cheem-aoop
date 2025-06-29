@@ -8,7 +8,7 @@ package com.motorph.usermanagement.exception;
  * Exception thrown when a role is not found in the system
  * This used in role management operations that require an existing role
  * 
- * @author harvey punsalan
+ * @author Harvey
  */
 public class RoleNotFoundException extends Exception {
     private static final long serialVersionUID = 1L;

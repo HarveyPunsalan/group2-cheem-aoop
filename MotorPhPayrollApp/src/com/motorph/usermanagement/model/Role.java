@@ -10,7 +10,7 @@ import java.util.Objects;
  * This represents a user role in the system
  * Corresponds to the user_role table in the database
  * 
- * @author harvey punsalan
+ * @author Harvey
  */
 public class Role {
     private int roleId;                    // Primary key

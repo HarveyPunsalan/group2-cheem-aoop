@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * This will handles permission checking and role-based access control.
  * 
- * @author harvey 
+ * @author Harvey 
  */
 public interface Authorizer {
     /**

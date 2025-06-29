@@ -9,7 +9,6 @@ import java.util.Objects;
 
 /**
  * Represents a permission that controls access to specific system features.
- * Corresponds to the user_access table in the database.
  * 
  * @author Harvey 
  */

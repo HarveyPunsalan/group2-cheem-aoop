@@ -17,7 +17,7 @@ import java.util.logging.Level;
  * Utility class providing helper methods for JDBC operations
  * This includes methods for safely closing database resources and handling transactions
  * 
- * @author harvey punsalan
+ * @author Harvey
  */
 
 public class JDBCUtils {

@@ -8,7 +8,7 @@ package com.motorph.usermanagement.exception;
  * Exception thrown when a user is not found in the system
  * This is typically used in operations that require an existing user
  * 
- * @author harvey punsalan
+ * @author Harvey 
  */
 
 public class UserNotFoundException extends Exception {

@@ -8,7 +8,7 @@ package com.motorph.usermanagement.exception;
  * Exception thrown when attempting to create a permission that already exists
  * This prevents duplicate permissions from being created in the system
  * 
- * @author harvey punsalan
+ * @author Harvey
  */
 public class DuplicatePermissionException extends Exception {
     private static final long serialVersionUID = 1L;

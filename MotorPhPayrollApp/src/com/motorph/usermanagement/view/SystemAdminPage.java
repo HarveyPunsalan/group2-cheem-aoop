@@ -10,7 +10,7 @@ import java.util.logging.Level;
 
 /**
  *
- * @author harvey punsalan
+ * @author Harvey
  */
 public class SystemAdminPage extends javax.swing.JFrame {
     private static final Logger logger = Logger.getLogger(SystemAdminPage.class.getName());

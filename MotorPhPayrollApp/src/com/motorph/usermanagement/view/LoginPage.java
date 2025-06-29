@@ -302,10 +302,11 @@ public class LoginPage extends javax.swing.JFrame {
     private void handleDatabaseError(DataAccessException e) {
         logger.log(Level.SEVERE, "Database error during authentication", e);
         JOptionPane.showMessageDialog(this, 
-            "Unable to connect to the system. Please try again later.\n" +
-            "Technical details: " + e.getMessage(), 
+            """
+            Unable to connect to the system. Please try again later.
+            Technical details: """ + e.getMessage(), 
             "System Error", 
-            JOptionPane.ERROR_MESSAGE);
+        JOptionPane.ERROR_MESSAGE);
     }
     /**
      * Handle unexpected errors
@@ -313,9 +314,10 @@ public class LoginPage extends javax.swing.JFrame {
     private void handleUnexpectedError(Exception e) {
         logger.log(Level.SEVERE, "Unexpected error during authentication", e);
         JOptionPane.showMessageDialog(this, 
-            "An unexpected error occurred. Please contact support.\n" +
-            "Technical details: " + e.getMessage(), 
-            "System Error", 
+            """
+            An unexpected error occurred. Please contact support.
+            Technical details: """ + e.getMessage(), 
+            "System Error",  
             JOptionPane.ERROR_MESSAGE);
     }
     /**
@@ -324,9 +326,11 @@ public class LoginPage extends javax.swing.JFrame {
     private void handleDashboardError(Exception error, String username) {
         logger.log(Level.SEVERE, "Error opening dashboard for user: " + username, error);
         JOptionPane.showMessageDialog(this, 
-            "Login successful, but there was an error opening the dashboard.\n" +
-            "Error: " + error.getMessage() + 
-            "\n\nPlease contact your system administrator.", 
+            """
+            Login successful, but there was an error opening the dashboard.
+            Error: """ + error.getMessage() + """
+            Please contact your system administrator.
+            """, 
             "Dashboard Error", 
             JOptionPane.ERROR_MESSAGE);
     }  
@@ -405,7 +409,7 @@ public class LoginPage extends javax.swing.JFrame {
         return user.getRoleId() == SYSTEM_ADMIN_ROLE_ID;
     }
     /**
-     * Determines if the user has admin role - FIXED for your requirements
+     * Determines if the user has admin role 
      * This will check if manuel.garcia (employee #1) should get admin access
      */
     private boolean isAdminRole(User user) {
@@ -417,7 +421,7 @@ public class LoginPage extends javax.swing.JFrame {
         logger.info(() -> String.format("Checking admin role for user: %s, employeeId: %d, roleId: %d", 
                                       username, employeeId, roleId));
         
-        // Check if this is manuel.garcia with employee ID 1 (your specific requirement)
+        // Check if this is manuel.garcia with employee ID 1
         boolean isManuelGarcia = "manuel.garcia".equals(username) && employeeId == 1;
         
         // Check standard admin role IDs
@@ -514,12 +518,10 @@ public class LoginPage extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new LoginPage().setVisible(true);
-            }
-        });
-    }
+        java.awt.EventQueue.invokeLater(() -> {
+        new CompanyHomePage().setVisible(true);
+    });
+}
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1LogIn;
     private javax.swing.JButton jButton2ForgotPassword;

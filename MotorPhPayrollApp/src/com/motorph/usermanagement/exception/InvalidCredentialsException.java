@@ -8,7 +8,7 @@ package com.motorph.usermanagement.exception;
  * Exception thrown when user provides invalid login credentials
  * This is used during authentication to indicate username/password mismatch
  * 
- * @author harvey punsalan
+ * @author Harvey
  */
 
 public class InvalidCredentialsException extends Exception {

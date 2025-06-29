@@ -8,7 +8,7 @@ package com.motorph.usermanagement.exception;
  * Exception thrown when attempting to create a user with a username that already exists
  * This helps maintain data integrity by preventing duplicate usernames in the system
  * 
- * @author harvey punsalan
+ * @author Harvey
  */
 public class DuplicateUserException extends Exception {
     private static final long serialVersionUID = 1L;
