@@ -45,6 +45,40 @@ public class Access {
         return companyHomePage;
     }
     
+    // Route NonAdmin to a landing page using ProfilePage as their main landing
+    public static JFrame accessNonAdminLandingPage(NonAdmin nonAdmin) {
+        if (nonAdmin == null) {
+            logger.warning("Attempted to access NonAdmin Landing Page with null nonAdmin reference.");
+            return null;
+        }
+        logger.info(() -> "Opening Landing Page for NonAdmin: " + nonAdmin.getUsername());
+        ProfilePage landingPage = new ProfilePage(nonAdmin);
+        landingPage.setVisible(true);
+        return landingPage;
+    }
+    
+    // Generic method to route any User to appropriate landing page
+    public static JFrame accessUserLandingPage(User user) {
+        if (user == null) {
+            logger.warning("Attempted to access landing page with null user reference.");
+            return null;
+        }
+        
+        if (user instanceof Admin admin) {
+            logger.info(() -> "Routing Admin to Company Home Page: " + admin.getUsername());
+            return accessCompanyHomePage(admin);
+        } else if (user instanceof NonAdmin nonAdmin) {
+            logger.info(() -> "Routing NonAdmin to Landing Page: " + nonAdmin.getUsername());
+            return accessNonAdminLandingPage(nonAdmin);
+        } else {
+            // Fallback for generic User objects (treat as NonAdmin)
+            logger.info(() -> "Routing generic User to Profile Page: " + user.getUsername());
+            ProfilePage profilePage = new ProfilePage(user);
+            profilePage.setVisible(true);
+            return profilePage;
+        }
+    }
+        
     // Route admin to employee info management 
     public static JFrame accessEmployeeInformation(Admin admin) {
         if (admin == null) {

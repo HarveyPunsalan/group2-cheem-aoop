@@ -55,12 +55,26 @@ public class NonAdmin extends User {
     
     /**
      * Static method to handle non-admin login via Access class
-     * Maintains compatibility with existing UI code
+     * Now properly routes NonAdmin users to their appropriate landing page
      * 
      * @param user The non-admin user attempting to log in
      */ 
     public static void login(User user) {
-        Access.accessProfilePage(user);
+        if (user instanceof NonAdmin) {
+            // Use the specific NonAdmin landing page method
+            Access.accessNonAdminLandingPage((NonAdmin) user);
+        } else {
+            // Use the generic user landing page routing
+            Access.accessUserLandingPage(user);
+        }
+    }
+    
+    /**
+     * Instance method to access the NonAdmin landing page
+     * Provides direct access for NonAdmin instances
+     */
+    public void accessLandingPage() {
+        Access.accessNonAdminLandingPage(this);
     }
     
     /**
