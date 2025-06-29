@@ -42,14 +42,8 @@ public class CompanyHomePage extends javax.swing.JFrame {
      * Handles user logout with confirmation dialog.
      */
     private void logout(javax.swing.JFrame frame) {
-        int confirmed = JOptionPane.showConfirmDialog(frame,
-                "Are you sure you want to log out?", "Logout Confirmation",
-                JOptionPane.YES_NO_OPTION);
-
-        if (confirmed == JOptionPane.YES_OPTION) {
-            frame.dispose(); // Close current frame cleanly
-            new com.motorph.usermanagement.view.LoginPage().setVisible(true); // Return to login screen
-        }
+        frame.dispose(); 
+        new com.motorph.usermanagement.view.LoginPage().setVisible(true); // Return to login screen
     }
     /**
      * This method is called from within the constructor to initialize the form.

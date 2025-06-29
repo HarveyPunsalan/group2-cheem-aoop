@@ -9,7 +9,7 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author harvey punsalan
+ * @author Harvey 
  */
 public class UserManagementPage extends javax.swing.JPanel {
 
@@ -79,11 +79,13 @@ public class UserManagementPage extends javax.swing.JPanel {
         
         // Clear placeholder text when user clicks on text fields
         jTextFieldUserNameSearch.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
             public void focusGained(java.awt.event.FocusEvent evt) {
                 if (jTextFieldUserNameSearch.getText().equals("Enter Username")) {
                     jTextFieldUserNameSearch.setText("");
                 }
             }
+            @Override
             public void focusLost(java.awt.event.FocusEvent evt) {
                 if (jTextFieldUserNameSearch.getText().isEmpty()) {
                     jTextFieldUserNameSearch.setText("Enter Username");
@@ -94,11 +96,13 @@ public class UserManagementPage extends javax.swing.JPanel {
         
         
         jTextFieldPutUsername.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
             public void focusGained(java.awt.event.FocusEvent evt) {
                 if (jTextFieldPutUsername.getText().equals("Enter Username")) {
                     jTextFieldPutUsername.setText("");
                 }
             }
+            @Override
             public void focusLost(java.awt.event.FocusEvent evt) {
                 if (jTextFieldPutUsername.getText().isEmpty()) {
                     jTextFieldPutUsername.setText("Enter Username");
@@ -107,11 +111,13 @@ public class UserManagementPage extends javax.swing.JPanel {
         });
         
         jTextFieldPutEmployeeID.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
             public void focusGained(java.awt.event.FocusEvent evt) {
                 if (jTextFieldPutEmployeeID.getText().equals("Enter employee ID")) {
                     jTextFieldPutEmployeeID.setText("");
                 }
             }
+            @Override
             public void focusLost(java.awt.event.FocusEvent evt) {
                 if (jTextFieldPutEmployeeID.getText().isEmpty()) {
                     jTextFieldPutEmployeeID.setText("Enter employee ID");
@@ -120,11 +126,13 @@ public class UserManagementPage extends javax.swing.JPanel {
         });
         
         jTextFieldPutPassword.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
             public void focusGained(java.awt.event.FocusEvent evt) {
                 if (jTextFieldPutPassword.getText().equals("Enter Password")) {
                     jTextFieldPutPassword.setText("");
                 }
             }
+            @Override
             public void focusLost(java.awt.event.FocusEvent evt) {
                 if (jTextFieldPutPassword.getText().isEmpty()) {
                     jTextFieldPutPassword.setText("Enter Password");
@@ -156,6 +164,8 @@ public class UserManagementPage extends javax.swing.JPanel {
     /**
      * Sets the table model for the user table
      * This method is called by UserController
+     * 
+     * @param tableModel the data model to be applied to the user table
      */
     public void setTableModel(DefaultTableModel tableModel) {
         jTableShowInfo.setModel(tableModel);
@@ -175,6 +185,9 @@ public class UserManagementPage extends javax.swing.JPanel {
     /**
      * Updates the user count display
      * This method is called by UserController
+     * 
+     * @param totalUsers the total number of users in the system
+     * @param activeUsers the number of currently active users
      */
     public void updateUserCountDisplay(int totalUsers, int activeUsers) {
         int inactiveUsers = totalUsers - activeUsers;
@@ -421,7 +434,7 @@ public class UserManagementPage extends javax.swing.JPanel {
                         .addComponent(jLabelRoleID)
                         .addComponent(jComboBoxChooseRoleID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jButtonCreateUser)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(20, 20, 20))
         );
@@ -434,7 +447,7 @@ public class UserManagementPage extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 

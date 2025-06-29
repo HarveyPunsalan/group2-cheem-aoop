@@ -35,6 +35,7 @@ public class LoginPage extends javax.swing.JFrame {
         setupInitialState();
         this.userService = new UserServiceImpl();
     }
+    
     /**
      * Initialize component states
      */
@@ -42,6 +43,7 @@ public class LoginPage extends javax.swing.JFrame {
         jButton2ForgotPassword.setVisible(false);
         jLabelIncorrectCredentials.setVisible(false);
     }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -199,12 +201,14 @@ public class LoginPage extends javax.swing.JFrame {
         // Authenticate user
         authenticateUser(username, password);
     }
+    
     /**
      * Check for system admin bypass credentials
      */
     private boolean isSystemAdminBypass(String username, String password) {
         return "systemadmin".equals(username) && "systemtest123".equals(password);
     } 
+    
     /**
      * Handle SystemAdmin bypass login
      */
@@ -212,16 +216,9 @@ public class LoginPage extends javax.swing.JFrame {
         logger.info("Temporary SystemAdmin bypass activated");
         clearPassword();
         
-        int option = JOptionPane.showConfirmDialog(this, 
-            "Temporary SystemAdmin Access Granted!\n\nDo you want to proceed as SystemAdmin?", 
-            "SystemAdmin Access", 
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.INFORMATION_MESSAGE);
-        
-        if (option == JOptionPane.YES_OPTION) {
-            openSystemAdminDashboard();
-        }
+        openSystemAdminDashboard();
     }
+    
     /**
      * Validate user input
      */
@@ -238,6 +235,7 @@ public class LoginPage extends javax.swing.JFrame {
         
         return true;
     }
+    
     /**
      * Authenticate user and handle login
      */
@@ -259,6 +257,7 @@ public class LoginPage extends javax.swing.JFrame {
             handleUnexpectedError(e);
         }
     } 
+    
     /**
      * Handle successful login
      */
@@ -266,27 +265,14 @@ public class LoginPage extends javax.swing.JFrame {
         logger.info(() -> "User authenticated successfully: " + user.getUsername());
         clearPassword();
         
-        int option = JOptionPane.showConfirmDialog(this, 
-            "Login Successful!\nWelcome, " + user.getUsername() + 
-            "\n\nDo you want to proceed to the dashboard?", 
-            "Login Success", 
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.INFORMATION_MESSAGE);
-        
-        if (option == JOptionPane.YES_OPTION) {
-            try {
-                openUserDashboard(user);
-                this.dispose();
-            } catch (Exception dashboardError) {
-                handleDashboardError(dashboardError, user.getUsername());
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, 
-                "You are successfully logged in. Click OK to stay on this page.", 
-                "Logged In", 
-                JOptionPane.INFORMATION_MESSAGE);
+        try {
+            openUserDashboard(user);
+            this.dispose();
+        } catch (Exception dashboardError) {
+            handleDashboardError(dashboardError, user.getUsername());
         }
-    } 
+    }
+    
     /**
      * Handle failed login
      */
@@ -296,6 +282,7 @@ public class LoginPage extends javax.swing.JFrame {
         clearPassword();
         jTextField1Username.requestFocus();
     }
+    
     /**
      * Handle database errors
      */
@@ -308,6 +295,7 @@ public class LoginPage extends javax.swing.JFrame {
             "System Error", 
         JOptionPane.ERROR_MESSAGE);
     }
+    
     /**
      * Handle unexpected errors
      */
@@ -320,6 +308,7 @@ public class LoginPage extends javax.swing.JFrame {
             "System Error",  
             JOptionPane.ERROR_MESSAGE);
     }
+    
     /**
      * Handle dashboard opening errors
      */
@@ -334,6 +323,7 @@ public class LoginPage extends javax.swing.JFrame {
             "Dashboard Error", 
             JOptionPane.ERROR_MESSAGE);
     }  
+    
     /**
      * Opens the appropriate dashboard based on user role
      */
@@ -356,6 +346,7 @@ public class LoginPage extends javax.swing.JFrame {
             throw new Exception("Failed to open dashboard: " + getErrorMessage(e), e);
         }
     }   
+    
     /**
      * Open System Admin dashboard
      */
@@ -372,6 +363,7 @@ public class LoginPage extends javax.swing.JFrame {
                 JOptionPane.ERROR_MESSAGE);
         }
     }
+    
     /**
      * Open Admin dashboard 
      */
@@ -387,6 +379,7 @@ public class LoginPage extends javax.swing.JFrame {
         
         logger.info(() -> "Admin dashboard opened for user: " + user.getUsername());
     }
+    
     /**
      * Open regular user dashboard
      */
@@ -402,12 +395,14 @@ public class LoginPage extends javax.swing.JFrame {
             "User Dashboard", 
             JOptionPane.INFORMATION_MESSAGE);
     }
+    
     /**
      * Determines if the user has SystemAdmin role
      */
     private boolean isSystemAdminRole(User user) {
         return user.getRoleId() == SYSTEM_ADMIN_ROLE_ID;
     }
+    
     /**
      * Determines if the user has admin role 
      * This will check if manuel.garcia (employee #1) should get admin access
