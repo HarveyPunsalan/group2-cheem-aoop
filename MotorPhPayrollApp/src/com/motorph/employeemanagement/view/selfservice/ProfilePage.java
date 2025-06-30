@@ -4,6 +4,7 @@
  */
 package com.motorph.employeemanagement.view.selfservice;
 
+import com.motorph.usermanagement.model.NonAdmin;
 import com.motorph.database.connection.DatabaseService;
 import com.motorph.employeemanagement.model.Employee;
 import com.motorph.employeemanagement.service.EmployeeRetrievalService;
@@ -27,37 +28,49 @@ public class ProfilePage extends javax.swing.JFrame {
     private final EmployeeRetrievalService retrievalService;
     private Employee currentEmployee;
 
+    /**
+     * Default constructor - SHOULD NOT BE USED
+     * This constructor is problematic because it creates a ProfilePage without a user context
+     * which leads to NullPointerException when trying to access user methods.
+     * 
+     * @deprecated Use ProfilePage(User user) instead
+     */
+    @Deprecated
     public ProfilePage() {
         initComponents();
+        // FIXED: Don't set user to null and then try to use it
         this.user = null;
-
-        // Register logout listener
-        user.addLogoutListener(this);
-
-        // Hide admin-only components if the user is not an admin
-        if (user instanceof NonAdmin) {
-            jButton3AdminPortal.setVisible(false);
-        }
-
+        
         // Initialize service to retrieve employee data
         this.retrievalService = new EmployeeRetrievalService(new SQLExecutor(DatabaseService.connectToMotorPH()));
         
-        // TODO!!!: Replace hardcoded ID with dynamic retrieval when user.getEmployeeId() is functional
-        loadEmployeeDetails(user.getEmployeeId());
-
+        // FIXED: Don't try to access user methods when user is null
+        // Show warning message instead
+        JOptionPane.showMessageDialog(this, 
+            "ProfilePage created without user context. This should not happen.", 
+            "System Warning", 
+            JOptionPane.WARNING_MESSAGE);
+        
+        // Don't load employee details or register logout listener when user is null
         disableAllTextFields(); // Prevent edits to the profile form
     }
     
     /**
      * Constructs the profile page and loads the current employee's details.
      *
-     * @param user       The logged-in user (Admin or NonAdmin).
+     * @param user The logged-in user (Admin or NonAdmin).
      */
     public ProfilePage(User user) {
         initComponents();
+        
+        // Add null check for user parameter
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null when creating ProfilePage");
+        }
+        
         this.user = user;
 
-        // Register logout listener
+        // Register logout listener only if user is not null
         user.addLogoutListener(this);
 
         // Hide admin-only components if the user is not an admin
@@ -68,8 +81,16 @@ public class ProfilePage extends javax.swing.JFrame {
         // Initialize service to retrieve employee data
         this.retrievalService = new EmployeeRetrievalService(new SQLExecutor(DatabaseService.connectToMotorPH()));
         
-        // TODO!!!: Replace hardcoded ID with dynamic retrieval when user.getEmployeeId() is functional
-        loadEmployeeDetails(user.getEmployeeId());
+        // Add validation for employeeId before loading details
+        int employeeId = user.getEmployeeId();
+        if (employeeId > 0) {
+            loadEmployeeDetails(employeeId);
+        } else {
+            JOptionPane.showMessageDialog(this, 
+                "Invalid employee ID: " + employeeId, 
+                "Data Error", 
+                JOptionPane.ERROR_MESSAGE);
+        }
 
         disableAllTextFields(); // Prevent edits to the profile form
     }
@@ -80,11 +101,15 @@ public class ProfilePage extends javax.swing.JFrame {
      * @param employeeId The ID of the employee to load.
      */
     private void loadEmployeeDetails(int employeeId) {
-        currentEmployee = retrievalService.getEmployeeById(employeeId);
-        if (currentEmployee == null) {
-            JOptionPane.showMessageDialog(this, "Employee not found.");
-            return;
-        }
+        try {
+            currentEmployee = retrievalService.getEmployeeById(employeeId);
+            if (currentEmployee == null) {
+                JOptionPane.showMessageDialog(this, 
+                    "Employee not found with ID: " + employeeId, 
+                    "Data Error", 
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
         // Personal info
         jTextField1EmployeeNo.setText(String.valueOf(currentEmployee.getEmployeeId()));
         jTextField1FirstName.setText(currentEmployee.getFirstName());
@@ -121,7 +146,13 @@ public class ProfilePage extends javax.swing.JFrame {
         jTextField9ClothingAllowance.setText(currentEmployee.getClothingAllowance().toString());
         jTextField17GrossSemiRate.setText(currentEmployee.getGrossSemiMonthlyRate().toString());
         jTextField18HourlyRate.setText(currentEmployee.getHourlyRate().toString());
-}
+    } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, 
+                "Error loading employee details: " + e.getMessage(), 
+                "Database Error", 
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
     
     /**
      * Disables all input fields to ensure the profile is read-only.
@@ -160,6 +191,15 @@ public class ProfilePage extends javax.swing.JFrame {
         jTextField4Country.setEnabled(false);
         jTextField4AddressType.setEnabled(false);
     }
+    
+    // Add getter method for testing/debugging
+    public User getUser() {
+        return user;
+    }
+    
+    public Employee getCurrentEmployee() {
+        return currentEmployee;
+ }
 
     /**
      * This method is called from within the constructor to initialize the form.

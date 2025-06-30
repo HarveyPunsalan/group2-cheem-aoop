@@ -6,6 +6,7 @@ package com.motorph.usermanagement.view;
 
 import com.motorph.usermanagement.model.Admin;
 import com.motorph.usermanagement.model.NonAdmin;
+import com.motorph.employeemanagement.view.selfservice.ProfilePage;
 import com.motorph.usermanagement.service.UserService;
 import com.motorph.usermanagement.service.UserServiceImpl;
 import com.motorph.usermanagement.model.User;
@@ -28,7 +29,7 @@ public class LoginPage extends javax.swing.JFrame {
     // Role constants for better maintainability
     private static final int SYSTEM_ADMIN_ROLE_ID = 0;
     private static final int ADMIN_ROLE_ID = 1;
-    private static final int REGULAR_USER_ROLE_ID = 2;
+    private static final int NON_ADMIN_ROLE_ID = 2;
 
     public LoginPage() {
         initComponents();
@@ -328,15 +329,30 @@ public class LoginPage extends javax.swing.JFrame {
      * Opens the appropriate dashboard based on user role
      */
     private void openUserDashboard(User user) throws Exception {
-        logger.info(() -> "Opening dashboard for user: " + user.getUsername() + ", Role ID: " + user.getRoleId());
+        logger.info(() -> "Opening dashboard for user: " + user.getUsername() + ", Role ID: " + user.getRoleId() + ", Employee ID: " + user.getEmployeeId());
+        
+        // Debug: Check all role conditions
+        boolean isSystemAdmin = isSystemAdminRole(user);
+        boolean isAdmin = isAdminRole(user);
+        boolean isNonAdmin = isNonAdminRole(user);
+        
+        logger.info(() -> String.format("Role check results for %s: SystemAdmin=%s, Admin=%s, NonAdmin=%s", 
+                                      user.getUsername(), isSystemAdmin, isAdmin, isNonAdmin));
         
         try {
-            if (isSystemAdminRole(user)) {
+            if (isSystemAdmin) {
+                logger.info(() -> "Opening SystemAdmin dashboard for: " + user.getUsername());
                 openSystemAdminDashboard();
-            } else if (isAdminRole(user)) {
+            } else if (isNonAdmin) {
+                // Check NonAdmin BEFORE Admin to avoid conflicts
+                logger.info(() -> "Opening NonAdmin dashboard for: " + user.getUsername());
+                openNonAdminDashboard(user);
+            } else if (isAdmin) {
+                logger.info(() -> "Opening Admin dashboard for: " + user.getUsername());
                 openAdminDashboard(user);
             } else {
-                openRegularUserDashboard(user);
+                // Handle unknown role
+                throw new Exception("Unknown user role: " + user.getRoleId() + " for user: " + user.getUsername());
             }
             
             logger.info(() -> "Dashboard opened successfully for user: " + user.getUsername());
@@ -381,19 +397,19 @@ public class LoginPage extends javax.swing.JFrame {
     }
     
     /**
-     * Open regular user dashboard
+     * Open NonAdmin dashboard - directs to ProfilePage
      */
-    private void openRegularUserDashboard(User user) throws Exception {
-        logger.info(() -> "Opening user dashboard for user: " + user.getUsername());
-        NonAdmin nonAdmin = new NonAdmin(user);
-        
-        // TODO: Implement specific user dashboard - for now show message
-        JOptionPane.showMessageDialog(null, 
-            "User dashboard would open here.\n" +
-            "User: " + user.getUsername() + " (Regular User)\n" +
-            "Role ID: " + user.getRoleId(), 
-            "User Dashboard", 
-            JOptionPane.INFORMATION_MESSAGE);
+    private void openNonAdminDashboard(User user) throws Exception {
+       logger.info(() -> "Opening NonAdmin dashboard (ProfilePage) for user: " + user.getUsername());
+    
+       // Create NonAdmin object from authenticated user
+       NonAdmin nonAdmin = new NonAdmin(user);
+    
+       // Open the ProfilePage (NonAdmin Dashboard) - directly like Admin does
+       ProfilePage nonAdminDashboard = new ProfilePage(nonAdmin);
+       nonAdminDashboard.setVisible(true);
+    
+       logger.info(() -> "NonAdmin dashboard (ProfilePage) opened for user: " + user.getUsername());
     }
     
     /**
@@ -404,7 +420,7 @@ public class LoginPage extends javax.swing.JFrame {
     }
     
     /**
-     * Determines if the user has admin role 
+     * Determines if the user has Admin role 
      * This will check if manuel.garcia (employee #1) should get admin access
      */
     private boolean isAdminRole(User user) {
@@ -430,7 +446,35 @@ public class LoginPage extends javax.swing.JFrame {
         
         return isAdmin;       
     }//GEN-LAST:event_jButton1LogInActionPerformed
-
+     
+    /**
+     * Determines if the user has NonAdmin role
+     * This will check if andrea.villanueva (role id #2) should get NonAdmin access
+     */
+    private boolean isNonAdminRole(User user) {
+        int roleId = user.getRoleId();
+        int employeeId = user.getEmployeeId();
+        String username = user.getUsername();
+        
+        // Log the details for debugging
+        logger.info(() -> String.format("Checking NonAdmin role for user: %s, employeeId: %d, roleId: %d", 
+                                      username, employeeId, roleId));
+        
+        // Check if this is antonio.lim with employee ID 2
+        boolean isAndreaVillanueva = "andrea.villanueva".equals(username) && employeeId == 2;
+        
+        // Check standard NonAdmin role IDs
+        boolean hasNonAdminRoleId = (roleId == NON_ADMIN_ROLE_ID);
+        
+        // Return true if either condition is met
+        boolean isNonAdmin = isAndreaVillanueva || hasNonAdminRoleId;
+        
+        logger.info(() -> String.format("NonAdmin check result for %s: %s (andrea.villanueva: %s, nonAdminRole: %s)", 
+                                      username, isNonAdmin, isAndreaVillanueva, hasNonAdminRoleId));
+        
+        return isNonAdmin;
+    }
+    
     private void jTextField1UsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1UsernameActionPerformed
         // Move focus to password field when Enter is pressed in username field
         jPasswordFieldPassword.requestFocus();
@@ -515,6 +559,8 @@ public class LoginPage extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
         new CompanyHomePage().setVisible(true);
+        new LoginPage().setVisible(true);
+        
     });
 }
     // Variables declaration - do not modify//GEN-BEGIN:variables
