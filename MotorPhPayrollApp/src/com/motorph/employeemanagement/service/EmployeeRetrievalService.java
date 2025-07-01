@@ -157,7 +157,7 @@ public class EmployeeRetrievalService {
         List<AllowanceRecord> allowances = executor.executeQuery(
             Script.GET_EMPLOYEE_ALLOWANCES,
             List.of(emp.getEmployeeId()),
-            rs -> new AllowanceRecord(rs.getString("allowance_name"), rs.getBigDecimal("amount"))
+            rs -> new AllowanceRecord(rs.getString("allowance_name"), rs.getBigDecimal("monthly_amount"))
         );
 
         for (AllowanceRecord ar : allowances) {

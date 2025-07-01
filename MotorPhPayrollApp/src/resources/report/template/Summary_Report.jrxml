@@ -11,15 +11,15 @@
             </queryString>
             <field name="Pay Period" class="java.lang.String"/>
         </subDataset>-->
-<!--        <parameter name="PAY_PERIOD_ID" class="java.lang.String"/>
+        <parameter name="PAY_PERIOD_ID" class="java.lang.String"/>
 	<queryString language="SQL">
 		<![CDATA[CALL generate_bi_weekly_payroll_summary($P{PAY_PERIOD_ID})]]>
-	</queryString>-->
+	</queryString>
         
-	<parameter name="YEAR_MONTH" class="java.lang.String"/>
+<!--	<parameter name="YEAR_MONTH" class="java.lang.String"/>
 	<queryString language="SQL">
 		<![CDATA[CALL generate_monthly_payroll_summary($P{YEAR_MONTH})]]>
-	</queryString>
+	</queryString>-->
         <field name="Pay Period" class="java.lang.String"/>  
 	<field name="Employee No" class="java.lang.Integer"/>
 	<field name="Employee Full Name" class="java.lang.String"/>

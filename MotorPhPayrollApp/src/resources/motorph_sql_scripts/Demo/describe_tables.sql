@@ -1,5 +1,0 @@
-DESCRIBE employee_personal_information;
-DESCRIBE employee_address;
-DESCRIBE payroll_record;
-DESCRIBE address_type;
-DESCRIBE deduction_chart_type;

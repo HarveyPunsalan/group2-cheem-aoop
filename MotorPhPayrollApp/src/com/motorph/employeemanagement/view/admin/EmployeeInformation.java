@@ -68,6 +68,7 @@ public class EmployeeInformation extends javax.swing.JFrame {
         try {
             List<Employee> employees = retrievalService.getActiveEmployees(); // Fetch the list of active employees from the service
             jTable1EmployeeList.setModel(mapToTableModel(employees)); // Convert the list into a table model and update the JTable
+            
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error loading employees: " + e.getMessage()); // Show error dialog if retrieval fails
         }
@@ -280,7 +281,7 @@ public class EmployeeInformation extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jTable1EmployeeList.setColumnSelectionAllowed(true);
+        jTable1EmployeeList.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jTable1EmployeeList.setShowGrid(true);
         jTable1EmployeeList.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(jTable1EmployeeList);
@@ -390,8 +391,9 @@ public class EmployeeInformation extends javax.swing.JFrame {
 
         // Open the ViewEmployeeDetails frame in "View Mode" (fields are non-editable)
 //        ViewEmployeeDetails detailsPage = new ViewEmployeeDetails((Admin) admin, Integer.parseInt(employeeID));
-        ViewEmployeeDetails detailsPage = new ViewEmployeeDetails(Integer.parseInt(employeeID));
-        detailsPage.setVisible(true);
+//        ViewEmployeeDetails detailsPage = new ViewEmployeeDetails(Integer.parseInt(employeeID));
+//        detailsPage.setVisible(true);
+        Access.accessViewEmployeeDetails(admin, Integer.parseInt(employeeID));
 
         // Close the current frame
         this.dispose();
