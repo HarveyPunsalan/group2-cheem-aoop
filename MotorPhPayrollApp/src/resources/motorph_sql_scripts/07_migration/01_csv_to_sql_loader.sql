@@ -1,2 +1,0 @@
--- Placeholder for SQL scripts that help in loading data from CSV into tables
--- Example: LOAD DATA INFILE 'employees.csv' INTO TABLE employee_personal_information FIELDS TERMINATED BY ',';

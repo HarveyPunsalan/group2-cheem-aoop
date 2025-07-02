@@ -37,9 +37,9 @@ public class DatabaseConfigReader {
 
             if (input != null) {
                 properties.load(input);
-                logger.info("Successfully loaded DB configuration from: " + configFileName);
+                logger.log(Level.INFO, "Successfully loaded DB configuration from: {0}", configFileName);
             } else {
-                logger.severe("Configuration file not found in classpath: " + configFileName);
+                logger.log(Level.SEVERE, "Configuration file not found in classpath: {0}", configFileName);
                 throw new IOException("Config file not found: " + configFileName);
             }
 

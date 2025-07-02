@@ -4,10 +4,10 @@
  */
 package databasetest;
 
-import Class.EMS.PersonalInformation;
 import com.motorph.database.connection.DatabaseService;
 import com.motorph.database.execution.SQLExecutor;
 import com.motorph.database.execution.Script;
+import com.motorph.employeemanagement.model.PersonalInformation;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
@@ -32,7 +32,7 @@ public class DatabaseDemo {
                     Script.SELECT_ALL_EMPLOYEES, //SELECT_ALL_EMPLOYEES
                     //List.of("10001"),
                     resultSet -> new PersonalInformation(
-                            resultSet.getString("ID"),
+                            resultSet.getInt("ID"),
                             resultSet.getString("Last Name"),
                             resultSet.getString("First Name"),
                             resultSet.getObject("Birthday", LocalDate.class),

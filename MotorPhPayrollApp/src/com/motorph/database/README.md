@@ -22,6 +22,7 @@ The database module is organized into focused packages that promote separation o
 
 ## 📚 Key Classes 🧠🧰📘
 
+* **`DatabaseConfigFile`** – 
 * **`DatabaseConfigReader`** – Loads properties from the config file
 * **`DatabaseConnector`** – Establishes raw JDBC connection
 * **`DatabaseService`** – Provides a shared connection instance wrapper
@@ -35,7 +36,7 @@ The database module is organized into focused packages that promote separation o
 This example demonstrates how to retrieve an employee record using a parameterized query with the `SQLExecutor` and map the result to an `Employee` object:
 
 ```java
-Connection conn = DatabaseService.getConnection();
+Connection conn = DatabaseService.connectToMotorPH();
 SQLExecutor executor = new SQLExecutor(conn);
 
 List<Object> params = List.of("employee_id");
