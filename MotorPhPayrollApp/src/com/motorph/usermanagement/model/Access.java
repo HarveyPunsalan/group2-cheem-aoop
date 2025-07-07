@@ -20,7 +20,7 @@ import com.motorph.payrollprocessing.view.admin.PayrollSummaryPage;
 import com.motorph.payrollprocessing.view.admin.PayrollNetPay;
 import com.motorph.attendancemanagement.view.admin.AttendanceBiweekly;
 import com.motorph.attendancemanagement.view.admin.AttendanceDailyRecord;
-import com.motorph.payrollprocessing.model.PayPeriod;
+import com.motorph.payrollprocessing.model.payroll.PayPeriod;
 import com.motorph.employeemanagement.model.Employee;
 import javax.swing.JFrame;
 import java.util.logging.Logger;
@@ -193,6 +193,18 @@ public class Access {
             return null;
         }
     } 
+    
+    // View another employee's details
+    public static JFrame accessViewEmployeeDetails(int employeeID) {
+//        if (user == null) {
+//            logger.warning("Attempted to access Employee Details with null user reference.");
+//            return null;
+//        }
+        logger.info(() -> "Opening Employee Details for employee: " + employeeID);
+        ViewEmployeeDetails employeeDetails = new ViewEmployeeDetails(employeeID);
+        employeeDetails.setVisible(true);
+        return employeeDetails;
+    }
     
     // Show profile page (employee or admin) 
     public static JFrame accessProfilePage(User user) {
