@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Service interface for Role-related business operations.
+ * Service interface for role related business operations.
  * Defines the contract for role management functionality.
  * 
  * @author Harvey 

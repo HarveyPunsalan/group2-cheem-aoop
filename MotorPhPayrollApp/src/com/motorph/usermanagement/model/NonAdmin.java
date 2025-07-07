@@ -7,7 +7,7 @@ package com.motorph.usermanagement.model;
 /**
  * @author Harvey 
  * 
- * Represents a Non-Admin user in the system.
+ * Represents a NonAdmin user in the system.
  * This extends User class and provides non-admin user functionality
  */
 public class NonAdmin extends User {

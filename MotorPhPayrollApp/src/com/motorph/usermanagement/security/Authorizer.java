@@ -8,12 +8,14 @@ import com.motorph.usermanagement.model.User;
 import com.motorph.usermanagement.model.Permission;
 import com.motorph.usermanagement.exception.DataAccessException;
 import java.util.List;
+
 /**
- * This will handles permission checking and role-based access control.
+ * This will handles permission checking and role based access control.
  * 
  * @author Harvey 
  */
 public interface Authorizer {
+    
     /**
      * Checks if a user has a specific permission.
      * 

@@ -4,9 +4,6 @@
  */
 package com.motorph.usermanagement.model;
 
-import com.motorph.employeemanagement.model.Employee;
-import com.motorph.payrollprocessing.model.PayPeriod;
-import javax.swing.JFrame;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -15,10 +12,14 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- *
+ * Focuses on login logic only
  * @author Harvey 
  */
 public class AccessTest {
+    
+    private Admin testAdmin;
+    private NonAdmin testNonAdmin;
+    private User testUser;
     
     public AccessTest() {
     }
@@ -33,340 +34,218 @@ public class AccessTest {
     
     @Before
     public void setUp() {
+        testAdmin = new Admin("admin123", "hashedpass", 1001, 1);
+        testNonAdmin = new NonAdmin("user456", "hashedpass", 1002, 2);
+        testUser = new User("genericuser", "hashedpass", 1003, 3);
     }
     
     @After
     public void tearDown() {
+        testAdmin = null;
+        testNonAdmin = null;
+        testUser = null;
     }
 
     /**
-     * Test of accessCompanyHomePage method, of class Access.
+     * Test User canLogin method with active account
      */
     @Test
-    public void testAccessCompanyHomePage() {
-        System.out.println("accessCompanyHomePage");
-        Admin admin = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessCompanyHomePage(admin);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testUserCanLogin_ActiveAccount() {
+        System.out.println("Testing canLogin with active account");
+        
+        assertTrue("Active user should be able to login", testUser.canLogin());
     }
 
     /**
-     * Test of accessEmployeeInformation method, of class Access.
+     * Test User canLogin method with inactive account
      */
     @Test
-    public void testAccessEmployeeInformation() {
-        System.out.println("accessEmployeeInformation");
-        Admin admin = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessEmployeeInformation(admin);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testUserCanLogin_InactiveAccount() {
+        System.out.println("Testing canLogin with inactive account");
+        
+        testUser.deactivateAccount();
+        assertFalse("Inactive user should not be able to login", testUser.canLogin());
     }
 
     /**
-     * Test of accessDTR method, of class Access.
+     * Test User account activation
      */
     @Test
-    public void testAccessDTR_3args() {
-        System.out.println("accessDTR");
-        Admin admin = null;
-        int employeeID = 0;
-        PayPeriod selectedPayPeriod = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessDTR(admin, employeeID, selectedPayPeriod);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testUserAccountActivation() {
+        System.out.println("Testing account activation");
+        
+        testUser.deactivateAccount();
+        assertFalse("Account should be inactive", testUser.isActive());
+        
+        testUser.activateAccount();
+        assertTrue("Account should be active after activation", testUser.isActive());
     }
 
     /**
-     * Test of accessDTR method, of class Access.
+     * Test User account deactivation
      */
     @Test
-    public void testAccessDTR_Admin_Employee() {
-        System.out.println("accessDTR");
-        Admin admin = null;
-        Employee employee = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessDTR(admin, employee);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testUserAccountDeactivation() {
+        System.out.println("Testing account deactivation");
+        
+        assertTrue("Account should be active initially", testUser.isActive());
+        
+        testUser.deactivateAccount();
+        assertFalse("Account should be inactive after deactivation", testUser.isActive());
     }
 
     /**
-     * Test of accessDTR method, of class Access.
+     * Test Admin isAdmin method
      */
     @Test
-    public void testAccessDTR_Employee() {
-        System.out.println("accessDTR");
-        Employee employee = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessDTR(employee);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testAdminIsAdmin() {
+        System.out.println("Testing Admin isAdmin method");
+        
+        assertTrue("Admin should return true for isAdmin()", testAdmin.isAdmin());
     }
 
     /**
-     * Test of accessAttendanceBiweekly method, of class Access.
+     * Test NonAdmin isAdmin method
      */
     @Test
-    public void testAccessAttendanceBiweekly() {
-        System.out.println("accessAttendanceBiweekly");
-        Admin admin = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessAttendanceBiweekly(admin);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testNonAdminIsAdmin() {
+        System.out.println("Testing NonAdmin isAdmin method");
+        
+        assertFalse("NonAdmin should return false for isAdmin()", testNonAdmin.isAdmin());
     }
 
     /**
-     * Test of accessViewEmployeeDetails method, of class Access.
+     * Test User authentication result setting
      */
     @Test
-    public void testAccessViewEmployeeDetails_User_String() {
-        System.out.println("accessViewEmployeeDetails");
-        User user = null;
-        int employeeID = 0;
-        JFrame expResult = null;
-        JFrame result = Access.accessViewEmployeeDetails(user, employeeID);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testUserAuthenticationResult() {
+        System.out.println("Testing authentication result setting");
+        
+        testUser.setAuthenticationResult(true);
+        assertTrue("Authentication result should be true", testUser.getAuthenticationResult());
+        
+        testUser.setAuthenticationResult(false);
+        assertFalse("Authentication result should be false", testUser.getAuthenticationResult());
     }
 
     /**
-     * Test of accessViewEmployeeDetails method, of class Access.
+     * Test User constructor with credentials
      */
     @Test
-    public void testAccessViewEmployeeDetails_User() {
-        System.out.println("accessViewEmployeeDetails");
-        User user = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessViewEmployeeDetails(user);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testUserConstructorWithCredentials() {
+        System.out.println("Testing User constructor with credentials");
+        
+        User user = new User("testuser", "testpass", 123, 2);
+        
+        assertEquals("Username should match", "testuser", user.getUsername());
+        assertEquals("Password should match", "testpass", user.getPasswordHashed());
+        assertEquals("Employee ID should match", 123, user.getEmployeeId());
+        assertEquals("Role ID should match", 2, user.getRoleId());
+        assertTrue("New user should be active", user.isActive());
     }
 
     /**
-     * Test of accessProfilePage method, of class Access.
+     * Test Admin constructor with credentials
      */
     @Test
-    public void testAccessProfilePage() {
-        System.out.println("accessProfilePage");
-        User user = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessProfilePage(user);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testAdminConstructorWithCredentials() {
+        System.out.println("Testing Admin constructor with credentials");
+        
+        Admin admin = new Admin("adminuser", "adminpass", 456, 1);
+        
+        assertEquals("Username should match", "adminuser", admin.getUsername());
+        assertEquals("Password should match", "adminpass", admin.getPasswordHashed());
+        assertEquals("Employee ID should match", 456, admin.getEmployeeId());
+        assertEquals("Role ID should match", 1, admin.getRoleId());
+        assertTrue("New admin should be active", admin.isActive());
+        assertTrue("Admin should return true for isAdmin()", admin.isAdmin());
     }
 
     /**
-     * Test of accessEmployeePayslip method, of class Access.
+     * Test NonAdmin constructor with credentials
      */
     @Test
-    public void testAccessEmployeePayslip() {
-        System.out.println("accessEmployeePayslip");
-        User user = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessEmployeePayslip(user);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testNonAdminConstructorWithCredentials() {
+        System.out.println("Testing NonAdmin constructor with credentials");
+        
+        NonAdmin nonAdmin = new NonAdmin("empuser", "emppass", 789, 3);
+        
+        assertEquals("Username should match", "empuser", nonAdmin.getUsername());
+        assertEquals("Password should match", "emppass", nonAdmin.getPasswordHashed());
+        assertEquals("Employee ID should match", 789, nonAdmin.getEmployeeId());
+        assertEquals("Role ID should match", 3, nonAdmin.getRoleId());
+        assertTrue("New non-admin should be active", nonAdmin.isActive());
+        assertFalse("NonAdmin should return false for isAdmin()", nonAdmin.isAdmin());
     }
 
     /**
-     * Test of accessEmployeeAttendance method, of class Access.
+     * Test User default constructor
      */
     @Test
-    public void testAccessEmployeeAttendance() {
-        System.out.println("accessEmployeeAttendance");
-        User user = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessEmployeeAttendance(user);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testUserDefaultConstructor() {
+        System.out.println("Testing User default constructor");
+        
+        User user = new User();
+        
+        assertTrue("Default user should be active", user.isActive());
+        assertNotNull("Account creation timestamp should be set", user.getAccountCreated());
+        assertEquals("Default user ID should be 0", 0, user.getUserId());
     }
 
     /**
-     * Test of accessPayrollList method, of class Access.
+     * Test User last login update
      */
     @Test
-    public void testAccessPayrollList() {
-        System.out.println("accessPayrollList");
-        Admin admin = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessPayrollList(admin);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testUserLastLoginUpdate() {
+        System.out.println("Testing last login update");
+        
+        assertNull("Initial last login should be null", testUser.getLastLogin());
+        
+        testUser.updateLastLogin();
+        
+        assertNotNull("Last login should be set after update", testUser.getLastLogin());
     }
 
     /**
-     * Test of accessPayrollEmployeeSelection method, of class Access.
+     * Test User toString method
      */
     @Test
-    public void testAccessPayrollEmployeeSelection() {
-        System.out.println("accessPayrollEmployeeSelection");
-        Admin admin = null;
-        PayPeriod payPeriod = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessPayrollEmployeeSelection(admin, payPeriod);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testUserToString() {
+        System.out.println("Testing User toString method");
+        
+        testUser.setUserId(100);
+        String result = testUser.toString();
+        
+        assertNotNull("toString should not return null", result);
+        assertTrue("toString should contain username", result.contains("genericuser"));
+        assertTrue("toString should contain employee ID", result.contains("1003"));
     }
 
     /**
-     * Test of accessPayrollEarnings method, of class Access.
+     * Test Admin copy constructor
      */
     @Test
-    public void testAccessPayrollEarnings_Admin_PayPeriod() {
-        System.out.println("accessPayrollEarnings");
-        Admin admin = null;
-        PayPeriod payPeriod = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessPayrollEarnings(admin, payPeriod);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testAdminCopyConstructor() {
+        System.out.println("Testing Admin copy constructor");
+        
+        Admin copiedAdmin = new Admin(testUser);
+        
+        assertEquals("Username should match", testUser.getUsername(), copiedAdmin.getUsername());
+        assertEquals("Employee ID should match", testUser.getEmployeeId(), copiedAdmin.getEmployeeId());
+        assertTrue("Copied admin should return true for isAdmin()", copiedAdmin.isAdmin());
     }
 
     /**
-     * Test of accessPayrollEarnings method, of class Access.
+     * Test NonAdmin copy constructor
      */
     @Test
-    public void testAccessPayrollEarnings_PayPeriod() {
-        System.out.println("accessPayrollEarnings");
-        PayPeriod payPeriod = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessPayrollEarnings(payPeriod);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testNonAdminCopyConstructor() {
+        System.out.println("Testing NonAdmin copy constructor");
+        
+        NonAdmin copiedNonAdmin = new NonAdmin(testUser);
+        
+        assertEquals("Username should match", testUser.getUsername(), copiedNonAdmin.getUsername());
+        assertEquals("Employee ID should match", testUser.getEmployeeId(), copiedNonAdmin.getEmployeeId());
+        assertFalse("Copied non-admin should return false for isAdmin()", copiedNonAdmin.isAdmin());
     }
-
-    /**
-     * Test of accessPayrollDeductions method, of class Access.
-     */
-    @Test
-    public void testAccessPayrollDeductions_Admin_PayPeriod() {
-        System.out.println("accessPayrollDeductions");
-        Admin admin = null;
-        PayPeriod payPeriod = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessPayrollDeductions(admin, payPeriod);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of accessPayrollDeductions method, of class Access.
-     */
-    @Test
-    public void testAccessPayrollDeductions_PayPeriod() {
-        System.out.println("accessPayrollDeductions");
-        PayPeriod payPeriod = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessPayrollDeductions(payPeriod);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of accessPayrollNetPay method, of class Access.
-     */
-    @Test
-    public void testAccessPayrollNetPay_Admin_PayPeriod() {
-        System.out.println("accessPayrollNetPay");
-        Admin admin = null;
-        PayPeriod payPeriod = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessPayrollNetPay(admin, payPeriod);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of accessPayrollNetPay method, of class Access.
-     */
-    @Test
-    public void testAccessPayrollNetPay_PayPeriod() {
-        System.out.println("accessPayrollNetPay");
-        PayPeriod payPeriod = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessPayrollNetPay(payPeriod);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of accessPayrollSummaryPage method, of class Access.
-     */
-    @Test
-    public void testAccessPayrollSummaryPage_Admin_PayPeriod() {
-        System.out.println("accessPayrollSummaryPage");
-        Admin admin = null;
-        PayPeriod payPeriod = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessPayrollSummaryPage(admin, payPeriod);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of accessPayrollSummaryPage method, of class Access.
-     */
-    @Test
-    public void testAccessPayrollSummaryPage_PayPeriod() {
-        System.out.println("accessPayrollSummaryPage");
-        PayPeriod payPeriod = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessPayrollSummaryPage(payPeriod);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of accessEmployeeRequests method, of class Access.
-     */
-    @Test
-    public void testAccessEmployeeRequests() {
-        System.out.println("accessEmployeeRequests");
-        Admin admin = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessEmployeeRequests(admin);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of accessRequestCenter method, of class Access.
-     */
-    @Test
-    public void testAccessRequestCenter() {
-        System.out.println("accessRequestCenter");
-        User user = null;
-        JFrame expResult = null;
-        JFrame result = Access.accessRequestCenter(user);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }   
 }

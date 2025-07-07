@@ -17,10 +17,10 @@ import java.time.ZoneId;
 import java.util.Date;
 
 /**
- * Utility class for date and time operations used in the user management system
+ * Utility class for date and time operations 
  * Provides methods for formatting dates, calculating time differences, and working with timestamps
  * 
- * @author harvey punsalan
+ * @author Harvey
  */
 
 public class DateUtils {

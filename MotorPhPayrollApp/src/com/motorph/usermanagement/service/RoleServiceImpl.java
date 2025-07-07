@@ -33,7 +33,7 @@ public class RoleServiceImpl implements RoleService {
     }
     
     /**
-     * Constructor for dependency injection.
+     * Constructor 
      * @param roleDAO
      */
     public RoleServiceImpl(RoleDAO roleDAO) {

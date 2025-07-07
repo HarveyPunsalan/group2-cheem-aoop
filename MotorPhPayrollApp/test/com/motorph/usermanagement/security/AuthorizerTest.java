@@ -4,9 +4,9 @@
  */
 package com.motorph.usermanagement.security;
 
-import com.motorph.usermanagement.exception.DataAccessException;
 import com.motorph.usermanagement.model.Permission;
 import com.motorph.usermanagement.model.User;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -21,6 +21,9 @@ import static org.junit.Assert.*;
  */
 public class AuthorizerTest {
     
+    private Authorizer authorizer;
+    private User testUser;
+    
     public AuthorizerTest() {
     }
     
@@ -34,6 +37,13 @@ public class AuthorizerTest {
     
     @Before
     public void setUp() {
+        authorizer = new AuthorizerImpl();
+        
+        // Create a test user
+        testUser = new User();
+        testUser.setUserId(1);
+        testUser.setUsername("testuser");
+        testUser.setRoleId(1);
     }
     
     @After
@@ -41,125 +51,157 @@ public class AuthorizerTest {
     }
 
     /**
-     * Test of hasPermission method, of class Authorizer.
+     * Test of hasPermission method with null user.
      */
     @Test
-    public void testHasPermission() throws Exception {
-        System.out.println("hasPermission");
-        User user = null;
-        String permissionName = "";
-        Authorizer instance = new AuthorizerImpl();
-        boolean expResult = false;
-        boolean result = instance.hasPermission(user, permissionName);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testHasPermission_NullUser() throws Exception {
+        System.out.println("hasPermission with null user");
+        
+        boolean result = authorizer.hasPermission(null, "READ_ACCESS");
+        
+        assertFalse("Null user should not have permissions", result);
     }
 
     /**
-     * Test of hasAnyPermission method, of class Authorizer.
+     * Test of hasPermission method with null permission name.
      */
     @Test
-    public void testHasAnyPermission() throws Exception {
-        System.out.println("hasAnyPermission");
-        User user = null;
-        List<String> permissionNames = null;
-        Authorizer instance = new AuthorizerImpl();
-        boolean expResult = false;
-        boolean result = instance.hasAnyPermission(user, permissionNames);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testHasPermission_NullPermission() throws Exception {
+        System.out.println("hasPermission with null permission");
+        
+        boolean result = authorizer.hasPermission(testUser, null);
+        
+        assertFalse("User should not have null permission", result);
     }
 
     /**
-     * Test of hasAllPermissions method, of class Authorizer.
+     * Test of hasPermission method with empty permission name.
      */
     @Test
-    public void testHasAllPermissions() throws Exception {
-        System.out.println("hasAllPermissions");
-        User user = null;
-        List<String> permissionNames = null;
-        Authorizer instance = new AuthorizerImpl();
-        boolean expResult = false;
-        boolean result = instance.hasAllPermissions(user, permissionNames);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testHasPermission_EmptyPermission() throws Exception {
+        System.out.println("hasPermission with empty permission");
+        
+        boolean result = authorizer.hasPermission(testUser, "");
+        
+        assertFalse("User should not have empty permission", result);
     }
 
     /**
-     * Test of getUserPermissions method, of class Authorizer.
+     * Test of hasAnyPermission method with null user.
      */
     @Test
-    public void testGetUserPermissions() throws Exception {
-        System.out.println("getUserPermissions");
-        User user = null;
-        Authorizer instance = new AuthorizerImpl();
-        List<Permission> expResult = null;
-        List<Permission> result = instance.getUserPermissions(user);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testHasAnyPermission_NullUser() throws Exception {
+        System.out.println("hasAnyPermission with null user");
+        
+        List<String> permissions = Arrays.asList("READ_ACCESS", "WRITE_ACCESS");
+        boolean result = authorizer.hasAnyPermission(null, permissions);
+        
+        assertFalse("Null user should not have any permissions", result);
     }
 
     /**
-     * Test of hasResourceAccess method, of class Authorizer.
+     * Test of hasAnyPermission method with null permission list.
      */
     @Test
-    public void testHasResourceAccess() throws Exception {
-        System.out.println("hasResourceAccess");
-        User user = null;
-        String resourceName = "";
-        String actionName = "";
-        Authorizer instance = new AuthorizerImpl();
-        boolean expResult = false;
-        boolean result = instance.hasResourceAccess(user, resourceName, actionName);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testHasAnyPermission_NullPermissions() throws Exception {
+        System.out.println("hasAnyPermission with null permissions");
+        
+        boolean result = authorizer.hasAnyPermission(testUser, null);
+        
+        assertFalse("User should not have null permissions", result);
     }
 
     /**
-     * Test of isAdmin method, of class Authorizer.
+     * Test of hasAllPermissions method with null user.
      */
     @Test
-    public void testIsAdmin() throws Exception {
-        System.out.println("isAdmin");
-        User user = null;
-        Authorizer instance = new AuthorizerImpl();
-        boolean expResult = false;
-        boolean result = instance.isAdmin(user);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testHasAllPermissions_NullUser() throws Exception {
+        System.out.println("hasAllPermissions with null user");
+        
+        List<String> permissions = Arrays.asList("READ_ACCESS", "WRITE_ACCESS");
+        boolean result = authorizer.hasAllPermissions(null, permissions);
+        
+        assertFalse("Null user should not have all permissions", result);
     }
 
-    public class AuthorizerImpl implements Authorizer {
-
-        public boolean hasPermission(User user, String permissionName) throws DataAccessException {
-            return false;
-        }
-
-        public boolean hasAnyPermission(User user, List<String> permissionNames) throws DataAccessException {
-            return false;
-        }
-
-        public boolean hasAllPermissions(User user, List<String> permissionNames) throws DataAccessException {
-            return false;
-        }
-
-        public List<Permission> getUserPermissions(User user) throws DataAccessException {
-            return null;
-        }
-
-        public boolean hasResourceAccess(User user, String resourceName, String actionName) throws DataAccessException {
-            return false;
-        }
-
-        public boolean isAdmin(User user) throws DataAccessException {
-            return false;
-        }
+    /**
+     * Test of hasAllPermissions method with null permission list.
+     */
+    @Test
+    public void testHasAllPermissions_NullPermissions() throws Exception {
+        System.out.println("hasAllPermissions with null permissions");
+        
+        boolean result = authorizer.hasAllPermissions(testUser, null);
+        
+        assertFalse("User should not have null permissions", result);
     }
-    
+
+    /**
+     * Test of getUserPermissions method with null user.
+     */
+    @Test
+    public void testGetUserPermissions_NullUser() throws Exception {
+        System.out.println("getUserPermissions with null user");
+        
+        List<Permission> result = authorizer.getUserPermissions(null);
+        
+        assertNotNull("Should return empty list for null user", result);
+        assertTrue("Should return empty list for null user", result.isEmpty());
+    }
+
+    /**
+     * Test of getUserPermissions method with valid user.
+     */
+    @Test
+    public void testGetUserPermissions_ValidUser() throws Exception {
+        System.out.println("getUserPermissions with valid user");
+        
+        List<Permission> result = authorizer.getUserPermissions(testUser);
+        
+        assertNotNull("Should return a list", result);
+        // Since this depends on database data, we just check it's not null
+    }
+
+    /**
+     * Test of hasResourceAccess method with null parameters.
+     */
+    @Test
+    public void testHasResourceAccess_NullParameters() throws Exception {
+        System.out.println("hasResourceAccess with null parameters");
+        
+        boolean result1 = authorizer.hasResourceAccess(null, "resource", "action");
+        assertFalse("Null user should not have resource access", result1);
+        
+        boolean result2 = authorizer.hasResourceAccess(testUser, null, "action");
+        assertFalse("Null resource should not be accessible", result2);
+        
+        boolean result3 = authorizer.hasResourceAccess(testUser, "resource", null);
+        assertFalse("Null action should not be accessible", result3);
+    }
+
+    /**
+     * Test of isAdmin method with null user.
+     */
+    @Test
+    public void testIsAdmin_NullUser() throws Exception {
+        System.out.println("isAdmin with null user");
+        
+        boolean result = authorizer.isAdmin(null);
+        
+        assertFalse("Null user should not be admin", result);
+    }
+
+    /**
+     * Test of isAdmin method with valid user.
+     */
+    @Test
+    public void testIsAdmin_ValidUser() throws Exception {
+        System.out.println("isAdmin with valid user");
+        
+        boolean result = authorizer.isAdmin(testUser);
+        
+        // Just check it doesn't throw an exception
+        // The actual result depends on database data
+        assertNotNull("Should return a boolean value", result);
+    }
 }

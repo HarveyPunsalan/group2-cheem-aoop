@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * This provides role-based access control and permission checking functionality.
+ * This provides role based access control and permission checking functionality.
  * 
  * @author Harvey
  */
@@ -40,7 +40,10 @@ public class AuthorizerImpl implements Authorizer {
     }
     
     /**
-     * Constructor for dependency injection.
+     * Constructor
+     * 
+     * @param permissionDAO
+     * @param roleDAO
      */
     public AuthorizerImpl(PermissionDAO permissionDAO, RoleDAO roleDAO) {
         this.permissionDAO = permissionDAO;

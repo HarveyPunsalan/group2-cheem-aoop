@@ -16,7 +16,7 @@ public class Permission {
     // Core database fields
     private int accessId;                       // Unique ID for this permission
     private String accessName;             // Name for the permission
-    private int accessCategoryId;           // Points to category (like Payroll, HR, etc.)
+    private int accessCategoryId;           // Points to category 
     private int resourceId;                    // What resource this permission applies to
     private int actionId;                       // What action is allowed (e.g., READ, WRITE)
     private boolean requiresApproval;    // Whether this access requires approval 
@@ -169,8 +169,6 @@ public class Permission {
     public void setActionName(String actionName) {
         this.actionName = actionName;
     }
-    
-    // ---------- Utility Methods ----------
     
     @Override
     public boolean equals(Object obj) {

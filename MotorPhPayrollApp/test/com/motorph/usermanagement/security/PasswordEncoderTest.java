@@ -4,7 +4,10 @@
  */
 package com.motorph.usermanagement.security;
 
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -14,50 +17,119 @@ import static org.junit.Assert.*;
  */
 public class PasswordEncoderTest {
     
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder encoder;
+    
+    public PasswordEncoderTest() {
+    }
+    
+    @BeforeClass
+    public static void setUpClass() {
+    }
+    
+    @AfterClass
+    public static void tearDownClass() {
+    }
     
     @Before
     public void setUp() {
-        passwordEncoder = new PasswordEncoder();
+        encoder = new PasswordEncoder();
+    }
+    
+    @After
+    public void tearDown() {
     }
 
-    /**
-     * Test that encode method works
-     */
     @Test
     public void testEncode() {
-        String plainPassword = "myPassword123";
+        String password = "test123";
+        String encoded = encoder.encode(password);
         
-        String result = passwordEncoder.encode(plainPassword);
-        
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
+        assertNotNull(encoded);
+        assertFalse(encoded.isEmpty());
     }
 
-    /**
-     * Test that matches method works with correct password
-     */
     @Test
-    public void testMatches_CorrectPassword() {
-        String plainPassword = "testPassword";
+    public void testEncodeDifferentResults() {
+        String password = "samepass";
+        String encoded1 = encoder.encode(password);
+        String encoded2 = encoder.encode(password);
         
-        String encodedPassword = passwordEncoder.encode(plainPassword);
-        boolean result = passwordEncoder.matches(plainPassword, encodedPassword);
+        // should be different due to salt
+        assertNotEquals(encoded1, encoded2);
+    }
+
+    @Test
+    public void testMatches() {
+        String password = "mypassword";
+        String encoded = encoder.encode(password);
         
+        boolean result = encoder.matches(password, encoded);
         assertTrue(result);
     }
 
-    /**
-     * Test that matches method rejects wrong password
-     */
     @Test
-    public void testMatches_WrongPassword() {
-        String correctPassword = "correctPassword";
-        String wrongPassword = "wrongPassword";
+    public void testMatchesWrongPassword() {
+        String correctPass = "correct123";
+        String wrongPass = "wrong123";
+        String encoded = encoder.encode(correctPass);
         
-        String encodedPassword = passwordEncoder.encode(correctPassword);
-        boolean result = passwordEncoder.matches(wrongPassword, encodedPassword);
-        
+        boolean result = encoder.matches(wrongPass, encoded);
         assertFalse(result);
+    }
+
+    @Test
+    public void testEmptyPassword() {
+        String empty = "";
+        String encoded = encoder.encode(empty);
+        
+        assertNotNull(encoded);
+        assertTrue(encoder.matches(empty, encoded));
+    }
+
+    @Test
+    public void testNullPassword() {
+        String encoded = encoder.encode("somepass");
+        
+        boolean result = encoder.matches(null, encoded);
+        assertFalse(result);
+    }
+
+    @Test
+    public void testInvalidEncodedPassword() {
+        String password = "test";
+        String badEncoded = "notvalidbase64!@#";
+        
+        boolean result = encoder.matches(password, badEncoded);
+        assertFalse(result);
+    }
+
+    @Test
+    public void testCaseSensitive() {
+        String password = "MyPass123";
+        String encoded = encoder.encode(password);
+        
+        assertTrue(encoder.matches("MyPass123", encoded));
+        assertFalse(encoder.matches("mypass123", encoded));
+        assertFalse(encoder.matches("MYPASS123", encoded));
+    }
+
+    @Test
+    public void testCommonPasswords() {
+        String[] passwords = {"admin123", "user2024", "temp_pass"};
+        
+        for (String pass : passwords) {
+            String encoded = encoder.encode(pass);
+            assertTrue(encoder.matches(pass, encoded));
+            assertFalse(encoder.matches(pass + "x", encoded));
+        }
+    }
+
+    @Test
+    public void testEncodedLength() {
+        String password = "test";
+        String encoded = encoder.encode(password);
+        
+        // base64 encoded 48 bytes should be 64 chars
+        assertEquals(64, encoded.length());
     }
 }

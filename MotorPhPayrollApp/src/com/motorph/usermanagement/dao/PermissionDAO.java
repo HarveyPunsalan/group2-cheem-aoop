@@ -13,9 +13,9 @@ import java.util.Optional;
 
 /**
  * Data Access Object interface for Permission entity operations.
- * Defines the contract for permission-related database operations.
+ * Defines the contract for permission related database operations.
  *
- * @author harvey punsalan
+ * @author Harvey
  */
 public interface PermissionDAO {
     /**

@@ -2,6 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/UnitTests/JUnit4TestClass.java to edit this template
  */
+
 package com.motorph.usermanagement.model;
 
 import org.junit.After;
@@ -41,13 +42,10 @@ public class RoleTest {
      */
     @Test
     public void testGetRoleId() {
-        System.out.println("getRoleId");
         Role instance = new Role();
-        int expResult = 0;
+        instance.setRoleId(1);
         int result = instance.getRoleId();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(1, result);
     }
 
     /**
@@ -55,12 +53,10 @@ public class RoleTest {
      */
     @Test
     public void testSetRoleId() {
-        System.out.println("setRoleId");
-        int roleId = 0;
+        int roleId = 5;
         Role instance = new Role();
         instance.setRoleId(roleId);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(roleId, instance.getRoleId());
     }
 
     /**
@@ -68,13 +64,10 @@ public class RoleTest {
      */
     @Test
     public void testGetRoleName() {
-        System.out.println("getRoleName");
         Role instance = new Role();
-        String expResult = "";
+        instance.setRoleName("ADMIN");
         String result = instance.getRoleName();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals("ADMIN", result);
     }
 
     /**
@@ -82,12 +75,10 @@ public class RoleTest {
      */
     @Test
     public void testSetRoleName() {
-        System.out.println("setRoleName");
-        String roleName = "";
+        String roleName = "USER";
         Role instance = new Role();
         instance.setRoleName(roleName);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(roleName, instance.getRoleName());
     }
 
     /**
@@ -95,13 +86,10 @@ public class RoleTest {
      */
     @Test
     public void testGetRoleDescription() {
-        System.out.println("getRoleDescription");
         Role instance = new Role();
-        String expResult = "";
+        instance.setRoleDescription("Admin role");
         String result = instance.getRoleDescription();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals("Admin role", result);
     }
 
     /**
@@ -109,12 +97,10 @@ public class RoleTest {
      */
     @Test
     public void testSetRoleDescription() {
-        System.out.println("setRoleDescription");
-        String roleDescription = "";
+        String roleDescription = "User role";
         Role instance = new Role();
         instance.setRoleDescription(roleDescription);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(roleDescription, instance.getRoleDescription());
     }
 
     /**
@@ -122,14 +108,10 @@ public class RoleTest {
      */
     @Test
     public void testEquals() {
-        System.out.println("equals");
-        Object obj = null;
-        Role instance = new Role();
-        boolean expResult = false;
-        boolean result = instance.equals(obj);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        Role role1 = new Role(1, "ADMIN", "Administrator");
+        Role role2 = new Role(1, "ADMIN", "Administrator");
+        boolean result = role1.equals(role2);
+        assertEquals(true, result);
     }
 
     /**
@@ -137,13 +119,9 @@ public class RoleTest {
      */
     @Test
     public void testHashCode() {
-        System.out.println("hashCode");
-        Role instance = new Role();
-        int expResult = 0;
+        Role instance = new Role(1, "ADMIN", "Administrator");
         int result = instance.hashCode();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertTrue(result != 0);
     }
 
     /**
@@ -151,13 +129,27 @@ public class RoleTest {
      */
     @Test
     public void testToString() {
-        System.out.println("toString");
-        Role instance = new Role();
-        String expResult = "";
+        Role instance = new Role(1, "ADMIN", "Administrator");
         String result = instance.toString();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertTrue(result.contains("ADMIN"));
+        assertTrue(result.contains("1"));
     }
     
+    /**
+     * Test constructors
+     */
+    @Test
+    public void testConstructors() {
+        Role role1 = new Role();
+        assertNotNull(role1);
+        
+        Role role2 = new Role("USER", "Regular user");
+        assertEquals("USER", role2.getRoleName());
+        assertEquals("Regular user", role2.getRoleDescription());
+        
+        Role role3 = new Role(1, "ADMIN", "Administrator");
+        assertEquals(1, role3.getRoleId());
+        assertEquals("ADMIN", role3.getRoleName());
+        assertEquals("Administrator", role3.getRoleDescription());
+    }
 }
