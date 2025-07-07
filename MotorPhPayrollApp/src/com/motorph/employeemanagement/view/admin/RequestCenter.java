@@ -4,9 +4,9 @@
  */
 package com.motorph.employeemanagement.view.admin;
 
-import com.motorph.payrollprocessing.service.PayrollService;
-import com.motorph.payrollprocessing.model.PayPeriod;
-import com.motorph.validation.ComponentsValidator;
+import com.motorph.payrollprocessing.service.core.PayrollService;
+import com.motorph.payrollprocessing.model.payroll.PayPeriod;
+import com.motorph.common.util.validation.ComponentsValidator;
 import com.motorph.employeemanagement.model.Employee;
 import Class.EntityManagement.EntityManager;
 import Class.EntityManagement.EntityType;
@@ -17,6 +17,11 @@ import com.motorph.attendancemanagement.model.Leave;
 import com.motorph.attendancemanagement.service.LeaveService;
 import com.motorph.attendancemanagement.model.Overtime;
 import com.motorph.attendancemanagement.model.Request;
+import com.motorph.database.connection.DatabaseService;
+import com.motorph.payrollprocessing.dao.payrolldao.PayPeriodDAO;
+import com.motorph.payrollprocessing.mapper.payrollmapper.PayPeriodMapper;
+import com.motorph.payrollprocessing.service.core.PayPeriodService;
+import com.motorph.payrollprocessing.service.core.ServiceFactory;
 import com.motorph.usermanagement.model.Access;
 import com.motorph.usermanagement.model.Admin;
 import com.motorph.usermanagement.model.User;
@@ -839,7 +844,9 @@ public class RequestCenter extends javax.swing.JFrame {
         String startDate = dates[0];
         String endDate = dates[1];
         
-        PayPeriod selectedPayPeriod = new PayPeriod(startDate, endDate);
+        PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodServicewService();
+        
+        PayPeriod selectedPayPeriod = payPeriodService.searchByDateRange(dates[0], dates[1]).get();
         
         jComboBoxOvertimeDate.setEnabled(true);
 //        jComboBoxOvertimeDate.setModel(dtrManager.getOvertimeDatesComboBoxModel(dtrManager.getFilteredDailyAttendance(new Employee(user.getEmployeeID()), selectedPayPeriod)));
