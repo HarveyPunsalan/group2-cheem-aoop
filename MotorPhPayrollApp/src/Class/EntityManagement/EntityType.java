@@ -7,7 +7,7 @@ package Class.EntityManagement;
 import CSVFileManager.CsvFile;
 import com.motorph.employeemanagement.model.Employee;
 import Class.IDManagement.IDPrefix;
-import com.motorph.payrollprocessing.model.PayPeriod;
+import com.motorph.payrollprocessing.model.payroll.PayPeriod;
 import com.motorph.attendancemanagement.model.DailyAttendance;
 import com.motorph.attendancemanagement.model.Leave;
 import com.motorph.attendancemanagement.model.LeaveType;
