@@ -29,7 +29,11 @@
               <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="jLabel5EnterDetails" min="-2" pref="261" max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Component id="jLabel5EnterDetails" min="-2" pref="261" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <Component id="jPanelEarnings" max="32767" attributes="0"/>
                       <Component id="jPanelEmployeeInformation5" alignment="0" max="32767" attributes="0"/>
                       <Component id="jPanelDeduction" alignment="0" max="32767" attributes="0"/>
@@ -42,7 +46,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jLabelAttendancePeriod" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="jComboBoxAttendancePeriod" min="-2" pref="200" max="-2" attributes="0"/>
+                      <Component id="jComboBoxPayPeriod" min="-2" pref="200" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace pref="66" max="32767" attributes="0"/>
@@ -60,10 +64,13 @@
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
-                      <Component id="jLabel5EnterDetails" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jLabel5EnterDetails" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jComboBoxAttendancePeriod" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jComboBoxPayPeriod" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabelAttendancePeriod" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
@@ -699,7 +706,7 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="jLabelWitholdingTax">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Witholding Tax:"/>
+            <Property name="text" type="java.lang.String" value="Withholding Tax:"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="jTextFieldWitholdingTax">
@@ -789,14 +796,14 @@
         <Property name="text" type="java.lang.String" value="Net Salary:"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JComboBox" name="jComboBoxAttendancePeriod">
+    <Component class="javax.swing.JComboBox" name="jComboBoxPayPeriod">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="0"/>
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBoxAttendancePeriodActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBoxPayPeriodActionPerformed"/>
       </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
@@ -806,6 +813,14 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Pay Period"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="jButton1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Download Payslip"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
