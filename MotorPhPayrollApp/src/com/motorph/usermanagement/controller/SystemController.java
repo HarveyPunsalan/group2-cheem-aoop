@@ -15,8 +15,9 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 import javax.swing.JPanel;
 /**
- * To  handles navigation between different management pages
- * @author harvey punsalan
+ * To  handles navigation between different management pages   --- still not finish 
+ * 
+ * @author Harvey
  */
 public class SystemController implements ActionListener {
     private static final Logger logger = Logger.getLogger(SystemController.class.getName());
@@ -83,7 +84,6 @@ public class SystemController implements ActionListener {
             contentPanel.add(rolePage, ROLE_CARD);
             contentPanel.add(userPage, USER_CARD);
             
-            // Show welcome screen initially (you can create a welcome panel later)
             JPanel welcomePanel = createWelcomePanel();
             contentPanel.add(welcomePanel, WELCOME_CARD);
             
@@ -98,7 +98,7 @@ public class SystemController implements ActionListener {
     }
     
     /**
-     * Create a simple welcome panel (placeholder for now)
+     * Create a simple welcome panel (placeholder for now) --- still not finish
      */
     private JPanel createWelcomePanel() {
         JPanel welcomePanel = new JPanel();

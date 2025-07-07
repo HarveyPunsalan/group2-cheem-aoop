@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 
 /**
- * This manages CRUD operations for roles and coordinates with the view layer.
+ * This manages CRUD operations for roles and coordinates with the view layer
  * 
  * @author Harvey 
  */

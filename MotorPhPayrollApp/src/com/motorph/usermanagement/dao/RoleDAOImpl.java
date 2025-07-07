@@ -52,16 +52,13 @@ public class RoleDAOImpl implements RoleDAO {
     private static final String COUNT_ROLES_SQL = 
         "SELECT COUNT(*) FROM user_role";
     
-    // Query to count users assigned to a role matches to system_user table
     private static final String COUNT_USERS_FOR_ROLE_SQL = 
         "SELECT COUNT(*) FROM system_user WHERE role_id = ? AND is_active = 1";
     
-    // Query to search roles by name pattern
     private static final String SEARCH_ROLES_BY_NAME_SQL = 
         "SELECT role_id, role_name, role_description FROM user_role " +
         "WHERE role_name LIKE ? ORDER BY role_name";
     
-    // Query to get permissions for a role joins role_access with user_access
     private static final String SELECT_PERMISSIONS_FOR_ROLE_SQL = 
         "SELECT ua.access_id, ua.access_name, ua.access_category_id, ua.resource_id, ua.action_id, " +
         "ua.requires_approval, ua.is_active " +
@@ -69,12 +66,10 @@ public class RoleDAOImpl implements RoleDAO {
         "JOIN user_access ua ON ra.access_id = ua.access_id " +
         "WHERE ra.role_id = ? AND ua.is_active = 1";
     
-    // Query to assign permission to role
     private static final String INSERT_ROLE_ACCESS_SQL = 
         "INSERT INTO role_access (role_id, access_id) VALUES (?, ?) " +
         "ON DUPLICATE KEY UPDATE role_id = role_id"; // Prevent duplicates
     
-    // Query to remove permission from role
     private static final String DELETE_ROLE_ACCESS_SQL = 
         "DELETE FROM role_access WHERE role_id = ? AND access_id = ?";
     

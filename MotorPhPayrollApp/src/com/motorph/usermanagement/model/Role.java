@@ -8,13 +8,12 @@ import java.util.Objects;
 
 /**
  * This represents a user role in the system
- * Corresponds to the user_role table in the database
  * 
  * @author Harvey
  */
 public class Role {
     private int roleId;                    // Primary key
-    private String roleName;               // Human-readable role name
+    private String roleName;               // Role name
     private String roleDescription;        // Detailed description of role purpose
     
     /**

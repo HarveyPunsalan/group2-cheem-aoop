@@ -16,7 +16,7 @@ import java.util.Optional;
  * This interface defines the contract for user management functionality
  * including authentication, registration, and user administration.
  * 
- * @author harvey punsalan
+ * @author Harvey
  */
 public interface UserService {
     /**

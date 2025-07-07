@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     }
     
     /**
-     * Constructor for dependency injection (useful for testing).
+     * Constructor useful for testing
      * 
      * @param userDAO provides access to user-related data
      * @param roleDAO provides access to role-related data
@@ -93,7 +93,6 @@ public class UserServiceImpl implements UserService {
             throw new InvalidCredentialsException("Password cannot be empty");
         }
         
-        // Create authenticator with proper dependency injection
         AuthenticatorImpl authenticator = new AuthenticatorImpl();
         
         // Use the new authenticate method that handles migration

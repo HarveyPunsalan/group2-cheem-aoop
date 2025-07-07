@@ -18,6 +18,8 @@ import static org.junit.Assert.*;
  */
 public class PermissionTest {
     
+    private Permission permission;
+    
     public PermissionTest() {
     }
     
@@ -31,350 +33,262 @@ public class PermissionTest {
     
     @Before
     public void setUp() {
+        permission = new Permission();
     }
     
     @After
     public void tearDown() {
     }
 
-    /**
-     * Test of getAccessId method, of class Permission.
-     */
     @Test
     public void testGetAccessId() {
         System.out.println("getAccessId");
-        Permission instance = new Permission();
-        int expResult = 0;
-        int result = instance.getAccessId();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // default value should be 0
+        int result = permission.getAccessId();
+        assertEquals(0, result);
     }
 
-    /**
-     * Test of setAccessId method, of class Permission.
-     */
     @Test
     public void testSetAccessId() {
         System.out.println("setAccessId");
-        int accessId = 0;
-        Permission instance = new Permission();
-        instance.setAccessId(accessId);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // test if setting id works properly
+        permission.setAccessId(123);
+        assertEquals(123, permission.getAccessId());
     }
 
-    /**
-     * Test of getAccessName method, of class Permission.
-     */
     @Test
     public void testGetAccessName() {
         System.out.println("getAccessName");
-        Permission instance = new Permission();
-        String expResult = "";
-        String result = instance.getAccessName();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // initial value should be null
+        String result = permission.getAccessName();
+        assertNull(result);
     }
 
-    /**
-     * Test of setAccessName method, of class Permission.
-     */
     @Test
     public void testSetAccessName() {
         System.out.println("setAccessName");
-        String accessName = "";
-        Permission instance = new Permission();
-        instance.setAccessName(accessName);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // test setting permission name
+        permission.setAccessName("READ_USERS");
+        assertEquals("READ_USERS", permission.getAccessName());
     }
 
-    /**
-     * Test of getAccessCategoryId method, of class Permission.
-     */
     @Test
     public void testGetAccessCategoryId() {
         System.out.println("getAccessCategoryId");
-        Permission instance = new Permission();
-        int expResult = 0;
-        int result = instance.getAccessCategoryId();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // should start at 0
+        int result = permission.getAccessCategoryId();
+        assertEquals(0, result);
     }
 
-    /**
-     * Test of setAccessCategoryId method, of class Permission.
-     */
     @Test
     public void testSetAccessCategoryId() {
         System.out.println("setAccessCategoryId");
-        int accessCategoryId = 0;
-        Permission instance = new Permission();
-        instance.setAccessCategoryId(accessCategoryId);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // try setting category id to 5
+        permission.setAccessCategoryId(5);
+        assertEquals(5, permission.getAccessCategoryId());
     }
 
-    /**
-     * Test of getResourceId method, of class Permission.
-     */
     @Test
     public void testGetResourceId() {
         System.out.println("getResourceId");
-        Permission instance = new Permission();
-        int expResult = 0;
-        int result = instance.getResourceId();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // check default value
+        int result = permission.getResourceId();
+        assertEquals(0, result);
     }
 
-    /**
-     * Test of setResourceId method, of class Permission.
-     */
     @Test
     public void testSetResourceId() {
         System.out.println("setResourceId");
-        int resourceId = 0;
-        Permission instance = new Permission();
-        instance.setResourceId(resourceId);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // set resource id and check
+        permission.setResourceId(10);
+        assertEquals(10, permission.getResourceId());
     }
 
-    /**
-     * Test of getActionId method, of class Permission.
-     */
     @Test
     public void testGetActionId() {
         System.out.println("getActionId");
-        Permission instance = new Permission();
-        int expResult = 0;
-        int result = instance.getActionId();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // default should be 0
+        int result = permission.getActionId();
+        assertEquals(0, result);
     }
 
-    /**
-     * Test of setActionId method, of class Permission.
-     */
     @Test
     public void testSetActionId() {
         System.out.println("setActionId");
-        int actionId = 0;
-        Permission instance = new Permission();
-        instance.setActionId(actionId);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // set action id to 15
+        permission.setActionId(15);
+        assertEquals(15, permission.getActionId());
     }
 
-    /**
-     * Test of isRequiresApproval method, of class Permission.
-     */
     @Test
     public void testIsRequiresApproval() {
         System.out.println("isRequiresApproval");
-        Permission instance = new Permission();
-        boolean expResult = false;
-        boolean result = instance.isRequiresApproval();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // boolean should be false by default
+        boolean result = permission.isRequiresApproval();
+        assertFalse(result);
     }
 
-    /**
-     * Test of setRequiresApproval method, of class Permission.
-     */
     @Test
     public void testSetRequiresApproval() {
         System.out.println("setRequiresApproval");
-        boolean requiresApproval = false;
-        Permission instance = new Permission();
-        instance.setRequiresApproval(requiresApproval);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // set to true and check
+        permission.setRequiresApproval(true);
+        assertTrue(permission.isRequiresApproval());
     }
 
-    /**
-     * Test of isActive method, of class Permission.
-     */
     @Test
     public void testIsActive() {
         System.out.println("isActive");
-        Permission instance = new Permission();
-        boolean expResult = false;
-        boolean result = instance.isActive();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // should be false initially
+        boolean result = permission.isActive();
+        assertFalse(result);
     }
 
-    /**
-     * Test of setActive method, of class Permission.
-     */
     @Test
     public void testSetActive() {
         System.out.println("setActive");
-        boolean isActive = false;
-        Permission instance = new Permission();
-        instance.setActive(isActive);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // activate permission
+        permission.setActive(true);
+        assertTrue(permission.isActive());
     }
 
-    /**
-     * Test of getCreatedAt method, of class Permission.
-     */
     @Test
     public void testGetCreatedAt() {
         System.out.println("getCreatedAt");
-        Permission instance = new Permission();
-        Timestamp expResult = null;
-        Timestamp result = instance.getCreatedAt();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // timestamp should be null at first
+        Timestamp result = permission.getCreatedAt();
+        assertNull(result);
     }
 
-    /**
-     * Test of setCreatedAt method, of class Permission.
-     */
     @Test
     public void testSetCreatedAt() {
         System.out.println("setCreatedAt");
-        Timestamp createdAt = null;
-        Permission instance = new Permission();
-        instance.setCreatedAt(createdAt);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // set timestamp to current time
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        permission.setCreatedAt(now);
+        assertEquals(now, permission.getCreatedAt());
     }
 
-    /**
-     * Test of getCategoryName method, of class Permission.
-     */
     @Test
     public void testGetCategoryName() {
         System.out.println("getCategoryName");
-        Permission instance = new Permission();
-        String expResult = "";
-        String result = instance.getCategoryName();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        String result = permission.getCategoryName();
+        assertEquals("Unknown Category", result);
     }
 
-    /**
-     * Test of setCategoryName method, of class Permission.
-     */
     @Test
     public void testSetCategoryName() {
         System.out.println("setCategoryName");
-        String categoryName = "";
-        Permission instance = new Permission();
-        instance.setCategoryName(categoryName);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        permission.setCategoryName("User Management");
+        assertEquals("User Management", permission.getCategoryName());
     }
 
-    /**
-     * Test of getResourceName method, of class Permission.
-     */
     @Test
     public void testGetResourceName() {
         System.out.println("getResourceName");
-        Permission instance = new Permission();
-        String expResult = "";
-        String result = instance.getResourceName();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        String result = permission.getResourceName();
+        assertEquals("Unknown Resource", result);
     }
 
-    /**
-     * Test of setResourceName method, of class Permission.
-     */
     @Test
     public void testSetResourceName() {
         System.out.println("setResourceName");
-        String resourceName = "";
-        Permission instance = new Permission();
-        instance.setResourceName(resourceName);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        permission.setResourceName("Users");
+        assertEquals("Users", permission.getResourceName());
     }
 
-    /**
-     * Test of getActionName method, of class Permission.
-     */
     @Test
     public void testGetActionName() {
         System.out.println("getActionName");
-        Permission instance = new Permission();
-        String expResult = "";
-        String result = instance.getActionName();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        String result = permission.getActionName();
+        assertEquals("Unknown Action", result);
     }
 
-    /**
-     * Test of setActionName method, of class Permission.
-     */
     @Test
     public void testSetActionName() {
         System.out.println("setActionName");
-        String actionName = "";
-        Permission instance = new Permission();
-        instance.setActionName(actionName);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        permission.setActionName("Read");
+        assertEquals("Read", permission.getActionName());
     }
 
-    /**
-     * Test of equals method, of class Permission.
-     */
     @Test
     public void testEquals() {
         System.out.println("equals");
-        Object obj = null;
-        Permission instance = new Permission();
-        boolean expResult = false;
-        boolean result = instance.equals(obj);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // create two permission objects with same values
+        Permission p1 = new Permission();
+        p1.setAccessId(1);
+        p1.setAccessName("TEST");
+        
+        Permission p2 = new Permission();
+        p2.setAccessId(1);
+        p2.setAccessName("TEST");
+        
+        // should be equal
+        assertTrue(p1.equals(p2));
+        // null should not be equal
+        assertFalse(p1.equals(null));
     }
 
-    /**
-     * Test of hashCode method, of class Permission.
-     */
     @Test
     public void testHashCode() {
         System.out.println("hashCode");
-        Permission instance = new Permission();
-        int expResult = 0;
-        int result = instance.hashCode();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // set some values
+        permission.setAccessId(1);
+        permission.setAccessName("TEST");
+        
+        // hashcode should be consistent
+        int hash1 = permission.hashCode();
+        int hash2 = permission.hashCode();
+        assertEquals(hash1, hash2);
     }
 
-    /**
-     * Test of toString method, of class Permission.
-     */
     @Test
     public void testToString() {
         System.out.println("toString");
-        Permission instance = new Permission();
-        String expResult = "";
-        String result = instance.toString();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // set some test values
+        permission.setAccessId(1);
+        permission.setAccessName("READ_USERS");
+        
+        String result = permission.toString();
+        assertNotNull(result);
+        // should contain the id and name
+        assertTrue(result.contains("accessId=1"));
+        assertTrue(result.contains("READ_USERS"));
+    }
+
+    @Test
+    public void testConstructorWithAllParams() {
+        System.out.println("constructor with all params");
+        // test the full constructor
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        Permission p = new Permission(1, "READ_USERS", 5, 10, 15, true, true, now);
+        
+        // check all values were set correctly
+        assertEquals(1, p.getAccessId());
+        assertEquals("READ_USERS", p.getAccessName());
+        assertEquals(5, p.getAccessCategoryId());
+        assertEquals(10, p.getResourceId());
+        assertEquals(15, p.getActionId());
+        assertTrue(p.isRequiresApproval());
+        assertTrue(p.isActive());
+        assertEquals(now, p.getCreatedAt());
     }
     
+    @Test
+    public void testConstructorWithoutIdAndTimestamp() {
+        System.out.println("constructor without id and timestamp");
+        // test the partial constructor
+        Permission p = new Permission("WRITE_ROLES", 2, 3, 4, false, true);
+        
+        // id should be 0 (not set)
+        assertEquals(0, p.getAccessId());
+        assertEquals("WRITE_ROLES", p.getAccessName());
+        assertEquals(2, p.getAccessCategoryId());
+        assertEquals(3, p.getResourceId());
+        assertEquals(4, p.getActionId());
+        assertFalse(p.isRequiresApproval());
+        assertTrue(p.isActive());
+        // timestamp should be null
+        assertNull(p.getCreatedAt());
+    }
 }

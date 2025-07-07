@@ -17,6 +17,8 @@ import static org.junit.Assert.*;
  */
 public class AuthenticatorTest {
     
+    private Authenticator authenticator;
+    
     public AuthenticatorTest() {
     }
     
@@ -30,6 +32,7 @@ public class AuthenticatorTest {
     
     @Before
     public void setUp() {
+        authenticator = new AuthenticatorImpl();
     }
     
     @After
@@ -42,13 +45,13 @@ public class AuthenticatorTest {
     @Test
     public void testHashPassword() {
         System.out.println("hashPassword");
-        String plainTextPassword = "";
-        Authenticator instance = new AuthenticatorImpl();
-        String expResult = "";
-        String result = instance.hashPassword(plainTextPassword);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        String plainTextPassword = "testpassword123";
+        
+        String result = authenticator.hashPassword(plainTextPassword);
+        
+        assertNotNull(result);
+        assertEquals(60, result.length());
+        assertTrue(result.startsWith("$2"));
     }
 
     /**
@@ -57,14 +60,12 @@ public class AuthenticatorTest {
     @Test
     public void testVerifyPassword() {
         System.out.println("verifyPassword");
-        String plainTextPassword = "";
-        String hashedPassword = "";
-        Authenticator instance = new AuthenticatorImpl();
-        boolean expResult = false;
-        boolean result = instance.verifyPassword(plainTextPassword, hashedPassword);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        String plainTextPassword = "mypassword123";
+        String hashedPassword = authenticator.hashPassword(plainTextPassword);
+        
+        boolean result = authenticator.verifyPassword(plainTextPassword, hashedPassword);
+        
+        assertTrue(result);
     }
 
     /**
@@ -73,12 +74,11 @@ public class AuthenticatorTest {
     @Test
     public void testGenerateSalt() {
         System.out.println("generateSalt");
-        Authenticator instance = new AuthenticatorImpl();
-        String expResult = "";
-        String result = instance.generateSalt();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
+        String result = authenticator.generateSalt();
+        
+        assertNotNull(result);
+        assertTrue(result.startsWith("$2"));
     }
 
     /**
@@ -87,32 +87,95 @@ public class AuthenticatorTest {
     @Test
     public void testIsPasswordSecure() {
         System.out.println("isPasswordSecure");
-        String password = "";
-        Authenticator instance = new AuthenticatorImpl();
-        boolean expResult = false;
-        boolean result = instance.isPasswordSecure(password);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        String password = "SecurePass123!";
+        
+        boolean result = authenticator.isPasswordSecure(password);
+        
+        assertTrue(result);
     }
-
-    public class AuthenticatorImpl implements Authenticator {
-
-        public String hashPassword(String plainTextPassword) {
-            return "";
-        }
-
-        public boolean verifyPassword(String plainTextPassword, String hashedPassword) {
-            return false;
-        }
-
-        public String generateSalt() {
-            return "";
-        }
-
-        public boolean isPasswordSecure(String password) {
-            return false;
+    
+    @Test
+    public void testHashPasswordEmpty() {
+        System.out.println("hashPassword empty");
+        try {
+            authenticator.hashPassword("");
+            fail("Should throw IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
         }
     }
     
+    @Test
+    public void testHashPasswordNull() {
+        System.out.println("hashPassword null");
+        try {
+            authenticator.hashPassword(null);
+            fail("Should throw IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+    
+    @Test
+    public void testVerifyPasswordWrong() {
+        System.out.println("verifyPassword wrong");
+        String plainTextPassword = "correct123";
+        String wrongPassword = "wrong123";
+        String hashedPassword = authenticator.hashPassword(plainTextPassword);
+        
+        boolean result = authenticator.verifyPassword(wrongPassword, hashedPassword);
+        
+        assertFalse(result);
+    }
+    
+    @Test
+    public void testVerifyPasswordNull() {
+        System.out.println("verifyPassword null");
+        String hashedPassword = authenticator.hashPassword("test123");
+        
+        boolean result1 = authenticator.verifyPassword(null, hashedPassword);
+        boolean result2 = authenticator.verifyPassword("test123", null);
+        
+        assertFalse(result1);
+        assertFalse(result2);
+    }
+    
+    @Test
+    public void testGenerateSaltUnique() {
+        System.out.println("generateSalt unique");
+        
+        String salt1 = authenticator.generateSalt();
+        String salt2 = authenticator.generateSalt();
+        
+        assertNotEquals(salt1, salt2);
+    }
+    
+    @Test
+    public void testIsPasswordSecureWeak() {
+        System.out.println("isPasswordSecure weak");
+        String password = "weak";
+        
+        boolean result = authenticator.isPasswordSecure(password);
+        
+        assertFalse(result);
+    }
+    
+    @Test
+    public void testIsPasswordSecureNoDigit() {
+        System.out.println("isPasswordSecure no digit");
+        String password = "Password!";
+        
+        boolean result = authenticator.isPasswordSecure(password);
+        
+        assertFalse(result);
+    }
+    
+    @Test
+    public void testIsPasswordSecureNull() {
+        System.out.println("isPasswordSecure null");
+        
+        boolean result = authenticator.isPasswordSecure(null);
+        
+        assertFalse(result);
+    }
 }

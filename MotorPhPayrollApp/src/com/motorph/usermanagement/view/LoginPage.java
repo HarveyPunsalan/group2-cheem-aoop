@@ -364,7 +364,7 @@ public class LoginPage extends javax.swing.JFrame {
     }   
     
     /**
-     * Open System Admin dashboard
+     * Open SystemAdmin dashboard
      */
     private void openSystemAdminDashboard() {
         try {

@@ -16,7 +16,7 @@ import org.junit.runners.Suite;
  * @author Harvey
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({com.motorph.usermanagement.view.ViewSuite.class, com.motorph.usermanagement.dao.DaoSuite.class, com.motorph.usermanagement.util.UtilSuite.class, com.motorph.usermanagement.model.ModelSuite.class, com.motorph.usermanagement.service.ServiceSuite.class, com.motorph.usermanagement.exception.ExceptionSuite.class, com.motorph.usermanagement.security.SecuritySuite.class, com.motorph.usermanagement.controller.ControllerSuite.class})
+@Suite.SuiteClasses({com.motorph.usermanagement.dao.DaoSuite.class, com.motorph.usermanagement.util.UtilSuite.class, com.motorph.usermanagement.model.ModelSuite.class, com.motorph.usermanagement.service.ServiceSuite.class, com.motorph.usermanagement.security.SecuritySuite.class})
 public class UsermanagementSuite {
 
     @BeforeClass

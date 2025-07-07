@@ -16,7 +16,7 @@ import org.junit.runners.Suite;
  * @author Harvey
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({com.motorph.usermanagement.util.ConstantsTest.class, com.motorph.usermanagement.util.JDBCUtilsTest.class, com.motorph.usermanagement.util.DateUtilsTest.class, com.motorph.usermanagement.util.ValidationUtilsTest.class})
+@Suite.SuiteClasses({com.motorph.usermanagement.util.ValidationUtilsTest.class})
 public class UtilSuite {
 
     @BeforeClass

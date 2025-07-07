@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 
 /**
- * This manages CRUD operations for permissions and role-permission assignments.
+ * This manages CRUD operations for permissions and role permission assignments
  * 
  * @author Harvey 
  */

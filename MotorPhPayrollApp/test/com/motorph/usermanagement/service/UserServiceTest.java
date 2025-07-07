@@ -4,11 +4,11 @@
  */
 package com.motorph.usermanagement.service;
 
-import com.motorph.usermanagement.exception.DataAccessException;
+import com.motorph.usermanagement.model.User;
+import com.motorph.usermanagement.exception.UserNotFoundException;
 import com.motorph.usermanagement.exception.DuplicateUserException;
 import com.motorph.usermanagement.exception.InvalidCredentialsException;
-import com.motorph.usermanagement.exception.UserNotFoundException;
-import com.motorph.usermanagement.model.User;
+import com.motorph.usermanagement.exception.DataAccessException;
 import java.util.List;
 import java.util.Optional;
 import org.junit.After;
@@ -19,10 +19,14 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- *
+ * Test class for UserService interface.
+ * This tests the interface contract using a mock implementation.
+ * 
  * @author Harvey
  */
 public class UserServiceTest {
+    
+    private UserService userService;
     
     public UserServiceTest() {
     }
@@ -37,6 +41,7 @@ public class UserServiceTest {
     
     @Before
     public void setUp() {
+        userService = new UserServiceTestImpl();
     }
     
     @After
@@ -44,330 +49,308 @@ public class UserServiceTest {
     }
 
     /**
-     * Test of registerUser method, of class UserService.
+     * Test of authenticate method with valid credentials.
      */
     @Test
-    public void testRegisterUser() throws Exception {
-        System.out.println("registerUser");
-        User user = null;
-        UserService instance = new UserServiceImpl();
-        int expResult = 0;
-        int result = instance.registerUser(user);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testAuthenticate_ValidCredentials() throws Exception {
+        System.out.println("authenticate - Valid Credentials");
+        String username = "testuser";
+        String password = "password123";
+        
+        User result = userService.authenticate(username, password);
+        
+        assertNotNull("Authentication should return a user", result);
+        assertEquals("Username should match", username, result.getUsername());
+        assertTrue("User should be active", result.isActive());
     }
-
+    
     /**
-     * Test of authenticate method, of class UserService.
+     * Test of authenticate method with invalid username.
      */
-    @Test
-    public void testAuthenticate() throws Exception {
-        System.out.println("authenticate");
+    @Test(expected = InvalidCredentialsException.class)
+    public void testAuthenticate_InvalidUsername() throws Exception {
+        System.out.println("authenticate - Invalid Username");
+        String username = "nonexistent";
+        String password = "password123";
+        
+        userService.authenticate(username, password);
+    }
+    
+    /**
+     * Test of authenticate method with invalid password.
+     */
+    @Test(expected = InvalidCredentialsException.class)
+    public void testAuthenticate_InvalidPassword() throws Exception {
+        System.out.println("authenticate - Invalid Password");
+        String username = "testuser";
+        String password = "wrongpassword";
+        
+        userService.authenticate(username, password);
+    }
+    
+    /**
+     * Test of authenticate method with null username.
+     */
+    @Test(expected = InvalidCredentialsException.class)
+    public void testAuthenticate_NullUsername() throws Exception {
+        System.out.println("authenticate - Null Username");
+        String username = null;
+        String password = "password123";
+        
+        userService.authenticate(username, password);
+    }
+    
+    /**
+     * Test of authenticate method with null password.
+     */
+    @Test(expected = InvalidCredentialsException.class)
+    public void testAuthenticate_NullPassword() throws Exception {
+        System.out.println("authenticate - Null Password");
+        String username = "testuser";
+        String password = null;
+        
+        userService.authenticate(username, password);
+    }
+    
+    /**
+     * Test of authenticate method with empty username.
+     */
+    @Test(expected = InvalidCredentialsException.class)
+    public void testAuthenticate_EmptyUsername() throws Exception {
+        System.out.println("authenticate - Empty Username");
         String username = "";
+        String password = "password123";
+        
+        userService.authenticate(username, password);
+    }
+    
+    /**
+     * Test of authenticate method with empty password.
+     */
+    @Test(expected = InvalidCredentialsException.class)
+    public void testAuthenticate_EmptyPassword() throws Exception {
+        System.out.println("authenticate - Empty Password");
+        String username = "testuser";
         String password = "";
-        UserService instance = new UserServiceImpl();
-        User expResult = null;
-        User result = instance.authenticate(username, password);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
+        userService.authenticate(username, password);
     }
 
     /**
-     * Test of assignRole method, of class UserService.
+     * Test of getUserByUsername method with valid username.
      */
     @Test
-    public void testAssignRole() throws Exception {
-        System.out.println("assignRole");
-        int userId = 0;
-        int roleId = 0;
-        UserService instance = new UserServiceImpl();
-        boolean expResult = false;
-        boolean result = instance.assignRole(userId, roleId);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testGetUserByUsername_ValidUsername() throws Exception {
+        System.out.println("getUserByUsername - Valid Username");
+        String username = "testuser";
+        
+        Optional<User> result = userService.getUserByUsername(username);
+        
+        assertTrue("Should return a user", result.isPresent());
+        assertEquals("Username should match", username, result.get().getUsername());
+    }
+    
+    /**
+     * Test of getUserByUsername method with invalid username.
+     */
+    @Test
+    public void testGetUserByUsername_InvalidUsername() throws Exception {
+        System.out.println("getUserByUsername - Invalid Username");
+        String username = "nonexistent";
+        
+        Optional<User> result = userService.getUserByUsername(username);
+        
+        assertFalse("Should return empty optional", result.isPresent());
+    }
+    
+    /**
+     * Test of isUsernameAvailable method with available username.
+     */
+    @Test
+    public void testIsUsernameAvailable_Available() throws Exception {
+        System.out.println("isUsernameAvailable - Available Username");
+        String username = "newuser";
+        
+        boolean result = userService.isUsernameAvailable(username);
+        
+        assertTrue("Username should be available", result);
+    }
+    
+    /**
+     * Test of isUsernameAvailable method with taken username.
+     */
+    @Test
+    public void testIsUsernameAvailable_Taken() throws Exception {
+        System.out.println("isUsernameAvailable - Taken Username");
+        String username = "testuser";
+        
+        boolean result = userService.isUsernameAvailable(username);
+        
+        assertFalse("Username should be taken", result);
+    }
+    
+    /**
+     * Test of changePassword method with valid data.
+     */
+    @Test
+    public void testChangePassword_ValidData() throws Exception {
+        System.out.println("changePassword - Valid Data");
+        int userId = 1;
+        String newPassword = "newpassword123";
+        
+        boolean result = userService.changePassword(userId, newPassword);
+        
+        assertTrue("Password change should succeed", result);
+    }
+    
+    /**
+     * Test of changePassword method with invalid user ID.
+     */
+    @Test(expected = UserNotFoundException.class)
+    public void testChangePassword_InvalidUserId() throws Exception {
+        System.out.println("changePassword - Invalid User ID");
+        int userId = 999;
+        String newPassword = "newpassword123";
+        
+        userService.changePassword(userId, newPassword);
     }
 
     /**
-     * Test of updateUser method, of class UserService.
+     * Mock implementation of UserService for testing interface contract.
      */
-    @Test
-    public void testUpdateUser() throws Exception {
-        System.out.println("updateUser");
-        User user = null;
-        UserService instance = new UserServiceImpl();
-        boolean expResult = false;
-        boolean result = instance.updateUser(user);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
+    public class UserServiceTestImpl implements UserService {
 
-    /**
-     * Test of getUserById method, of class UserService.
-     */
-    @Test
-    public void testGetUserById() throws Exception {
-        System.out.println("getUserById");
-        int userId = 0;
-        UserService instance = new UserServiceImpl();
-        Optional<User> expResult = null;
-        Optional<User> result = instance.getUserById(userId);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getUserByUsername method, of class UserService.
-     */
-    @Test
-    public void testGetUserByUsername() throws Exception {
-        System.out.println("getUserByUsername");
-        String username = "";
-        UserService instance = new UserServiceImpl();
-        Optional<User> expResult = null;
-        Optional<User> result = instance.getUserByUsername(username);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getUserByEmployeeId method, of class UserService.
-     */
-    @Test
-    public void testGetUserByEmployeeId() throws Exception {
-        System.out.println("getUserByEmployeeId");
-        int employeeId = 0;
-        UserService instance = new UserServiceImpl();
-        Optional<User> expResult = null;
-        Optional<User> result = instance.getUserByEmployeeId(employeeId);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getAllUsers method, of class UserService.
-     */
-    @Test
-    public void testGetAllUsers() throws Exception {
-        System.out.println("getAllUsers");
-        UserService instance = new UserServiceImpl();
-        List<User> expResult = null;
-        List<User> result = instance.getAllUsers();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getUsersByRole method, of class UserService.
-     */
-    @Test
-    public void testGetUsersByRole() throws Exception {
-        System.out.println("getUsersByRole");
-        int roleId = 0;
-        UserService instance = new UserServiceImpl();
-        List<User> expResult = null;
-        List<User> result = instance.getUsersByRole(roleId);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getActiveUsers method, of class UserService.
-     */
-    @Test
-    public void testGetActiveUsers() throws Exception {
-        System.out.println("getActiveUsers");
-        UserService instance = new UserServiceImpl();
-        List<User> expResult = null;
-        List<User> result = instance.getActiveUsers();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of setUserStatus method, of class UserService.
-     */
-    @Test
-    public void testSetUserStatus() throws Exception {
-        System.out.println("setUserStatus");
-        int userId = 0;
-        boolean isActive = false;
-        UserService instance = new UserServiceImpl();
-        boolean expResult = false;
-        boolean result = instance.setUserStatus(userId, isActive);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of changePassword method, of class UserService.
-     */
-    @Test
-    public void testChangePassword() throws Exception {
-        System.out.println("changePassword");
-        int userId = 0;
-        String newPassword = "";
-        UserService instance = new UserServiceImpl();
-        boolean expResult = false;
-        boolean result = instance.changePassword(userId, newPassword);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of isUsernameAvailable method, of class UserService.
-     */
-    @Test
-    public void testIsUsernameAvailable() throws Exception {
-        System.out.println("isUsernameAvailable");
-        String username = "";
-        UserService instance = new UserServiceImpl();
-        boolean expResult = false;
-        boolean result = instance.isUsernameAvailable(username);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getUserCount method, of class UserService.
-     */
-    @Test
-    public void testGetUserCount() throws Exception {
-        System.out.println("getUserCount");
-        UserService instance = new UserServiceImpl();
-        int expResult = 0;
-        int result = instance.getUserCount();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getActiveUserCount method, of class UserService.
-     */
-    @Test
-    public void testGetActiveUserCount() throws Exception {
-        System.out.println("getActiveUserCount");
-        UserService instance = new UserServiceImpl();
-        int expResult = 0;
-        int result = instance.getActiveUserCount();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of searchUsersByUsername method, of class UserService.
-     */
-    @Test
-    public void testSearchUsersByUsername() throws Exception {
-        System.out.println("searchUsersByUsername");
-        String searchTerm = "";
-        UserService instance = new UserServiceImpl();
-        List<User> expResult = null;
-        List<User> result = instance.searchUsersByUsername(searchTerm);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of resetPassword method, of class UserService.
-     */
-    @Test
-    public void testResetPassword() throws Exception {
-        System.out.println("resetPassword");
-        int userId = 0;
-        String newPassword = "";
-        UserService instance = new UserServiceImpl();
-        boolean expResult = false;
-        boolean result = instance.resetPassword(userId, newPassword);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    public class UserServiceImpl implements UserService {
-
+        @Override
         public int registerUser(User user) throws DuplicateUserException, DataAccessException {
-            return 0;
+            if (user != null && "testuser".equals(user.getUsername())) {
+                throw new DuplicateUserException("Username already exists");
+            }
+            return 1;
         }
 
+        @Override
         public User authenticate(String username, String password) throws InvalidCredentialsException, DataAccessException {
-            return null;
+            if (username == null || username.trim().isEmpty()) {
+                throw new InvalidCredentialsException("Username cannot be empty");
+            }
+            if (password == null || password.isEmpty()) {
+                throw new InvalidCredentialsException("Password cannot be empty");
+            }
+            
+            if ("testuser".equals(username) && "password123".equals(password)) {
+                User user = new User();
+                user.setUserId(1);
+                user.setUsername(username);
+                user.setActive(true);
+                user.setRoleId(1);
+                return user;
+            }
+            
+            throw new InvalidCredentialsException("Invalid credentials");
         }
 
+        @Override
         public boolean assignRole(int userId, int roleId) throws UserNotFoundException, DataAccessException {
-            return false;
+            if (userId == 999) {
+                throw new UserNotFoundException("User not found");
+            }
+            return userId == 1;
         }
 
+        @Override
         public boolean updateUser(User user) throws UserNotFoundException, DataAccessException {
-            return false;
+            if (user == null || user.getUserId() == 999) {
+                throw new UserNotFoundException("User not found");
+            }
+            return true;
         }
 
+        @Override
         public Optional<User> getUserById(int userId) throws DataAccessException {
-            return null;
+            if (userId == 1) {
+                User user = new User();
+                user.setUserId(1);
+                user.setUsername("testuser");
+                user.setActive(true);
+                return Optional.of(user);
+            }
+            return Optional.empty();
         }
 
+        @Override
         public Optional<User> getUserByUsername(String username) throws DataAccessException {
-            return null;
+            if ("testuser".equals(username)) {
+                User user = new User();
+                user.setUserId(1);
+                user.setUsername(username);
+                user.setActive(true);
+                return Optional.of(user);
+            }
+            return Optional.empty();
         }
 
+        @Override
         public Optional<User> getUserByEmployeeId(int employeeId) throws DataAccessException {
-            return null;
+            return Optional.empty();
         }
 
+        @Override
         public List<User> getAllUsers() throws DataAccessException {
             return null;
         }
 
+        @Override
         public List<User> getUsersByRole(int roleId) throws DataAccessException {
             return null;
         }
 
+        @Override
         public List<User> getActiveUsers() throws DataAccessException {
             return null;
         }
 
+        @Override
         public boolean setUserStatus(int userId, boolean isActive) throws UserNotFoundException, DataAccessException {
-            return false;
+            if (userId == 999) {
+                throw new UserNotFoundException("User not found");
+            }
+            return userId == 1;
         }
 
+        @Override
         public boolean changePassword(int userId, String newPassword) throws UserNotFoundException, DataAccessException {
-            return false;
+            if (userId == 999) {
+                throw new UserNotFoundException("User not found");
+            }
+            return userId == 1;
         }
 
+        @Override
         public boolean isUsernameAvailable(String username) throws DataAccessException {
-            return false;
+            return !"testuser".equals(username);
         }
 
+        @Override
         public int getUserCount() throws DataAccessException {
-            return 0;
+            return 1;
         }
 
+        @Override
         public int getActiveUserCount() throws DataAccessException {
-            return 0;
+            return 1;
         }
 
+        @Override
         public List<User> searchUsersByUsername(String searchTerm) throws DataAccessException {
             return null;
         }
 
+        @Override
         public boolean resetPassword(int userId, String newPassword) throws UserNotFoundException, DataAccessException {
-            return false;
+            if (userId == 999) {
+                throw new UserNotFoundException("User not found");
+            }
+            return userId == 1;
         }
     }
-    
 }

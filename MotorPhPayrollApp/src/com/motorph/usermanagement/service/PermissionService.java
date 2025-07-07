@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Service interface for Permission-related business operations.
+ * Service interface for permission related business operations.
  * Defines the contract for permission management functionality.
  * @author Harvey 
  */

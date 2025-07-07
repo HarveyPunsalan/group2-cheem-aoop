@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * This handles all business logic related to permission management operations.
+ * This handles all business logic related to permission management.
  * Coordinates between DAOs and applies business validation rules.
  * 
  * @author Harvey
@@ -40,10 +40,10 @@ public class PermissionServiceImpl implements PermissionService {
     }
     
     /**
-     * Constructor for dependency injection (useful for testing)
+     * Constructor useful for testing
      * 
      * @param permissionDAO provides access to permission-related database operations
-     * @param roleDAO provides access to role-related database operations
+     * @param roleDAO provides access to role related database operations
      */
     public PermissionServiceImpl(PermissionDAO permissionDAO, RoleDAO roleDAO) {
         this.permissionDAO = permissionDAO;
@@ -146,7 +146,7 @@ public class PermissionServiceImpl implements PermissionService {
         }
         
         // Check if permission is assigned to any roles before deletion
-        // This would require additional business logic based on your requirements
+        // This would require additional business logic based on requirements
         
         boolean success = permissionDAO.deletePermission(permissionId);
         

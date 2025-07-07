@@ -22,7 +22,7 @@ import com.motorph.database.execution.EntityMapper;
  * JDBC implementation of PermissionDAO interface.
  * Handles all database operations related to Permission entity using the user_access table.
  *
- * @author harvey punsalan
+ * @author Harvey
  */
 
 public class PermissionDAOImpl implements PermissionDAO {
