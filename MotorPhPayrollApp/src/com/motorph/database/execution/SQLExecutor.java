@@ -4,11 +4,15 @@
  */
 package com.motorph.database.execution;
 
+//import com.motorph.common.mapper.EntityMapper;
+import com.motorph.common.mapper.ModelMapper;
+import com.motorph.database.execution.script.Script;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -35,7 +39,7 @@ public class SQLExecutor {
     }
     
     /**
-     * Executes a parameterized SELECT query and maps the results using the provided {@link ResultSetMapper}.
+     * Executes a parameterized SELECT query and maps the results using the provided {@link EntityMapper}.
      *
      * @param script the SQL script to execute
      * @param params the list of parameters to bind to the query
@@ -44,13 +48,14 @@ public class SQLExecutor {
      * @return a list of mapped objects from the result set
      * @throws SQLException if a database access error occurs
      */
-    public <T> List<T> executeQuery(Script script, List<Object> params, ResultSetMapper<T> mapper) throws SQLException {
+    public <T> List<T> executeQuery(Script script, List<Object> params, EntityMapper<T> mapper) throws SQLException {
         // 🔒 Validate parameter count
-        validateParameters(script.toString(), params);
+        validateParameters(script.getQuery(), params);
+        logQuery(script, params);
         
         List<T> results = new ArrayList<>();
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(script.toString())) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(script.getQuery())) {
             // ✅ Only set parameters if there are any
             if (!params.isEmpty()) {
                 setParameters(preparedStatement, params.toArray());
@@ -62,7 +67,30 @@ public class SQLExecutor {
                 }
             }
         }
+        return results;
+    }
+    
+    public <T> List<T> executeQuery(Script script, List<Object> params, ModelMapper<T> mapper) throws SQLException {
+        // 🔒 Validate parameter count
+        validateParameters(script.getQuery(), params);
+        logQuery(script, params);
+        
+        List<T> results = new ArrayList<>();
 
+        try (PreparedStatement preparedStatement = connection.prepareStatement(script.getQuery())) {
+            // ✅ Only set parameters if there are any
+            if (!params.isEmpty()) {
+                setParameters(preparedStatement, params.toArray());
+            }
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    results.add(mapper.map(resultSet));
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException("Query failed: " + script.getQuery(), e);
+            }
+        }
         return results;
     }
 
@@ -75,9 +103,24 @@ public class SQLExecutor {
      * @return a list of mapped objects from the result set
      * @throws SQLException if a database access error occurs
      */
-    public <T> List<T> executeQuery(Script script, ResultSetMapper<T> mapper) throws SQLException {
+    public <T> List<T> executeQuery(Script script, EntityMapper<T> mapper) throws SQLException {
         return executeQuery(script, List.of(), mapper);
-    }  
+    }
+
+    public <T> List<T> executeQuery(Script script, ModelMapper<T> mapper) throws SQLException {
+        return executeQuery(script, List.of(), mapper);
+    } 
+    
+    // ✅ NEW: Query for single object
+    public <T> Optional<T> queryForObject(Script script, List<Object> params, EntityMapper<T> mapper) throws SQLException {
+        List<T> results = executeQuery(script, params, mapper);
+        return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
+    }
+    
+    public <T> Optional<T> queryForObject(Script script, List<Object> params, ModelMapper<T> mapper) throws SQLException {
+        List<T> results = executeQuery(script, params, mapper);
+        return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
+    }
 
     /**
      * Executes an INSERT, UPDATE, or DELETE statement with parameters.
@@ -88,9 +131,10 @@ public class SQLExecutor {
      */
     public int executeUpdate(Script script, List<Object> params) {
         // 🔒 Validate parameter count
-        validateParameters(script.toString(), params);
+        validateParameters(script.getQuery(), params);
+        logQuery(script, params);
         
-        try (PreparedStatement preparedStatement = connection.prepareStatement(script.toString())) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(script.getQuery())) {
             // ✅ Only set parameters if there are any
             if (!params.isEmpty()) {
                 setParameters(preparedStatement, params.toArray());                
@@ -99,8 +143,18 @@ public class SQLExecutor {
             return preparedStatement.executeUpdate();
             
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to execute update: " + script.toString(), e);
-            throw new RuntimeException("Database update failed: " + script.name(), e);
+            LOGGER.log(Level.SEVERE, "Failed to execute update: " + script.getQuery(), e);
+            throw new RuntimeException("Database update failed: " + script.getQuery(), e);
+        }
+    }
+    
+    public int executeUpdate(Script script, PreparedStatementSetter setter) {           
+        try (PreparedStatement ps = connection.prepareStatement(script.getQuery())) {            
+            setter.set(ps); 
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to execute update: " + script.getQuery(), e);
+            throw new RuntimeException("Database update failed: " + script.getQuery(), e);
         }
     }
     
@@ -112,6 +166,19 @@ public class SQLExecutor {
      */
     public int executeUpdate(Script script) {
         return executeUpdate(script, List.of());
+    }
+    
+    // ✅ NEW: Batch update
+    public int[] batchUpdate(Script script, List<List<Object>> batchParams) throws SQLException {
+        logBatch(script, batchParams.size());
+
+        try (PreparedStatement ps = connection.prepareStatement(script.getQuery())) {
+            for (List<Object> params : batchParams) {
+                setParameters(ps, params.toArray());
+                ps.addBatch();
+            }
+            return ps.executeBatch();
+        }
     }
 
     /**
@@ -155,5 +222,18 @@ public class SQLExecutor {
                 String.format("Parameter mismatch: expected %d but got %d", expected, params.size())
             );
         }
+    }
+    
+    private void logQuery(Script script, List<Object> params) {
+        LOGGER.fine(() -> String.format("Executing SQL [%s]: %s with params: %s", script.getQuery(), script, params));
+    }
+
+    private void logBatch(Script script, int batchSize) {
+        LOGGER.fine(() -> String.format("Executing batch SQL [%s] with %d sets of parameters", script.getQuery(), batchSize));
+    }
+    
+    @FunctionalInterface
+    public interface PreparedStatementSetter {
+        void set(PreparedStatement stmt) throws SQLException;
     }
 }
