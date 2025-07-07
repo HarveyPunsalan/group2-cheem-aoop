@@ -1,4 +1,4 @@
-Username,Password,Employee #,RoleID,User #
+    Username,Password,Employee #,RoleID,User #
 AdminGarcia,10001,10001,2,1
 NonAdminLim,10002,10002,1,2
 Aquino,10003,10003,1,3

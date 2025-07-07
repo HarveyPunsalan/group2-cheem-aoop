@@ -5,7 +5,7 @@
 package Class.IDManagement;
 
 import CSVFileManager.CsvFile;
-import Class.CollectionUtils;
+import com.motorph.common.util.CollectionUtils;
 import java.util.*;
 /**
  *

@@ -1,2 +1,0 @@
--- Backup schema structure
--- Use mysqldump or workbench export tools to generate .sql backup of schema
