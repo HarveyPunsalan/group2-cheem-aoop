@@ -6,7 +6,7 @@ package com.motorph.database.test;
 
 import com.motorph.database.connection.DatabaseService;
 import com.motorph.database.execution.SQLExecutor;
-import com.motorph.database.execution.Script;
+import com.motorph.database.execution.EmployeeScript;
 import com.motorph.employeemanagement.model.PersonalInformation;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -32,8 +32,7 @@ public class DatabaseDemo {
         List<PersonalInformation> records;
         try {
             // ✅ Run SELECT query and map results
-            records = executor.executeQuery(
-                    Script.SELECT_ALL_EMPLOYEES, //SELECT_ALL_EMPLOYEES
+            records = executor.executeQuery(EmployeeScript.SELECT_ALL_EMPLOYEES, //SELECT_ALL_EMPLOYEES
                     //List.of("10001"),
                     resultSet -> new PersonalInformation(
                             resultSet.getInt("employee_id"),
@@ -62,8 +61,7 @@ public class DatabaseDemo {
         
 
         // INSERT demo
-        int rowsInserted = executor.executeUpdate(
-            Script.ADD_EMPLOYEE_ADDRESS,
+        int rowsInserted = executor.executeUpdate(EmployeeScript.ADD_EMPLOYEE_ADDRESS,
             List.of(10035, "123", "Main St", "Barangay 1", "City", "Province", "1234", "PH", 1)
         );
         System.out.println("Inserted rows: " + rowsInserted);
