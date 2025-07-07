@@ -8,44 +8,69 @@ package com.motorph.payrollprocessing.view.admin;
  *
  * @author Charm
  */
+import com.motorph.common.swing.TableConfigurator;
+import com.motorph.common.util.DateUtil;
 import com.motorph.usermanagement.view.LoginPage;
-import com.motorph.payrollprocessing.service.PayrollService;
-import com.motorph.payrollprocessing.model.PayPeriod;
+import com.motorph.payrollprocessing.model.payroll.PayPeriod;
+import com.motorph.payrollprocessing.tablemodel.EmployeeWorkedHoursSummaryTableModel;
+import com.motorph.payrollprocessing.tablemodel.HeaderCheckBoxHandler;
+import com.motorph.payrollprocessing.viewmodel.model.EmployeeWorkedHoursSummaryViewModel;
+import com.motorph.payrollprocessing.viewmodel.service.EmployeeWorkedHoursSummaryService;
+import com.motorph.payrollprocessing.viewmodel.service.ViewModelServiceFactory;
 import com.motorph.usermanagement.model.Admin;
 import com.motorph.usermanagement.model.Access;
-import java.time.format.DateTimeFormatter;
+import java.util.List;
+import javax.swing.JOptionPane;
 
 public class PayrollEmployeeSelection extends javax.swing.JFrame {
-    DateTimeFormatter formatterDate1  = DateTimeFormatter.ofPattern("MMMM dd");
-    DateTimeFormatter formatterDate2  = DateTimeFormatter.ofPattern("MMMM dd yyyy");
     Admin admin;
     PayPeriod payrollPayPeriod;
-    PayrollService payrollService = new PayrollService();
+    EmployeeWorkedHoursSummaryService service;
     
     public PayrollEmployeeSelection( ) {
         initComponents(); 
-
+        initService();
     }
     
     public PayrollEmployeeSelection(PayPeriod payPeriod) {
         initComponents(); 
+        initService();
+        loadTable(payPeriod);
+        
         this.payrollPayPeriod = payPeriod;
-        jPanel1.setVisible(false);
-        jTablePayrollEmployeeSelection.setModel(payrollService.getEmployeeSelectionTableModel(payPeriod));
-        jLabelPayPeriod.setText("Pay Period : " + payPeriod.getStartDate().format(formatterDate1) + " - " + payPeriod.getEndDate().format(formatterDate2));
+        
+        jPanel1.setVisible(false);        
+        jLabelPayPeriod.setText("Pay Period : " + DateUtil.format_RANGE_MMM_ddo_ddo(payPeriod.getStartDate(), payPeriod.getEndDate()));
     }
 
     public PayrollEmployeeSelection(Admin admin, PayPeriod payPeriod) {
         initComponents();
+        initService();
+        loadTable(payPeriod);
+        
         this.admin = admin;
         this.payrollPayPeriod = payPeriod;
-        jPanel1.setVisible(false);
-        jTablePayrollEmployeeSelection.setModel(payrollService.getEmployeeSelectionTableModel(payPeriod));
-        jLabelPayPeriod.setText("Pay Period : " + payPeriod.getStartDate().format(formatterDate1) + " - " + payPeriod.getEndDate().format(formatterDate2));
         
+        jPanel1.setVisible(false);
+        jLabelPayPeriod.setText("Pay Period : " + DateUtil.format_RANGE_MMM_ddo_ddo(payPeriod.getStartDate(), payPeriod.getEndDate()));        
     }
 
+    private void initService() {
+        try {
+            this.service = ViewModelServiceFactory.createEmployeeWorkedHoursSummaryServiceService();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Failed to load service: " + e.getMessage());
+        }
+    }
     
+    private void loadTable(PayPeriod payPeriod) {
+        List<EmployeeWorkedHoursSummaryViewModel> EmployeeWorkedHourList = this.service.getSummaryByPayPeriodId(payPeriod.getPayPeriodId());
+        EmployeeWorkedHoursSummaryTableModel tableModel = new EmployeeWorkedHoursSummaryTableModel(EmployeeWorkedHourList);
+        
+        jTablePayrollEmployeeSelection.setModel(tableModel);
+        TableConfigurator.configureEmployeeWorkedHoursSummaryTable(jTablePayrollEmployeeSelection);
+        HeaderCheckBoxHandler.addHeaderCheckBox(jTablePayrollEmployeeSelection, tableModel); // <- this enables select all
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -154,14 +179,14 @@ public class PayrollEmployeeSelection extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jButton1EmployeeInformation, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3EmployeeRequest, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
-                    .addComponent(jButton4Payroll, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
-                    .addComponent(jButton6LogOut, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
-                    .addComponent(jButton3SelfServicePortal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE))
+                    .addComponent(jButton6LogOut, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
+                    .addComponent(jButton3SelfServicePortal, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
+                    .addComponent(jButton3EmployeeRequest, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton4Payroll, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -175,7 +200,7 @@ public class PayrollEmployeeSelection extends javax.swing.JFrame {
                 .addComponent(jButton1EmployeeInformation)
                 .addGap(34, 34, 34)
                 .addComponent(jButton4Payroll)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 278, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 286, Short.MAX_VALUE)
                 .addComponent(jButton6LogOut)
                 .addContainerGap())
         );
@@ -222,7 +247,7 @@ public class PayrollEmployeeSelection extends javax.swing.JFrame {
             }
         });
 
-        jLabelPayPeriod.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabelPayPeriod.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabelPayPeriod.setText("Pay period : pay period");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -242,7 +267,7 @@ public class PayrollEmployeeSelection extends javax.swing.JFrame {
                                 .addComponent(jButtonNext)))
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(40, 40, 40)
+                        .addGap(36, 36, 36)
                         .addComponent(jLabelPayPeriod)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -254,8 +279,9 @@ public class PayrollEmployeeSelection extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jLabelPayPeriod)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
