@@ -37,9 +37,10 @@ public enum EmployeeScript implements Script {
                epi.birthday, epi.phone_number, epi.email
         FROM employee_personal_information epi
         JOIN employee_employment_information eei ON epi.employee_id = eei.employee_id
-        WHERE eei.employment_status = 'Active'
+                WHERE eei.employment_status = 'Active'
     """),
 
+    
     /**
      * Gets detailed information about an employee by joining multiple tables:
      * personal, address, government, employment, job, department, supervisor, and salary.
