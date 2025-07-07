@@ -5,7 +5,9 @@
 package com.motorph.attendancemanagement.model;
 
 import com.motorph.employeemanagement.model.Employee;
-import com.motorph.payrollprocessing.model.PayPeriod;
+import com.motorph.payrollprocessing.model.payroll.PayPeriod;
+import com.motorph.payrollprocessing.service.core.PayPeriodService;
+import com.motorph.payrollprocessing.service.core.ServiceFactory;
 import java.util.Arrays;
 
 /**
@@ -42,7 +44,10 @@ public class PayPeriodAttendance {
             
             // Create a PayPeriod from start and end date strings.
             // This assumes you have a PayPeriod constructor that accepts two date strings.
-            this.payperiodID = new PayPeriod(data[2], data[3]);
+            PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodServicewService();
+        
+            PayPeriod payPeriod = payPeriodService.searchByDateRange(data[2], data[3]).get();
+            this.payperiodID = payPeriod;
             
             // Parse numeric values
             this.totalWorkedHours = Double.parseDouble(data[4]);
