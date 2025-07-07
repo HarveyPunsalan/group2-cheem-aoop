@@ -4,10 +4,12 @@
  */
 package com.motorph.attendancemanagement.view.admin;
 
-import com.motorph.payrollprocessing.service.PayrollService;
-import com.motorph.payrollprocessing.model.PayPeriod;
+import com.motorph.payrollprocessing.service.core.PayrollService;
+import com.motorph.payrollprocessing.model.payroll.PayPeriod;
 import com.motorph.attendancemanagement.service.AttendanceService;
 import com.motorph.common.ui.renderer.PromptComboBoxRenderer;
+import com.motorph.payrollprocessing.service.core.PayPeriodService;
+import com.motorph.payrollprocessing.service.core.ServiceFactory;
 import com.motorph.usermanagement.model.Access;
 import com.motorph.usermanagement.model.Admin;
 import javax.swing.JOptionPane;
@@ -260,7 +262,9 @@ public class AttendanceBiweekly extends javax.swing.JFrame {
         String startDate = dates[0];
         String endDate = dates[1];
         
-        PayPeriod selectedPayPeriod = new PayPeriod(startDate, endDate);
+        PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodServicewService();
+        
+        PayPeriod selectedPayPeriod = payPeriodService.searchByDateRange(dates[0], dates[1]).get();
         AttendanceService dtrManager = new AttendanceService();
         jTableBiweeklyAttendace.setModel(dtrManager.getProcessedAttendanceTableModel(selectedPayPeriod));
         
@@ -304,7 +308,9 @@ public class AttendanceBiweekly extends javax.swing.JFrame {
         String startDate = dates[0];
         String endDate = dates[1];
         
-        PayPeriod selectedPayPeriod = new PayPeriod(startDate, endDate);
+        PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodServicewService();
+        
+        PayPeriod selectedPayPeriod = payPeriodService.searchByDateRange(dates[0], dates[1]).get();
         
         int rowIndex = jTableBiweeklyAttendace.getSelectedRow(); // Get selected row index
         String employeeID = jTableBiweeklyAttendace.getValueAt(rowIndex, 0).toString(); // Retrieve employee ID
