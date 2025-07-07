@@ -4,36 +4,59 @@
  */
 package com.motorph.payrollprocessing.view.admin;
 
-/**
- *
- * @author Charm
- */
 import com.motorph.usermanagement.model.Admin;
 import com.motorph.usermanagement.model.Access;
-import com.motorph.payrollprocessing.model.PayPeriod;
-import com.motorph.payrollprocessing.service.PayrollService;
+import com.motorph.payrollprocessing.model.payroll.PayPeriod;
+import com.motorph.payrollprocessing.service.core.PayPeriodService;
+import com.motorph.payrollprocessing.service.core.ServiceFactory;
+import com.motorph.common.swing.TableConfigurator;
+import com.motorph.common.swing.validation.SelectionValidator;
+import com.motorph.common.util.DateUtil;
+import com.motorph.payrollprocessing.tablemodel.BiWeeklyPayrollTableModel;
+import com.motorph.payrollprocessing.viewmodel.model.BiWeeklyPayrollViewModel;
+import com.motorph.payrollprocessing.viewmodel.service.BiWeeklyPayrollViewService;
+import com.motorph.payrollprocessing.viewmodel.service.ViewModelServiceFactory;
+import com.motorph.reportmanagement.controller.PayrollBiWeeklySummaryController;
+import java.time.LocalDate;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 public class PayrollList extends javax.swing.JFrame {
     Admin admin;
-    PayrollService payrollService = new PayrollService();
+    BiWeeklyPayrollViewService service;  
+    
     
     public PayrollList() {
-        initComponents();        
-        jTablePayrollList.setModel(payrollService.getPayrollListTableModel());
-        jLabelPayrollCount.setText(String.valueOf(payrollService.getPayrollListTableModel().getRowCount()) + " Payroll");
+        initComponents();
+        initService();
+        loadTable();
     }
 
     public PayrollList(Admin admin) {
         initComponents();
+        initService();
+        loadTable();
         this.admin = admin;
-        admin.addLogoutListener(this);
-        
-        jTablePayrollList.setModel(payrollService.getPayrollListTableModel());
-        jLabelPayrollCount.setText(String.valueOf(payrollService.getPayrollListTableModel().getRowCount()) + " Payroll");
+        admin.addLogoutListener(this);    
     }
 
+    private void initService() {
+        try {
+            this.service = ViewModelServiceFactory.createBiWeeklyPayrollViewService();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Failed to load service: " + e.getMessage());
+        }
+    }
     
+    private void loadTable() {
+        List<BiWeeklyPayrollViewModel> biWeeklyPayrollList = this.service.getAllBiWeeklyPayroll();
+        BiWeeklyPayrollTableModel tableModel = new BiWeeklyPayrollTableModel(biWeeklyPayrollList);
+        
+        jTablePayrollList.setModel(tableModel);
+        TableConfigurator.configureBiWeeklyPayrollTable(jTablePayrollList);
+        
+        jLabelPayrollCount.setText(String.valueOf(tableModel.getRowCount()) + " Payroll");
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -61,6 +84,7 @@ public class PayrollList extends javax.swing.JFrame {
         jTablePayrollList = new javax.swing.JTable();
         jButtonRunPayroll = new javax.swing.JButton();
         jLabelPayrollCount = new javax.swing.JLabel();
+        jButtonDownloadReport = new javax.swing.JButton();
 
         jButton5.setBackground(new java.awt.Color(0, 102, 153));
         jButton5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -172,7 +196,7 @@ public class PayrollList extends javax.swing.JFrame {
                 .addComponent(jButton4Payroll)
                 .addGap(30, 30, 30)
                 .addComponent(jButton4Attendance)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 245, Short.MAX_VALUE)
                 .addComponent(jButton6LogOut)
                 .addContainerGap())
         );
@@ -212,8 +236,15 @@ public class PayrollList extends javax.swing.JFrame {
             }
         });
 
-        jLabelPayrollCount.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabelPayrollCount.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabelPayrollCount.setText("Payroll");
+
+        jButtonDownloadReport.setText("Download Report");
+        jButtonDownloadReport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDownloadReportActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -221,16 +252,20 @@ public class PayrollList extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 896, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
+                        .addGap(42, 42, 42)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabelPayrollCount)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabelPayrollCount)
+                                .addGap(0, 0, Short.MAX_VALUE))
                             .addComponent(jButtonRunPayroll))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addGap(599, 599, 599)
+                        .addComponent(jButtonDownloadReport))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 882, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -241,14 +276,16 @@ public class PayrollList extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGap(26, 26, 26)
                         .addComponent(jButtonRunPayroll)
                         .addGap(18, 18, 18)
-                        .addComponent(jLabelPayrollCount)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(41, 41, 41))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabelPayrollCount)
+                            .addComponent(jButtonDownloadReport))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
 
         pack();
@@ -271,20 +308,17 @@ public class PayrollList extends javax.swing.JFrame {
 
     private void jButtonRunPayrollActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRunPayrollActionPerformed
         // Ensure a record is selected before proceeding
-        if (!isSelectRecord()) {
-            return;
-        }
+        if (!SelectionValidator.isRowSelected(jTablePayrollList, "Please select 1 Payroll Record")) return;
         
         int rowIndex = jTablePayrollList.getSelectedRow(); // Get selected row index
         String fullText = (String) jTablePayrollList.getValueAt(rowIndex, 0);
-        String[] parts = fullText.split(":"); // Split at ":"
-        String payPeriodText = parts[1].trim(); // Extract dates part
-        String[] dates = payPeriodText.split(" "); // Split start and end dates
-
         
-        PayPeriod payrollPayPeriod = new PayPeriod(dates[0], dates[1]); 
+        LocalDate[] dates = DateUtil.parse_LABEL_BiWeekly_MMM_ddo_ddo_to_MM_dd_yyyy(fullText, 2024);
+        PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodServicewService();
         
-        Access.accessPayrollEmployeeSelection(this.admin, payrollPayPeriod);
+        PayPeriod selectedPayPeriod = payPeriodService.searchByDateRange(dates[0], dates[1]).get();
+        
+        Access.accessPayrollEmployeeSelection(this.admin, selectedPayPeriod);
         this.setVisible(false);
     }//GEN-LAST:event_jButtonRunPayrollActionPerformed
 
@@ -302,6 +336,24 @@ public class PayrollList extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton4PayrollActionPerformed
 
+    private void jButtonDownloadReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDownloadReportActionPerformed
+        
+        if (!SelectionValidator.isRowSelected(jTablePayrollList, "Please select 1 Payroll Record")) return;      
+        
+        int rowIndex = jTablePayrollList.getSelectedRow(); // Get selected row index
+        String fullText = (String) jTablePayrollList.getValueAt(rowIndex, 0);        
+        LocalDate[] dates = DateUtil.parse_LABEL_BiWeekly_MMM_ddo_ddo_to_MM_dd_yyyy(fullText, 2024);
+        
+        PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodServicewService();        
+        PayPeriod selectedPayPeriod = payPeriodService.searchByDateRange(dates[0], dates[1]).get();
+        
+        BiWeeklyPayrollViewModel selectedBiWeeklyPayroll = this.service.getBiWeeklyPayroll(selectedPayPeriod.getPayPeriodId()).get();
+        if (!SelectionValidator.isPayrollProcessed(selectedBiWeeklyPayroll, this)) return;
+        
+        PayrollBiWeeklySummaryController controller = new PayrollBiWeeklySummaryController();
+        controller.generatePayrollBiWeeklySummaryPDF(selectedPayPeriod.getPayPeriodId());
+    }//GEN-LAST:event_jButtonDownloadReportActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -314,9 +366,18 @@ public class PayrollList extends javax.swing.JFrame {
                 break;
             }
         }
-    } catch (Exception ex) {
+//    } catch (Exception ex) {
+//        java.util.logging.Logger.getLogger(PayrollList.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    } catch (ClassNotFoundException ex) {
+        java.util.logging.Logger.getLogger(PayrollList.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    } catch (InstantiationException ex) {
+        java.util.logging.Logger.getLogger(PayrollList.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    } catch (IllegalAccessException ex) {
+        java.util.logging.Logger.getLogger(PayrollList.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    } catch (javax.swing.UnsupportedLookAndFeelException ex) {
         java.util.logging.Logger.getLogger(PayrollList.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
     }
+    
 
     // Assuming you have a way to authenticate the user and create a valid User object
 //    User loggedInUser = new Admin("adminUsername", "adminPassword");  // Example: Creating an Admin object
@@ -340,6 +401,7 @@ public class PayrollList extends javax.swing.JFrame {
     private javax.swing.JButton jButton4Payroll;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6LogOut;
+    private javax.swing.JButton jButtonDownloadReport;
     private javax.swing.JButton jButtonRunPayroll;
     private javax.swing.JLabel jLabelPayrollCount;
     private javax.swing.JMenu jMenu1;
