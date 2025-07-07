@@ -4,6 +4,7 @@
  */
 package com.motorph.common.util;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -16,6 +17,10 @@ public class NumberFormatter {
     
     // Currency format for Philippine Peso (₱)
     private static final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("en", "PH")); 
+    static {
+        currencyFormat.setMinimumFractionDigits(2);
+        currencyFormat.setMaximumFractionDigits(2);
+    }
     
     // Decimal format for standard numbers (e.g., 12,345.68)
     private static final DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
@@ -33,6 +38,10 @@ public class NumberFormatter {
     public static String formatCurrency(double value) {
         return currencyFormat.format(value);
     }
+    
+    public static String formatCurrency(BigDecimal value) {
+        return currencyFormat.format(value);
+    }
 
     /**
      * Formats a numeric value to a string with comma separators and two decimal places.
@@ -42,6 +51,10 @@ public class NumberFormatter {
      * @return formatted string with two decimal places
      */
     public static String formatDecimal(double value) {
+        return decimalFormat.format(value);
+    }
+    
+    public static String formatDecimal(Object value) {
         return decimalFormat.format(value);
     }
 
