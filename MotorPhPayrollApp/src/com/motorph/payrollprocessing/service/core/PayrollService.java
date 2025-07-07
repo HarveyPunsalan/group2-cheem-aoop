@@ -2,10 +2,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.motorph.payrollprocessing.service;
+package com.motorph.payrollprocessing.service.core;
 
-import com.motorph.payrollprocessing.model.PayrollRecord;
-import com.motorph.payrollprocessing.model.PayPeriod;
+import com.motorph.payrollprocessing.service.calculator.SalaryCalculator;
+import com.motorph.payrollprocessing.service.calculator.AllowanceCalculator;
+import com.motorph.payrollprocessing.service.calculator.DeductionCalculator;
+import com.motorph.payrollprocessing.service.calculator.TaxCalculator;
+import com.motorph.payrollprocessing.service.processor.PayrollCalculator;
+import com.motorph.payrollprocessing.model.payroll.PayrollRecord;
+import com.motorph.payrollprocessing.model.payroll.PayPeriod;
 import com.motorph.employeemanagement.model.Employee;
 import com.motorph.employeemanagement.service.csvversion.EmployeeService;
 import com.motorph.attendancemanagement.service.AttendanceService;
@@ -32,7 +37,7 @@ public class PayrollService {
     private AttendanceService attendanceService;
 
     public PayrollService() {
-        this.payPeriodList = CsvFile.PAYPERIOD.readFile(PayPeriod::new);
+//        this.payPeriodList = CsvFile.PAYPERIOD.readFile(PayPeriod::new);
         this.employeeService = new EmployeeService();
         this.attendanceService = new AttendanceService(); 
     }    
