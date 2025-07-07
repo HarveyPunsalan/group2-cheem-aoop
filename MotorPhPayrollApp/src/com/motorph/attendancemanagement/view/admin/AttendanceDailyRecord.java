@@ -13,9 +13,11 @@ import com.motorph.attendancemanagement.model.DailyAttendance;
 import com.motorph.usermanagement.model.Admin;
 import com.motorph.usermanagement.model.User;
 import com.motorph.usermanagement.model.Access;
-import com.motorph.payrollprocessing.model.PayPeriod;
-import com.motorph.payrollprocessing.service.PayrollService;
+import com.motorph.payrollprocessing.model.payroll.PayPeriod;
+import com.motorph.payrollprocessing.service.core.PayrollService;
 import com.motorph.common.ui.renderer.PromptComboBoxRenderer;
+import com.motorph.payrollprocessing.service.core.PayPeriodService;
+import com.motorph.payrollprocessing.service.core.ServiceFactory;
 import java.util.List;
 
 /**
@@ -371,7 +373,9 @@ public class AttendanceDailyRecord extends javax.swing.JFrame {
         String startDate = dates[0];
         String endDate = dates[1];
         
-        PayPeriod selectedPayPeriod = new PayPeriod(startDate, endDate);
+        PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodServicewService();
+        
+        PayPeriod selectedPayPeriod = payPeriodService.searchByDateRange(dates[0], dates[1]).get();
         
         AttendanceService dtrManager = new AttendanceService();
         jTableDailyAttendanceList.setModel(dtrManager.getAttendanceTableModel(employeeID, selectedPayPeriod));
