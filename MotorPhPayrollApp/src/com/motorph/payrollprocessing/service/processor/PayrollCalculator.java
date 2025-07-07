@@ -2,10 +2,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.motorph.payrollprocessing.service;
+package com.motorph.payrollprocessing.service.processor;
 
-import com.motorph.payrollprocessing.model.PayrollRecord;
-import com.motorph.payrollprocessing.model.PayrollSummary;
+import com.motorph.payrollprocessing.model.payroll.PayrollRecord;
+import com.motorph.payrollprocessing.model.payroll.PayrollSummary;
+import com.motorph.payrollprocessing.service.calculator.AllowanceCalculator;
+import com.motorph.payrollprocessing.service.calculator.DeductionCalculator;
+import com.motorph.payrollprocessing.service.calculator.SalaryCalculator;
+import com.motorph.payrollprocessing.service.calculator.TaxCalculator;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -42,7 +46,7 @@ public class PayrollCalculator {
         BigDecimal netSalary = grossSalary.subtract(totalDeductions).setScale(2, RoundingMode.HALF_UP);
 
 
-        return new PayrollRecord(basicSalary, grossSalary, governmentContribution, withHoldingTax, totalDeductions, netSalary);
+        return new PayrollRecord();
     }
     
     /**
@@ -61,8 +65,8 @@ public class PayrollCalculator {
         for (PayrollRecord record : records) {
             totalBasicSalary = totalBasicSalary.add(record.getBasicSalary());
             totalGrossSalary = totalGrossSalary.add(record.getGrossSalary());
-            totalGovernmentContribution = totalGovernmentContribution.add(record.getGovernmentContribution());
-            totalWithholdingTax = totalWithholdingTax.add(record.getWithHoldingTax());
+//            totalGovernmentContribution = totalGovernmentContribution.add(record.getGovernmentContribution());
+//            totalWithholdingTax = totalWithholdingTax.add(record.getWithHoldingTax());
             totalDeductions = totalDeductions.add(record.getTotalDeduction());
             totalNetSalary = totalNetSalary.add(record.getNetSalary());
         }
