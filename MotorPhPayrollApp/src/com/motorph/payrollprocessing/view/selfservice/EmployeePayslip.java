@@ -6,62 +6,104 @@ package com.motorph.payrollprocessing.view.selfservice;
 
 import com.motorph.usermanagement.view.LoginPage;
 import com.motorph.employeemanagement.model.Employee;
-import com.motorph.employeemanagement.service.csvversion.EmployeeService;
-import com.motorph.payrollprocessing.service.PayrollService;
-import com.motorph.payrollprocessing.service.TaxCalculator;
-import com.motorph.payrollprocessing.service.AllowanceCalculator;
-import com.motorph.payrollprocessing.service.SalaryCalculator;
-import com.motorph.payrollprocessing.service.DeductionCalculator;
-import com.motorph.payrollprocessing.model.PayPeriod;
-import com.motorph.attendancemanagement.service.AttendanceService;
-import com.motorph.attendancemanagement.service.AttendanceCalculator;
+import com.motorph.payrollprocessing.service.calculator.TaxCalculator;
+import com.motorph.payrollprocessing.service.calculator.AllowanceCalculator;
+import com.motorph.payrollprocessing.service.calculator.SalaryCalculator;
+import com.motorph.payrollprocessing.service.calculator.DeductionCalculator;
+import com.motorph.payrollprocessing.model.payroll.PayPeriod;
+import com.motorph.common.swing.validation.SelectionValidator;
 import com.motorph.usermanagement.model.Admin;
 import com.motorph.usermanagement.model.NonAdmin;
 import com.motorph.usermanagement.model.User;
 import com.motorph.usermanagement.model.Access;
 import com.motorph.common.ui.renderer.PromptComboBoxRenderer;
+import com.motorph.common.util.DateUtil;
+import com.motorph.common.util.NumberFormatter;
+import com.motorph.database.connection.DatabaseService;
+import com.motorph.database.execution.SQLExecutor;
+import com.motorph.employeemanagement.service.EmployeeRetrievalService;
+import com.motorph.payrollprocessing.model.payroll.Payslip;
+import com.motorph.payrollprocessing.service.core.PayPeriodService;
+import com.motorph.payrollprocessing.service.core.PayslipService;
+import com.motorph.payrollprocessing.service.core.ServiceFactory;
+import com.motorph.payrollprocessing.viewmodel.service.EmployeeWorkedHoursSummaryService;
+import com.motorph.payrollprocessing.viewmodel.service.ViewModelServiceFactory;
+import com.motorph.reportmanagement.controller.PayslipController;
 import java.math.BigDecimal;
-import java.time.format.DateTimeFormatter;
+import javax.swing.JOptionPane;
 /**
  *
  * @author Charm
  */
 public class EmployeePayslip extends javax.swing.JFrame {
-    DateTimeFormatter formatterDate1  = DateTimeFormatter.ofPattern("MMMM dd");
-    DateTimeFormatter formatterDate2  = DateTimeFormatter.ofPattern("MMMM dd yyyy");
-    User user;
-    PayrollService payrollService = new PayrollService();
-    EmployeeService employeeService = new EmployeeService();
-    AttendanceService attendanceService = new AttendanceService();
+    private final EmployeeRetrievalService retrievalService;
+    private boolean initializing = true;
+    private User user;
+    private PayPeriodService payPeriodService;
+    
     
     /**
      * Creates new form AddNewRecord
      */
     public EmployeePayslip() {
         initComponents();
-        
-
+        this.retrievalService = new EmployeeRetrievalService(new SQLExecutor(DatabaseService.connectToMotorPH()));
     }
     
     public EmployeePayslip(User user) {
         initComponents();
+        initService();
+        initializing = true;
+        setupPayPeriodComboBox();
+        initializing = false;
+        
         this.user = user;
-        user.addLogoutListener(this);
-        
-        Employee employee = employeeService.getEmployeeInformation(this.user.getEmployeeId());
-        
         if (user instanceof NonAdmin){
                 jButton3AdminPortal.setVisible(false);
+        }        
+        
+        user.addLogoutListener(this);
+        
+        this.retrievalService = new EmployeeRetrievalService(new SQLExecutor(DatabaseService.connectToMotorPH()));
+        jLabelInputID5.setText(String.valueOf(String.valueOf(user.getEmployeeId()))); 
+        loadEmployeeDetails(user.getEmployeeId());
+    }
+
+    private void initService() {
+        try {
+            this.payPeriodService = ServiceFactory.createPayPeriodServicewService();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Failed to load service: " + e.getMessage());
         }
+    }
+    
+    private void loadEmployeeDetails(int employeeId) {
+        try {
+            Employee currentEmployee = retrievalService.getEmployeeById(employeeId);
+            if (currentEmployee == null) {
+                JOptionPane.showMessageDialog(this, 
+                    "Employee not found with ID: " + employeeId, 
+                    "Data Error", 
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
         
-        jLabelInputID5.setText(String.valueOf(user.getEmployeeID()));      
-        jLabelInputName5.setText(employee.getFirstName() + " " + employee.getLastName()); 
-        jLabelInputPayPeriod5.setText("");
-        
-        jComboBoxAttendancePeriod.setModel(payrollService.getComboBoxModel());
-        jComboBoxAttendancePeriod.setRenderer(new PromptComboBoxRenderer("Select Pay Period") );
-        jComboBoxAttendancePeriod.setSelectedIndex(-1);
-    }    
+                 
+            jLabelInputName5.setText(currentEmployee.getFirstName() + " " + currentEmployee.getLastName()); 
+            jLabelInputPayPeriod5.setText("");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, 
+                "Error loading employee details: " + e.getMessage(), 
+                "Database Error", 
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void setupPayPeriodComboBox() {
+        jComboBoxPayPeriod.setModel(payPeriodService.getPayPeriodComboBoxModel("MM-dd-yyyy"));
+        jComboBoxPayPeriod.setRenderer(new PromptComboBoxRenderer("Select Pay Period") );
+        jComboBoxPayPeriod.setSelectedIndex(-1);
+    }
     
 
     /**
@@ -119,8 +161,9 @@ public class EmployeePayslip extends javax.swing.JFrame {
         jTextFieldTotalDeductions = new javax.swing.JTextField();
         jTextFieldNetSalary = new javax.swing.JTextField();
         jLabelNetSalary = new javax.swing.JLabel();
-        jComboBoxAttendancePeriod = new javax.swing.JComboBox<>();
+        jComboBoxPayPeriod = new javax.swing.JComboBox<>();
         jLabelAttendancePeriod = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -434,7 +477,7 @@ public class EmployeePayslip extends javax.swing.JFrame {
 
         jPanelDeduction.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Deductions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
 
-        jLabelWitholdingTax.setText("Witholding Tax:");
+        jLabelWitholdingTax.setText("Withholding Tax:");
 
         jTextFieldWitholdingTax.setEditable(false);
         jTextFieldWitholdingTax.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
@@ -528,13 +571,20 @@ public class EmployeePayslip extends javax.swing.JFrame {
         jLabelNetSalary.setFont(new java.awt.Font("Segoe UI", 3, 18)); // NOI18N
         jLabelNetSalary.setText("Net Salary:");
 
-        jComboBoxAttendancePeriod.addActionListener(new java.awt.event.ActionListener() {
+        jComboBoxPayPeriod.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBoxAttendancePeriodActionPerformed(evt);
+                jComboBoxPayPeriodActionPerformed(evt);
             }
         });
 
         jLabelAttendancePeriod.setText("Pay Period");
+
+        jButton1.setText("Download Payslip");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -546,7 +596,10 @@ public class EmployeePayslip extends javax.swing.JFrame {
                 .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel5EnterDetails, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel5EnterDetails, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton1))
                         .addComponent(jPanelEarnings, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanelEmployeeInformation5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanelDeduction, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -557,7 +610,7 @@ public class EmployeePayslip extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(jLabelAttendancePeriod)
                         .addGap(18, 18, 18)
-                        .addComponent(jComboBoxAttendancePeriod, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jComboBoxPayPeriod, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(66, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -570,10 +623,12 @@ public class EmployeePayslip extends javax.swing.JFrame {
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(28, 28, 28)
-                        .addComponent(jLabel5EnterDetails)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5EnterDetails)
+                            .addComponent(jButton1))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jComboBoxAttendancePeriod, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jComboBoxPayPeriod, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabelAttendancePeriod))
                         .addGap(10, 10, 10)
                         .addComponent(jPanelEmployeeInformation5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -617,48 +672,59 @@ public class EmployeePayslip extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_jButtonRequestActionPerformed
 
-    private void jComboBoxAttendancePeriodActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxAttendancePeriodActionPerformed
-        if (jComboBoxAttendancePeriod.getSelectedIndex() < 0 || jComboBoxAttendancePeriod.getSelectedItem() == null) {
-            return;
-        }
+    private void jComboBoxPayPeriodActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxPayPeriodActionPerformed
+        if (initializing) return;
+        if (SelectionValidator.isItemSelected(jComboBoxPayPeriod, "Please select 1 Pay Period")) return;
 
-        String[] dates = jComboBoxAttendancePeriod.getSelectedItem().toString().split(" : ");
-        String startDate = dates[0];
-        String endDate = dates[1];
-
-        PayPeriod selectedPayPeriod = new PayPeriod(startDate, endDate);
-        jLabelInputPayPeriod5.setText(selectedPayPeriod.getStartDate().format(formatterDate1) + " - " + selectedPayPeriod.getEndDate().format(formatterDate2));
+        String[] dates = jComboBoxPayPeriod.getSelectedItem().toString().split(" : ");
         
-        Employee employee = employeeService.getEmployeeInformation(this.user.getEmployeeId());
-        BigDecimal payableHours = BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(attendanceService.getFilteredDailyAttendance(employee, selectedPayPeriod)));
-        BigDecimal hourlyRate = employee.getHourlyRate();
-        BigDecimal rice = employee.getRiceSubsidy();
-        BigDecimal phone = employee.getPhoneAllowance();
-        BigDecimal clothing = employee.getClothingAllowance();
-        BigDecimal basicSalary = SalaryCalculator.calculateBasicSalary(payableHours, employee.getHourlyRate());
-        BigDecimal totalAllowance = AllowanceCalculator.calculateTotalAllowance(employee.getRiceSubsidy(),
-                                                                            employee.getPhoneAllowance(), 
-                                                                            employee.getClothingAllowance());
-        BigDecimal grossSalary = SalaryCalculator.calculateGrossSalary(basicSalary, totalAllowance);
-        BigDecimal sss = DeductionCalculator.calculateSSS(grossSalary);
-        BigDecimal philhealth = DeductionCalculator.calculatePhilHealth(grossSalary);            
-        BigDecimal pagibig = DeductionCalculator.calculatePagIbig(grossSalary);
-        BigDecimal govermentContribution = DeductionCalculator.calculateGovernmentContribution(sss, philhealth, pagibig);
-        BigDecimal tax = TaxCalculator.calculateWithHoldingTax(grossSalary, govermentContribution);
-        BigDecimal totalDeduction = DeductionCalculator.calculateTotalDeductions(govermentContribution, tax);
-        BigDecimal netSalary = SalaryCalculator.calculateNetSalary(grossSalary, totalDeduction, tax);
+        PayPeriod selectedPayPeriod = payPeriodService.searchByDateRange(dates[0], dates[1]).get();
+        jLabelInputPayPeriod5.setText(DateUtil.format_ddo_MMM(selectedPayPeriod.getStartDate()) + " - " + DateUtil.format_ddo_MMM_yyyy(selectedPayPeriod.getEndDate()));
         
-        setEarningResults(new Object[] {payableHours, hourlyRate, basicSalary, rice, phone, clothing, grossSalary});
-        setDeductionResults(new Object[] {tax, sss, philhealth, pagibig, totalDeduction});
-        setNetSalaryResult(netSalary);
+        EmployeeWorkedHoursSummaryService attendanceService = ViewModelServiceFactory.createEmployeeWorkedHoursSummaryServiceService();
+        Employee employee = retrievalService.getEmployeeById(user.getEmployeeId());
         
+        PayslipService payslipService = ServiceFactory.createPayslipServicewService();
+        Payslip viewPayslip = payslipService.getPayslipByPayPeriodAndEmployee(selectedPayPeriod.getPayPeriodId(), employee.getEmployeeId()).get();
         
-    }//GEN-LAST:event_jComboBoxAttendancePeriodActionPerformed
+        jTextFieldHoursWorked.setText(NumberFormatter.formatDecimal(viewPayslip.getPayableHours()));
+        jTextFieldHourlyRate.setText(NumberFormatter.formatDecimal(viewPayslip.getHourlyRate()));
+        jTextFieldBasicSalary1.setText(NumberFormatter.formatDecimal(viewPayslip.getHourlyRate().multiply(viewPayslip.getPayableHours())));
+        jTextFieldBasicSalary2.setText(NumberFormatter.formatDecimal(viewPayslip.getHourlyRate().multiply(viewPayslip.getPayableHours())));
+        jTextFieldRiceSubsidy.setText(NumberFormatter.formatDecimal(viewPayslip.getRiceSubsidy()));
+        jTextFieldPhoneAllowance.setText(NumberFormatter.formatDecimal(viewPayslip.getPhoneAllowance()));
+        jTextFieldClothingAllowance.setText(NumberFormatter.formatDecimal(viewPayslip.getClothingAllowance()));
+        jTextFieldGrossSalary.setText(NumberFormatter.formatDecimal(viewPayslip.getGrossSalary()));
+        
+        jTextFieldWitholdingTax.setText(NumberFormatter.formatDecimal(viewPayslip.getWithholdingTax()));
+        jTextFieldSSS.setText(NumberFormatter.formatDecimal(viewPayslip.getSss()));
+        jTextFieldPhilHealth.setText(NumberFormatter.formatDecimal(viewPayslip.getPhilhealth()));
+        jTextFieldPagIBIG.setText(NumberFormatter.formatDecimal(viewPayslip.getPagIbig()));
+        jTextFieldTotalDeductions.setText(NumberFormatter.formatDecimal(viewPayslip.getTotalDeductions()));
+        
+        jTextFieldNetSalary.setText(NumberFormatter.formatCurrency(viewPayslip.getNetSalary()));
+    }//GEN-LAST:event_jComboBoxPayPeriodActionPerformed
 
     private void jButton3AdminPortalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3AdminPortalActionPerformed
         Access.accessCompanyHomePage((Admin) user); 
         this.setVisible(false);
     }//GEN-LAST:event_jButton3AdminPortalActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if (initializing) return;
+        if (SelectionValidator.isItemSelected(jComboBoxPayPeriod, "Please select 1 Pay Period")) return;
+
+        String[] dates = jComboBoxPayPeriod.getSelectedItem().toString().split(" : ");
+        
+        PayPeriod selectedPayPeriod = payPeriodService.searchByDateRange(dates[0], dates[1]).get();
+        jLabelInputPayPeriod5.setText(DateUtil.format_ddo_MMM(selectedPayPeriod.getStartDate()) + " - " + DateUtil.format_ddo_MMM_yyyy(selectedPayPeriod.getEndDate()));
+        
+        EmployeeWorkedHoursSummaryService attendanceService = ViewModelServiceFactory.createEmployeeWorkedHoursSummaryServiceService();
+        Employee employee = retrievalService.getEmployeeById(user.getEmployeeId());
+        
+        PayslipController controller = new PayslipController();
+        controller.generatePayslip(employee.getEmployeeId(), selectedPayPeriod.getPayPeriodId());
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -696,13 +762,14 @@ public class EmployeePayslip extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3AdminPortal;
     private javax.swing.JButton jButton4Payroll2;
     private javax.swing.JButton jButton4Payroll3;
     private javax.swing.JButton jButton6LogOut;
     private javax.swing.JButton jButtonInformation;
     private javax.swing.JButton jButtonRequest;
-    private javax.swing.JComboBox<String> jComboBoxAttendancePeriod;
+    private javax.swing.JComboBox<String> jComboBoxPayPeriod;
     private javax.swing.JLabel jLabel5EnterDetails;
     private javax.swing.JLabel jLabelAttendancePeriod;
     private javax.swing.JLabel jLabelBasicSalary1;
@@ -747,25 +814,25 @@ public class EmployeePayslip extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
     
     public void setEarningResults(Object[] payrollData){
-        jTextFieldHoursWorked.setText(payrollData[0].toString());
-        jTextFieldHourlyRate.setText(payrollData[1].toString());
-        jTextFieldBasicSalary1.setText(payrollData[2].toString());
-        jTextFieldBasicSalary2.setText(payrollData[2].toString());
-        jTextFieldRiceSubsidy.setText(payrollData[3].toString());
-        jTextFieldPhoneAllowance.setText(payrollData[4].toString());
-        jTextFieldClothingAllowance.setText(payrollData[5].toString());
-        jTextFieldGrossSalary.setText(payrollData[6].toString());
+        jTextFieldHoursWorked.setText(NumberFormatter.formatDecimal(payrollData[0]));
+        jTextFieldHourlyRate.setText(NumberFormatter.formatDecimal(payrollData[1]));
+        jTextFieldBasicSalary1.setText(NumberFormatter.formatDecimal(payrollData[2]));
+        jTextFieldBasicSalary2.setText(NumberFormatter.formatDecimal(payrollData[2]));
+        jTextFieldRiceSubsidy.setText(NumberFormatter.formatDecimal(payrollData[3]));
+        jTextFieldPhoneAllowance.setText(NumberFormatter.formatDecimal(payrollData[4]));
+        jTextFieldClothingAllowance.setText(NumberFormatter.formatDecimal(payrollData[5]));
+        jTextFieldGrossSalary.setText(NumberFormatter.formatDecimal(payrollData[6]));
     }
     
     public void setDeductionResults(Object[] payrollData){
-        jTextFieldWitholdingTax.setText(payrollData[0].toString());
-        jTextFieldSSS.setText(payrollData[1].toString());
-        jTextFieldPhilHealth.setText(payrollData[2].toString());
-        jTextFieldPagIBIG.setText(payrollData[3].toString());
-        jTextFieldTotalDeductions.setText(payrollData[4].toString());
+        jTextFieldWitholdingTax.setText(NumberFormatter.formatDecimal(payrollData[0]));
+        jTextFieldSSS.setText(NumberFormatter.formatDecimal(payrollData[1]));
+        jTextFieldPhilHealth.setText(NumberFormatter.formatDecimal(payrollData[2]));
+        jTextFieldPagIBIG.setText(NumberFormatter.formatDecimal(payrollData[3]));
+        jTextFieldTotalDeductions.setText(NumberFormatter.formatDecimal(payrollData[4]));
     }
     
     public void setNetSalaryResult(BigDecimal payrollData){
-        jTextFieldNetSalary.setText(String.valueOf(payrollData));
+        jTextFieldNetSalary.setText(NumberFormatter.formatCurrency(payrollData));
     }
 }
