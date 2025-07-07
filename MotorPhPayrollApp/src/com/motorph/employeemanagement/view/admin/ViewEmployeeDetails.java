@@ -66,8 +66,7 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
         this.creationService = new EmployeeCreationService(connection);
         this.updateService = new EmployeeUpdateService(connection);
 
-        this.currentEmployee = null; // Indicates adding new record mode
-        jButton2SaveChanges.setText("Add Employee");
+        this.currentEmployee = retrievalService.getEmployeeById(employeeID);
         
         // Retrieve employee details from DB and populate fields
         this.currentEmployee = retrievalService.getEmployeeById(employeeID);

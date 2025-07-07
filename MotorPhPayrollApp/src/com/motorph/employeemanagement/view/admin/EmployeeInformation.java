@@ -393,8 +393,8 @@ public class EmployeeInformation extends javax.swing.JFrame {
 //        ViewEmployeeDetails detailsPage = new ViewEmployeeDetails((Admin) admin, Integer.parseInt(employeeID));
 //        ViewEmployeeDetails detailsPage = new ViewEmployeeDetails(Integer.parseInt(employeeID));
 //        detailsPage.setVisible(true);
-        Access.accessViewEmployeeDetails(admin, Integer.parseInt(employeeID));
-
+//        Access.accessViewEmployeeDetails(admin, Integer.parseInt(employeeID));
+        Access.accessViewEmployeeDetails(Integer.parseInt(employeeID));
         // Close the current frame
         this.dispose();
 

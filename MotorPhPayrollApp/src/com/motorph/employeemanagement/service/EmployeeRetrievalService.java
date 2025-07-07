@@ -5,7 +5,7 @@
 package com.motorph.employeemanagement.service;
 
 import com.motorph.database.execution.SQLExecutor;
-import com.motorph.database.execution.Script;
+import com.motorph.database.execution.EmployeeScript;
 import com.motorph.employeemanagement.model.Employee;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -43,8 +43,7 @@ public class EmployeeRetrievalService {
      * @throws SQLException if a database error occurs during retrieval
      */
     public List<Employee> getActiveEmployees() throws SQLException {
-        return executor.executeQuery(
-            Script.GET_ACTIVE_EMPLOYEES,
+        return executor.executeQuery(EmployeeScript.GET_ACTIVE_EMPLOYEES,
             this::mapBasicEmployee
         );
     }
@@ -59,8 +58,7 @@ public class EmployeeRetrievalService {
     public Employee getEmployeeById(int id) {
         List<Employee> employees = null;
         try {
-            employees = executor.executeQuery(
-                    Script.GET_EMPLOYEE_BY_ID,
+            employees = executor.executeQuery(EmployeeScript.GET_EMPLOYEE_BY_ID,
                     List.of(id),
                     this::mapFullEmployee
             );
@@ -154,8 +152,7 @@ public class EmployeeRetrievalService {
      * @throws SQLException if the allowance query fails
      */
     private void loadAllowances(Employee emp) throws SQLException {
-        List<AllowanceRecord> allowances = executor.executeQuery(
-            Script.GET_EMPLOYEE_ALLOWANCES,
+        List<AllowanceRecord> allowances = executor.executeQuery(EmployeeScript.GET_EMPLOYEE_ALLOWANCES,
             List.of(emp.getEmployeeId()),
             rs -> new AllowanceRecord(rs.getString("allowance_name"), rs.getBigDecimal("monthly_amount"))
         );

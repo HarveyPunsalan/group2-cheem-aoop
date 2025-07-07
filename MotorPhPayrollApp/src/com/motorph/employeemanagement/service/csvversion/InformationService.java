@@ -11,7 +11,7 @@ import CSVFileManager.CsvFile;
 import com.motorph.common.util.CollectionUtils;
 import com.motorph.database.connection.DatabaseService;
 import com.motorph.database.execution.SQLExecutor;
-import com.motorph.database.execution.Script;
+import com.motorph.database.execution.EmployeeScript;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -47,8 +47,7 @@ public class InformationService {
     public InformationService() {
         this.executor = new SQLExecutor(DatabaseService.connectToMotorPH());
         try {          
-            this.personalRecord = executor.executeQuery(
-                Script.SELECT_ALL_EMPLOYEES,
+            this.personalRecord = executor.executeQuery(EmployeeScript.SELECT_ALL_EMPLOYEES,
                 resultSet -> new PersonalInformation(
                     resultSet.getInt("employee_id"),                    
                     resultSet.getString("first_name"),
@@ -73,7 +72,7 @@ public class InformationService {
 
     public void addPersonalInformation(PersonalInformation newPersonalInformation){
         // ✅ Run the method
-        int rowsAffected = executor.executeUpdate(Script.ADD_PERSONAL_RECORD, newPersonalInformation.toInsertParams());
+        int rowsAffected = executor.executeUpdate(EmployeeScript.ADD_PERSONAL_RECORD, newPersonalInformation.toInsertParams());
 //        CsvFile.PERSONAL_RECORD.appendFile(newPersonalInformation.getInformation()); // Append the employee's information to the CSV file.
 
         // Update in-memory structures
