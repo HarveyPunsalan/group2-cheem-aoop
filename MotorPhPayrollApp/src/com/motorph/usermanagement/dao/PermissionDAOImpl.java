@@ -9,7 +9,6 @@ import com.motorph.usermanagement.exception.PermissionNotFoundException;
 import com.motorph.usermanagement.exception.DuplicatePermissionException;
 import com.motorph.usermanagement.exception.DataAccessException;
 import com.motorph.database.connection.DatabaseService;
-import com.motorph.database.execution.ResultSetMapper;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import com.motorph.database.execution.EntityMapper;
 
 /**
  * JDBC implementation of PermissionDAO interface.
@@ -92,7 +92,7 @@ public class PermissionDAOImpl implements PermissionDAO {
     /**
      * ResultSetMapper for converting database rows to Permission objects.
      */
-    private static final ResultSetMapper<Permission> PERMISSION_MAPPER = resultSet -> {
+    private static final EntityMapper<Permission> PERMISSION_MAPPER = resultSet -> {
         Permission permission = new Permission();
         permission.setAccessId(resultSet.getInt("access_id"));
         permission.setAccessName(resultSet.getString("access_name"));
