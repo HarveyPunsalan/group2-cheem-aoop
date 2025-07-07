@@ -6,8 +6,8 @@ package com.motorph.attendancemanagement.view.selfservice;
 
 import com.motorph.usermanagement.view.LoginPage;
 import com.motorph.employeemanagement.service.csvversion.EmployeeService;
-import com.motorph.payrollprocessing.service.PayrollService;
-import com.motorph.payrollprocessing.model.PayPeriod;
+import com.motorph.payrollprocessing.service.core.PayrollService;
+import com.motorph.payrollprocessing.model.payroll.PayPeriod;
 import com.motorph.attendancemanagement.service.AttendanceService;
 import com.motorph.attendancemanagement.service.AttendanceCalculator;
 import com.motorph.attendancemanagement.model.DailyAttendance;
@@ -16,6 +16,8 @@ import com.motorph.usermanagement.model.NonAdmin;
 import com.motorph.usermanagement.model.User;
 import com.motorph.usermanagement.model.Access;
 import com.motorph.common.ui.renderer.PromptComboBoxRenderer;
+import com.motorph.payrollprocessing.service.core.PayPeriodService;
+import com.motorph.payrollprocessing.service.core.ServiceFactory;
 import java.util.List;
 /**
  *
@@ -369,7 +371,9 @@ public class EmployeeAttendance extends javax.swing.JFrame {
         String startDate = dates[0];
         String endDate = dates[1];
 
-        PayPeriod selectedPayPeriod = new PayPeriod(startDate, endDate);
+        PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodServicewService();
+        
+        PayPeriod selectedPayPeriod = payPeriodService.searchByDateRange(dates[0], dates[1]).get();
 
         AttendanceService dtrManager = new AttendanceService();
         EmployeeService employeeService = new EmployeeService();
