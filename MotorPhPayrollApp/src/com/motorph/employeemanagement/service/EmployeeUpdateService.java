@@ -4,7 +4,7 @@
  */
 package com.motorph.employeemanagement.service;
 
-import com.motorph.database.execution.Script;
+import com.motorph.database.execution.EmployeeScript;
 import com.motorph.employeemanagement.model.Employee;
 import java.math.BigDecimal;
 import java.sql.*;
@@ -57,7 +57,7 @@ public class EmployeeUpdateService {
 
     // ========== Individual Table Update Methods ==========
     private void updatePersonalInformation(Employee employee) throws SQLException {
-        try (PreparedStatement stmt = connection.prepareStatement(Script.UPDATE_PERSONAL_INFORMATION.toString())) {
+        try (PreparedStatement stmt = connection.prepareStatement(EmployeeScript.UPDATE_PERSONAL_INFORMATION.toString())) {
             stmt.setString(1, employee.getFirstName());
             stmt.setString(2, employee.getLastName());
             stmt.setDate(3, new java.sql.Date(employee.getBirthday().getTime()));
@@ -70,7 +70,7 @@ public class EmployeeUpdateService {
     }
 
     private void updateAddress(Employee employee) throws SQLException {
-        try (PreparedStatement stmt = connection.prepareStatement(Script.UPDATE_ADDRESS.toString())) {
+        try (PreparedStatement stmt = connection.prepareStatement(EmployeeScript.UPDATE_ADDRESS.toString())) {
             stmt.setString(1, employee.getHouseNumber());
             stmt.setString(2, employee.getStreet());
             stmt.setString(3, employee.getBarangay());
@@ -86,7 +86,7 @@ public class EmployeeUpdateService {
     }
 
     private void updateGovernmentInformation(Employee employee) throws SQLException {
-        try (PreparedStatement stmt = connection.prepareStatement(Script.UPDATE_GOVERNMENT_INFORMATION.toString())) {
+        try (PreparedStatement stmt = connection.prepareStatement(EmployeeScript.UPDATE_GOVERNMENT_INFORMATION.toString())) {
             stmt.setString(1, employee.getSssNumber());
             stmt.setString(2, employee.getPhilhealthNumber());
             stmt.setString(3, employee.getPagibigNumber());
@@ -98,7 +98,7 @@ public class EmployeeUpdateService {
     }
 
     private void updateEmploymentInformation(Employee employee, int jobId) throws SQLException {
-        try (PreparedStatement stmt = connection.prepareStatement(Script.UPDATE_EMPLOYMENT_INFORMATION.toString())) {
+        try (PreparedStatement stmt = connection.prepareStatement(EmployeeScript.UPDATE_EMPLOYMENT_INFORMATION.toString())) {
             stmt.setInt(1, jobId);
             stmt.setString(2, employee.getEmploymentType());
             stmt.setString(3, employee.getEmploymentStatus());
@@ -117,7 +117,7 @@ public class EmployeeUpdateService {
             throw new SQLException("Salary record not found for employee ID " + employee.getEmployeeId());
         }
 
-        try (PreparedStatement stmt = connection.prepareStatement(Script.UPDATE_SALARY.toString())) {
+        try (PreparedStatement stmt = connection.prepareStatement(EmployeeScript.UPDATE_SALARY.toString())) {
             stmt.setInt(1, employee.getSalaryGrade());
             stmt.setBigDecimal(2, employee.getBasicSalary());
             stmt.setBigDecimal(3, employee.getGrossSemiMonthlyRate());
@@ -138,7 +138,7 @@ public class EmployeeUpdateService {
         int allowanceId = getAllowanceId(allowanceName);
 
         // Updates the amount for a specific allowance for the given employee.
-        try (PreparedStatement stmt = connection.prepareStatement(Script.UPDATE_ALLOWANCE.toString())) {
+        try (PreparedStatement stmt = connection.prepareStatement(EmployeeScript.UPDATE_ALLOWANCE.toString())) {
             stmt.setBigDecimal(1, amount != null ? amount : BigDecimal.ZERO);
             stmt.setInt(2, employeeId);
             stmt.setInt(3, allowanceId);
