@@ -9,12 +9,11 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for {@link DateUtils} class using JUnit 4.
+ * Unit tests for {@link DateUtil} class using JUnit 4.This class validates the following:
+ - Date formatting (default and custom patterns)
+ - Date parsing (default and custom patterns)
+ - Conversion between {@link LocalDate} and {@link java.sql.Date}
  * 
- * This class validates the following:
- * - Date formatting (default and custom patterns)
- * - Date parsing (default and custom patterns)
- * - Conversion between {@link LocalDate} and {@link java.sql.Date}
  */
 public class DateUtilsTest {
 
@@ -26,7 +25,7 @@ public class DateUtilsTest {
     @Test
     public void testFormatDate_defaultPattern() {
         LocalDate inputDate = LocalDate.of(2009, 9, 22);
-        String result = DateUtils.formatDate(inputDate);
+        String result = DateUtil.formatDate(inputDate);
         assertEquals("09-22-2009", result);
     }
 
@@ -35,7 +34,7 @@ public class DateUtilsTest {
      */    
     @Test
     public void testFormatDate_nullInput_returnsNull() {
-        assertNull(DateUtils.formatDate(null));
+        assertNull(DateUtil.formatDate(null));
     }
     
     /**
@@ -44,7 +43,7 @@ public class DateUtilsTest {
     @Test
     public void testFormatDate_customPattern() {
         LocalDate inputDate = LocalDate.of(2009, 9, 22);
-        String result = DateUtils.formatDate(inputDate, "yyyy/MM/dd");
+        String result = DateUtil.formatDate(inputDate, "yyyy/MM/dd");
         assertEquals("2009/09/22", result);
     }
 
@@ -53,7 +52,7 @@ public class DateUtilsTest {
      */    
     @Test
     public void testFormatDate_customPattern_nullLocalDate_returnsNull() {
-        assertNull(DateUtils.formatDate(null, "yyyy/MM/dd"));
+        assertNull(DateUtil.formatDate(null, "yyyy/MM/dd"));
     }
 
     /**
@@ -61,7 +60,7 @@ public class DateUtilsTest {
      */    
     @Test
     public void testFormatDate_customPattern_nullPattern_returnsNull() {
-        assertNull(DateUtils.formatDate(LocalDate.now(), null));
+        assertNull(DateUtil.formatDate(LocalDate.now(), null));
     }
 
     // ----------- Parse Date with Default Pattern -----------
@@ -72,7 +71,7 @@ public class DateUtilsTest {
     @Test
     public void testParseDate_defaultPattern() {
         String input = "06-15-2025";
-        LocalDate result = DateUtils.parseDate(input);
+        LocalDate result = DateUtil.parseDate(input);
         assertEquals(LocalDate.of(2025, 6, 15), result);
     }
 
@@ -82,7 +81,7 @@ public class DateUtilsTest {
     @Test(expected = IllegalArgumentException.class)
     public void testParseDate_wrongPattern_throwsParseException() {
         // Wrong pattern: uses slashes instead of dashes
-        DateUtils.parseDate("2025/06/15");
+        DateUtil.parseDate("2025/06/15");
     }
     
     /**
@@ -90,7 +89,7 @@ public class DateUtilsTest {
      */    
     @Test(expected = IllegalArgumentException.class)
     public void testParseDate_defaultPattern_nullInput_throwsException() {
-        DateUtils.parseDate(null);
+        DateUtil.parseDate(null);
     }
 
     /**
@@ -98,7 +97,7 @@ public class DateUtilsTest {
      */    
     @Test(expected = IllegalArgumentException.class)
     public void testParseDate_invalidLocalDateInput_throwsParseException() {
-        DateUtils.parseDate("not-a-date");
+        DateUtil.parseDate("not-a-date");
     }
 
     /**
@@ -106,7 +105,7 @@ public class DateUtilsTest {
      */   
     @Test(expected = IllegalArgumentException.class)
     public void testParseDate_invalidButFormattedCorrectly_throwsException() {
-        DateUtils.parseDate("13-45-2025"); // Matches pattern but invalid calendar values
+        DateUtil.parseDate("13-45-2025"); // Matches pattern but invalid calendar values
     }
 
     // ----------- Parse Date with Custom Pattern -----------
@@ -118,7 +117,7 @@ public class DateUtilsTest {
     public void testParseDate_customPattern() {
         String inputDate = "2025/06/15";
         String pattern = "yyyy/MM/dd";
-        LocalDate result = DateUtils.parseDate(inputDate, pattern);
+        LocalDate result = DateUtil.parseDate(inputDate, pattern);
         assertEquals(LocalDate.of(2025, 6, 15), result);
     }
 
@@ -127,7 +126,7 @@ public class DateUtilsTest {
      */    
     @Test(expected = IllegalArgumentException.class)
     public void testParseDate_customPattern_nullInput_throwsException() {
-        DateUtils.parseDate(null, "yyyy/MM/dd");
+        DateUtil.parseDate(null, "yyyy/MM/dd");
     }
 
     /**
@@ -135,7 +134,7 @@ public class DateUtilsTest {
      */    
     @Test(expected = IllegalArgumentException.class)
     public void testParseDate_customPattern_nullPattern_throwsException() {
-        DateUtils.parseDate("2025/01/01", null);
+        DateUtil.parseDate("2025/01/01", null);
     }
     
     /**
@@ -143,7 +142,7 @@ public class DateUtilsTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void testParseDate_customPattern_invalidLocalDateInput_throwsException() {
-        DateUtils.parseDate("not-a-date", "yyyy/MM/dd");
+        DateUtil.parseDate("not-a-date", "yyyy/MM/dd");
     }
 
     /**
@@ -151,7 +150,7 @@ public class DateUtilsTest {
      */       
     @Test(expected = IllegalArgumentException.class)
     public void testParseDate_customPattern_invalidButFormattedCorrectly_throwsException() {
-        DateUtils.parseDate("13-45-2025", "yyyy/MM/dd");
+        DateUtil.parseDate("13-45-2025", "yyyy/MM/dd");
     }
 
     // ----------- Conversion: LocalDate <-> java.sql.Date -----------
@@ -162,7 +161,7 @@ public class DateUtilsTest {
     @Test
     public void testToSqlDate_validLocalDate_returnsSqlDate() {
         LocalDate localDate = LocalDate.of(2024, 12, 31);
-        java.sql.Date sqlDate = DateUtils.toSqlDate(localDate);
+        java.sql.Date sqlDate = DateUtil.toSqlDate(localDate);
         assertNotNull(sqlDate);
         assertEquals("2024-12-31", sqlDate.toString());
     }
@@ -172,7 +171,7 @@ public class DateUtilsTest {
      */ 
     @Test
     public void testToSqlDate_nullInput_returnsNull() {
-        assertNull(DateUtils.toSqlDate(null));
+        assertNull(DateUtil.toSqlDate(null));
     }
 
     /**
@@ -181,7 +180,7 @@ public class DateUtilsTest {
     @Test
     public void testFromSqlDate_validSqlDate_returnsLocalDate() {
         java.sql.Date sqlDate = java.sql.Date.valueOf("2024-12-31");
-        LocalDate result = DateUtils.fromSqlDate(sqlDate);
+        LocalDate result = DateUtil.fromSqlDate(sqlDate);
         assertEquals(LocalDate.of(2024, 12, 31), result);
     }
 
@@ -190,7 +189,7 @@ public class DateUtilsTest {
      */    
     @Test
     public void testFromSqlDate_nullInput_returnsNull() {
-        assertNull(DateUtils.fromSqlDate(null));
+        assertNull(DateUtil.fromSqlDate(null));
     }
     
 }

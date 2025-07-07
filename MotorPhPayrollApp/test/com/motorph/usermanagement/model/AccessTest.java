@@ -4,6 +4,9 @@
  */
 package com.motorph.usermanagement.model;
 
+import com.motorph.employeemanagement.model.Employee;
+import com.motorph.payrollprocessing.model.payroll.PayPeriod;
+import javax.swing.JFrame;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

@@ -9,7 +9,6 @@ import com.motorph.usermanagement.exception.UserNotFoundException;
 import com.motorph.usermanagement.exception.DuplicateUserException;
 import com.motorph.usermanagement.exception.DataAccessException;
 import com.motorph.database.connection.DatabaseService;
-import com.motorph.database.execution.ResultSetMapper;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import com.motorph.database.execution.EntityMapper;
 
 /**
  * Handles all database operations related to user management
@@ -88,7 +88,7 @@ public class UserDAOImpl implements UserDAO {
      * ResultSetMapper for converting database rows to User objects.
      * Centralizes the mapping logic for consistency across all query methods.
      */
-    private static final ResultSetMapper<User> USER_MAPPER = resultSet -> {
+    private static final EntityMapper<User> USER_MAPPER = resultSet -> {
         User user = new User();
         user.setUserId(resultSet.getInt("user_id"));
         user.setUsername(resultSet.getString("username"));
