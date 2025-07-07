@@ -9,8 +9,8 @@ package com.motorph.payrollprocessing.view.admin;
  * @author Charm
  */
 import com.motorph.usermanagement.view.LoginPage;
-import com.motorph.payrollprocessing.service.PayrollService;
-import com.motorph.payrollprocessing.model.PayPeriod;
+import com.motorph.payrollprocessing.service.core.PayrollService;
+import com.motorph.payrollprocessing.model.payroll.PayPeriod;
 import com.motorph.usermanagement.model.Admin;
 import com.motorph.usermanagement.model.Access;
 import java.time.format.DateTimeFormatter;
