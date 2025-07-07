@@ -20,7 +20,7 @@ import java.sql.SQLException;
  * @param <T> the type of object to be mapped from the {@code ResultSet}
  */
 @FunctionalInterface
-public interface ResultSetMapper<T> {
+public interface EntityMapper<T> {
     
      /**
      * Maps the current row of the given {@code ResultSet} to an object of type {@code T}.

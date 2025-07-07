@@ -4,11 +4,13 @@
  */
 package com.motorph.database.execution;
 
+import com.motorph.database.execution.script.Script;
+
 /**
  * Enum representing predefined SQL scripts for the MotorPH Payroll System.
  * Each constant corresponds to a specific SQL statement for querying or updating database records.
  */
-public enum Script {
+public enum EmployeeScript implements Script {
     /** Retrieves all employee data from a consolidated view. */
     SELECT_ALL_EMPLOYEES("SELECT * FROM employee_details_view"),
     
@@ -123,7 +125,7 @@ public enum Script {
      *
      * @param sql the SQL statement to be assigned
      */
-    Script(String sql) {
+    EmployeeScript(String sql) {
         this.sql = sql;
     }
 
@@ -133,7 +135,7 @@ public enum Script {
      * @return SQL string
      */
     @Override
-    public String toString() {
+    public String getQuery() {
         return sql;
     }
 }
