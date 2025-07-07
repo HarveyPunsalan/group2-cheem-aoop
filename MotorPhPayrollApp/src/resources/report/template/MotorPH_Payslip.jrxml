@@ -15,9 +15,10 @@
 	<field name="position" class="java.lang.String"/>
 	<field name="department" class="java.lang.String"/>
 	<field name="monthly_rate" class="java.math.BigDecimal"/>
-	<field name="daily_rate" class="java.math.BigDecimal"/>
-	<field name="days_worked" class="java.lang.Integer"/>
+        <field name="hourly_rate" class="java.math.BigDecimal"/>
+	<field name="payable_hours" class="java.math.BigDecimal"/>
 	<field name="overtime" class="java.math.BigDecimal"/>
+        <field name="total" class="java.math.BigDecimal"/>
 	<field name="gross_salary" class="java.math.BigDecimal"/>
 	<field name="rice_subsidy" class="java.math.BigDecimal"/>
 	<field name="phone_allowance" class="java.math.BigDecimal"/>
@@ -143,12 +144,12 @@
 			<staticText>
 				<reportElement mode="Opaque" x="1" y="40" width="100" height="20" uuid="aa89738f-cd0c-46d9-ae6f-e55f322bcb7c"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Daily Rate]]></text>
+				<text><![CDATA[Hourly Rate]]></text>
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="1" y="60" width="100" height="20" uuid="6e47cf03-3512-4386-a72b-88e2695010ca"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Days Worked]]></text>
+				<text><![CDATA[Payable Hours]]></text>
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="1" y="80" width="100" height="20" uuid="8c6599f7-e791-46ef-b441-6f2beea2f35f"/>
@@ -161,24 +162,29 @@
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="100" y="20" width="100" height="20" uuid="e4baac93-52af-4e2c-819a-32d8c0a68820"/>
-				<textFieldExpression><![CDATA[$F{monthly_rate}]]></textFieldExpression>
+				<reportElement x="450" y="20" width="100" height="20" uuid="e4baac93-52af-4e2c-819a-32d8c0a68820"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+                                <textFieldExpression><![CDATA[$F{monthly_rate}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="100" y="41" width="100" height="18" uuid="d93bd598-a0b7-4a1d-921f-bc798e987395"/>
-				<textFieldExpression><![CDATA[$F{daily_rate}]]></textFieldExpression>
+				<reportElement x="450" y="41" width="100" height="18" uuid="d93bd598-a0b7-4a1d-921f-bc798e987395"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+                                <textFieldExpression><![CDATA[$F{hourly_rate}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="100" y="60" width="100" height="20" uuid="1ac27459-16d7-490d-b870-717712554152"/>
-				<textFieldExpression><![CDATA[$F{days_worked}]]></textFieldExpression>
+				<reportElement x="450" y="60" width="100" height="20" uuid="1ac27459-16d7-490d-b870-717712554152"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+                                <textFieldExpression><![CDATA[$F{payable_hours}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="100" y="79" width="100" height="22" uuid="3475c80f-3eca-48ec-8317-5b748d38cc18"/>
-				<textFieldExpression><![CDATA[$F{overtime}]]></textFieldExpression>
+				<reportElement x="450" y="79" width="100" height="22" uuid="3475c80f-3eca-48ec-8317-5b748d38cc18"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+                                <textFieldExpression><![CDATA[$F{overtime}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="100" y="100" width="100" height="22" uuid="41424141-9a4e-499b-8ab1-aea1383a4138"/>
-				<textFieldExpression><![CDATA[$F{gross_salary}]]></textFieldExpression>
+				<reportElement x="450" y="100" width="100" height="22" uuid="41424141-9a4e-499b-8ab1-aea1383a4138"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+                                <textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -223,20 +229,24 @@
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="102" y="40" width="100" height="19" uuid="3d7db20c-02b5-48be-b821-8e9aee412a5e"/>
-				<textFieldExpression><![CDATA[$F{phone_allowance}]]></textFieldExpression>
+				<reportElement x="450" y="40" width="100" height="19" uuid="3d7db20c-02b5-48be-b821-8e9aee412a5e"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+                                <textFieldExpression><![CDATA[$F{phone_allowance}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="102" y="20" width="100" height="19" uuid="5a2236a7-e27a-4c1e-94f2-6a87aaecda52"/>
-				<textFieldExpression><![CDATA[$F{rice_subsidy}]]></textFieldExpression>
+				<reportElement x="450" y="20" width="100" height="19" uuid="5a2236a7-e27a-4c1e-94f2-6a87aaecda52"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+                                <textFieldExpression><![CDATA[$F{rice_subsidy}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="102" y="60" width="148" height="19" uuid="b65f76b2-ec24-46d9-aacb-48b1fe934f6d"/>
-				<textFieldExpression><![CDATA[$F{clothing_allowance}]]></textFieldExpression>
+				<reportElement x="450" y="60" width="100" height="19" uuid="b65f76b2-ec24-46d9-aacb-48b1fe934f6d"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+                                <textFieldExpression><![CDATA[$F{clothing_allowance}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="100" y="79" width="100" height="19" uuid="7357fa32-47d2-41a7-b0d5-930901c7b16c"/>
-				<textFieldExpression><![CDATA[$F{total_allowance}]]></textFieldExpression>
+				<reportElement x="450" y="79" width="100" height="19" uuid="7357fa32-47d2-41a7-b0d5-930901c7b16c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+                                <textFieldExpression><![CDATA[$F{total_allowance}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement mode="Opaque" x="2" y="129" width="100" height="20" uuid="0f48bffd-8bc3-4f53-9740-9b2ec936495d"/>
@@ -264,24 +274,29 @@
 				<text><![CDATA[Total Deductions]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="102" y="129" width="100" height="19" uuid="6a52f8a8-1e00-434b-80c0-476555945bcb"/>
-				<textFieldExpression><![CDATA[$F{sss}]]></textFieldExpression>
+				<reportElement x="450" y="129" width="100" height="19" uuid="6a52f8a8-1e00-434b-80c0-476555945bcb"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+                                <textFieldExpression><![CDATA[$F{sss}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="102" y="148" width="100" height="19" uuid="c328ccba-fd88-44d5-8db4-612052214e78"/>
-				<textFieldExpression><![CDATA[$F{pag_ibig}]]></textFieldExpression>
+				<reportElement x="450" y="148" width="100" height="19" uuid="c328ccba-fd88-44d5-8db4-612052214e78"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+                                <textFieldExpression><![CDATA[$F{pag_ibig}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="102" y="169" width="100" height="18" uuid="1c08c70b-0071-42a4-9509-3209e6ca1fb2"/>
-				<textFieldExpression><![CDATA[$F{philhealth}]]></textFieldExpression>
+				<reportElement x="450" y="169" width="100" height="18" uuid="1c08c70b-0071-42a4-9509-3209e6ca1fb2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+                                <textFieldExpression><![CDATA[$F{philhealth}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="102" y="189" width="100" height="19" uuid="9545b3c0-bf97-4202-8e31-2e8066371b43"/>
-				<textFieldExpression><![CDATA[$F{withholding_tax}]]></textFieldExpression>
+				<reportElement x="450" y="189" width="100" height="19" uuid="9545b3c0-bf97-4202-8e31-2e8066371b43"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+                                <textFieldExpression><![CDATA[$F{withholding_tax}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="102" y="208" width="100" height="18" uuid="a0b8edca-d001-47d9-baa7-21dcaf145726"/>
-				<textFieldExpression><![CDATA[$F{total_deductions}]]></textFieldExpression>
+				<reportElement x="450" y="208" width="100" height="18" uuid="a0b8edca-d001-47d9-baa7-21dcaf145726"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+                                <textFieldExpression><![CDATA[$F{total_deductions}]]></textFieldExpression>
 			</textField>
 			<rectangle>
 				<reportElement x="0" y="109" width="553" height="20" backcolor="#1D344C" uuid="2cb0db05-4b59-4b21-8caf-9c996ebdf0ce"/>
@@ -324,20 +339,24 @@
 				<text><![CDATA[Total Net Pay]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="100" y="248" width="100" height="19" uuid="8005805f-e9d1-4636-9261-60acfbd5f14b"/>
-				<textFieldExpression><![CDATA[$F{gross_salary}]]></textFieldExpression>
+				<reportElement x="450" y="248" width="100" height="19" uuid="8005805f-e9d1-4636-9261-60acfbd5f14b"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+                                <textFieldExpression><![CDATA[$F{gross_salary}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="100" y="267" width="100" height="20" uuid="6cd07806-4a27-4727-aa2b-fd3dd1b0ffed"/>
-				<textFieldExpression><![CDATA[$F{total_allowance}]]></textFieldExpression>
+				<reportElement x="450" y="267" width="100" height="20" uuid="6cd07806-4a27-4727-aa2b-fd3dd1b0ffed"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+                                <textFieldExpression><![CDATA[$F{total_allowance}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="98" y="288" width="100" height="19" uuid="e95ed3a7-8add-4735-b9cf-59ab089aff36"/>
-				<textFieldExpression><![CDATA[$F{total_deductions}]]></textFieldExpression>
+				<reportElement x="450" y="288" width="100" height="19" uuid="e95ed3a7-8add-4735-b9cf-59ab089aff36"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+                                <textFieldExpression><![CDATA[$F{total_deductions}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="100" y="307" width="100" height="20" uuid="83aa72b4-a4cf-4a44-b6d1-7776a99bff5a"/>
-				<textFieldExpression><![CDATA[$F{net_salary}]]></textFieldExpression>
+				<reportElement x="450" y="307" width="100" height="20" uuid="83aa72b4-a4cf-4a44-b6d1-7776a99bff5a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+                                <textFieldExpression><![CDATA[$F{net_salary}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
