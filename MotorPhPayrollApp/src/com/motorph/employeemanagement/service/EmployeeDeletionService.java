@@ -50,7 +50,7 @@ public class EmployeeDeletionService {
     }
 
     private void deleteAllowances(int employeeId) throws SQLException {
-        String sql = "DELETE FROM employee_allowance WHERE employee_id = ?";
+        String sql = "DELETE FROM employee_default_allowance WHERE employee_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, employeeId);
             stmt.executeUpdate();
