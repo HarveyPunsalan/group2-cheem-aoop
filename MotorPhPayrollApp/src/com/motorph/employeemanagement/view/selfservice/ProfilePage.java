@@ -333,6 +333,11 @@ public class ProfilePage extends javax.swing.JFrame {
         jButtonInformation.setForeground(new java.awt.Color(255, 255, 255));
         jButtonInformation.setText("Informations");
         jButtonInformation.setBorder(null);
+        jButtonInformation.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonInformationActionPerformed(evt);
+            }
+        });
 
         jButton4Attendance.setBackground(new java.awt.Color(0, 102, 153));
         jButton4Attendance.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -1015,6 +1020,14 @@ public class ProfilePage extends javax.swing.JFrame {
     private void jTextField5PhoneNumberMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField5PhoneNumberMouseClicked
         jTextField5PhoneNumber.setEnabled(true);
     }//GEN-LAST:event_jTextField5PhoneNumberMouseClicked
+
+    private void jButtonInformationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInformationActionPerformed
+        // TODO add your handling code here:
+        // Open the Employee Information page (ProfilePage)
+        ProfilePage profilePage = new ProfilePage(user); 
+        profilePage.setVisible(true);
+        this.dispose(); // Close current window
+    }//GEN-LAST:event_jButtonInformationActionPerformed
 //
 //    /**
 //     * @param args the command line arguments
