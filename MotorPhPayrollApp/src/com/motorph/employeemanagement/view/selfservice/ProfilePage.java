@@ -1174,4 +1174,4 @@ public class ProfilePage extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldSupervisorId;
     // End of variables declaration//GEN-END:variables
 }
-
+// 1176
