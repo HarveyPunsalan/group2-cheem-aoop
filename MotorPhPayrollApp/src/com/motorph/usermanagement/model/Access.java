@@ -22,6 +22,8 @@ import com.motorph.attendancemanagement.view.admin.AttendanceBiweekly;
 import com.motorph.attendancemanagement.view.admin.AttendanceDailyRecord;
 import com.motorph.payrollprocessing.model.payroll.PayPeriod;
 import com.motorph.employeemanagement.model.Employee;
+import com.motorph.payrollprocessing.viewmodel.model.EmployeeWorkedHoursSummaryViewModel;
+import java.util.List;
 import javax.swing.JFrame;
 import java.util.logging.Logger;
 
@@ -358,6 +360,22 @@ public class Access {
         PayrollNetPay payrollEmployeeNetPay = new PayrollNetPay(payPeriod);
         payrollEmployeeNetPay.setVisible(true);
         return payrollEmployeeNetPay;
+    }
+
+    // Show summary page (admin)
+    public static JFrame accessPayrollSummaryPage(Admin admin, PayPeriod payPeriod, List<EmployeeWorkedHoursSummaryViewModel> viewModel) {
+        if (admin == null) {
+            logger.warning("Attempted to access Payroll Summary with null admin reference.");
+            return null;
+        }
+        if (admin.isAdmin()) {
+            logger.info(() -> "Opening Payroll Summary for admin: " + admin.getUsername());
+            PayrollSummaryPage payrollSummaryPage = new PayrollSummaryPage(admin, payPeriod, viewModel);
+            payrollSummaryPage.setVisible(true);
+            return payrollSummaryPage;
+        } else {
+            throw new SecurityException("Access denied: Admin privileges required");
+        }
     }
     
     // Show summary page (admin)

@@ -54,7 +54,7 @@ public class SQLExecutor {
         logQuery(script, params);
         
         List<T> results = new ArrayList<>();
-
+        
         try (PreparedStatement preparedStatement = connection.prepareStatement(script.getQuery())) {
             // ✅ Only set parameters if there are any
             if (!params.isEmpty()) {
