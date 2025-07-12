@@ -4,104 +4,70 @@
  */
 package com.motorph.attendancemanagement.model;
 
-/**
- *
- * @author 63909
- */
 import Class.EntityManagement.EntityManager;
 import Class.EntityManagement.EntityType;
 import Class.IDManagement.IDManager;
 import Class.IDManagement.Identifiable;
 import com.motorph.common.util.Parser;
-import java.time.LocalDate;
 
-/**
- * Represents a generic request in the system.
- *
- * <p>This class serves as a base for various types of requests, such as leave requests, data requests, or other
- * system interactions. Extend this class with additional fields and methods as needed to capture the specifics
- * of each request type.</p>
- */
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 public class Request implements Identifiable {
     private String requestID;
     private String requestTypeID;
-    private String employeeID;
+    private int employeeID;
     private LocalDate requestDate;
     private String reason;
     private String status;
     private int processedBy;
     private LocalDate processedDate;
     private String remarks;
-    
-    /**
-     * Default constructor for Request.
-     *
-     * <p>Initializes a new instance of the Request class with default values.
-     * Additional initialization logic can be added here if needed.</p>
-     */
+    private LocalDateTime createdAt; // ✅ SQL-aligned
+
     public Request() {
     }
-    
-    /**
-     * Constructs a Request from the provided request data.
-     *
-     * <p>The requestData array should contain at least 8 elements representing:
-     * <ul>
-     *   <li>Index 0: Request ID</li>
-     *   <li>Index 1: Request Type ID</li>
-     *   <li>Index 2: Employee ID (for the requesting employee, which will be converted to an Employee object)</li>
-     *   <li>Index 3: Request date (to be formatted using Formatter.formatDate)</li>
-     *   <li>Index 4: Reason for the request</li>
-     *   <li>Index 5: Request status</li>
-     *   <li>Index 6: Approved By (Employee ID; if empty, set to null)</li>
-     *   <li>Index 7: Processed date (to be formatted; if empty, set to null)</li>
-     * </ul>
-     * </p>
-     *
-     * @param requestData an array of strings containing the request details.
-     * @throws IllegalArgumentException if requestData is null or contains fewer than 8 elements.
-     */
+
     public Request(String[] requestData) {
         if (requestData == null) {
             throw new IllegalArgumentException("Request data cannot be null.");
         }
-        
+
         switch (requestData.length) {
             case 4 -> {
-                // New request (ID is generated)
+                // New request (without requestID, processed fields)
                 EntityManager request = new EntityManager(EntityType.REQUEST);
                 this.requestID = IDManager.generateID(request.getEntityType().getIdPrefix());
                 IDManager.saveIDCounters();
-                
+
                 this.requestTypeID = requestData[0];
-                this.employeeID = requestData[1];
+                this.employeeID = Parser.parseInteger(requestData[1], 0);
                 this.requestDate = Parser.parseLocalDate(requestData[2], null);
-                
                 this.reason = requestData[3].isEmpty() ? null : requestData[3];
-                
-                this.status = RequestStatus.PENDING.toString(); 
-                this.processedBy = 0; // Default to null since it's not provided in this case
-                this.processedDate = null; // Default to null since it's not provided in this case
+
+                this.status = RequestStatus.PENDING.toString();
+                this.processedBy = 0;
+                this.processedDate = null;
                 this.remarks = null;
+                this.createdAt = LocalDateTime.now(); // ✅ auto timestamp
             }
-            case 9 -> {
-                // Existing request (ID is provided)
+            case 10 -> {
+                // Fully loaded from SQL
                 this.requestID = requestData[0];
                 this.requestTypeID = requestData[1];
-                this.employeeID = requestData[2];
+                this.employeeID = Parser.parseInteger(requestData[2], 0);
                 this.requestDate = Parser.parseLocalDate(requestData[3], null);
                 this.reason = requestData[4].isEmpty() ? null : requestData[4];
-                
                 this.status = RequestStatus.valueOf(requestData[5]).toString();
-                this.processedBy = requestData[6].isEmpty() ? -1 : Integer.parseInt(requestData[6]);
-                this.processedDate = requestData[7].isEmpty() ? null : Parser.parseLocalDate(requestData[7], null);
+                this.processedBy = Parser.parseInteger(requestData[6], -1);
+                this.processedDate = Parser.parseLocalDate(requestData[7], null);
                 this.remarks = requestData[8].isEmpty() ? null : requestData[8];
+                this.createdAt = requestData[9].isEmpty() ? null : LocalDateTime.parse(requestData[9]);
             }
-            default -> throw new IllegalArgumentException("Invalid input data format. Expected 4 (new) or 9 (existing) parameters.");
+            default -> throw new IllegalArgumentException("Invalid input data format. Expected 4 or 10 parameters.");
         }
     }
 
-    // Getters and Setters
     @Override
     public String getID() {
         return requestID;
@@ -110,8 +76,8 @@ public class Request implements Identifiable {
     public String getRequestTypeID() {
         return requestTypeID;
     }
-    
-    public String getEmployeeID() {
+
+    public int getEmployeeID() {
         return employeeID;
     }
 
@@ -126,6 +92,7 @@ public class Request implements Identifiable {
     public String getStatus() {
         return status;
     }
+
     public void setStatus(String status) {
         this.status = status;
     }
@@ -140,11 +107,15 @@ public class Request implements Identifiable {
 
     public String getRemarks() {
         return remarks;
-    }   
-    
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
     public void approve(int processedBy) {
-        if (processedBy == -1) {
-            throw new IllegalArgumentException("Processed by cannot be null or empty.");
+        if (processedBy <= 0) {
+            throw new IllegalArgumentException("Processed by must be a valid employee ID.");
         }
         this.processedBy = processedBy;
         this.status = RequestStatus.APPROVED.toString();
@@ -152,11 +123,11 @@ public class Request implements Identifiable {
     }
 
     public void reject(int processedBy, String remarks) {
-        if (processedBy == -1) {
-            throw new IllegalArgumentException("Processed by cannot be null or empty.");
+        if (processedBy <= 0) {
+            throw new IllegalArgumentException("Processed by must be a valid employee ID.");
         }
-        if (reason == null || reason.isEmpty()) {
-            throw new IllegalArgumentException("Rejection reason cannot be null or empty.");
+        if (remarks == null || remarks.isEmpty()) {
+            throw new IllegalArgumentException("Rejection remarks cannot be empty.");
         }
 
         this.processedBy = processedBy;
@@ -165,4 +136,3 @@ public class Request implements Identifiable {
         this.processedDate = LocalDate.now();
     }
 }
-

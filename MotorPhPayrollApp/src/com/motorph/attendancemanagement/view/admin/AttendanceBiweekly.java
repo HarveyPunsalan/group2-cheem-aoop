@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.motorph.attendancemanagement.view.admin;
-
 import com.motorph.payrollprocessing.service.core.PayrollService;
 import com.motorph.payrollprocessing.model.payroll.PayPeriod;
 import com.motorph.attendancemanagement.service.AttendanceService;
@@ -12,37 +11,51 @@ import com.motorph.payrollprocessing.service.core.PayPeriodService;
 import com.motorph.payrollprocessing.service.core.ServiceFactory;
 import com.motorph.usermanagement.model.Access;
 import com.motorph.usermanagement.model.Admin;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import com.motorph.database.connection.DatabaseService;
+
+
 
 /**
  *
  * @author Charm
  */
 public class AttendanceBiweekly extends javax.swing.JFrame {
-    PayrollService payPeriodList = new PayrollService();
-    Admin admin;
-            
-    /**
-     * Creates new form AttendanceRecord
-     */    
+
+    private PayrollService payPeriodList;
+    private Admin admin;
+
     public AttendanceBiweekly() {
-        initComponents();
-        jComboBoxAttendancePeriod.setModel(payPeriodList.getComboBoxModel());
-        jComboBoxAttendancePeriod.setRenderer(new PromptComboBoxRenderer("Select Pay Period") );
-        jComboBoxAttendancePeriod.setSelectedIndex(-1);
-        
+        this(null); // call the main constructor with null admin
     }
-    
+
     public AttendanceBiweekly(Admin admin) {
-        initComponents();
         this.admin = admin;
-        admin.addLogoutListener(this);
-     
-        jComboBoxAttendancePeriod.setModel(payPeriodList.getComboBoxModel());
-        jComboBoxAttendancePeriod.setRenderer(new PromptComboBoxRenderer("Select Pay Period") );
-        jComboBoxAttendancePeriod.setSelectedIndex(-1);
-   
+
+        // ✅ INIT FIRST BEFORE initComponents
+        payPeriodList = new PayrollService();
+
+        initComponents(); // ⚠️ Make sure nothing inside this accesses payPeriodList
+
+        if (admin != null) {
+            admin.addLogoutListener(this);
+        }
+
+        // ✅ Set ComboBox model after components are created
+        if (payPeriodList != null) {
+            jComboBoxAttendancePeriod.setModel(payPeriodList.getComboBoxModel());
+            jComboBoxAttendancePeriod.setRenderer(new PromptComboBoxRenderer("Select Pay Period"));
+            jComboBoxAttendancePeriod.setSelectedIndex(-1);
+        } else {
+            System.err.println("⚠️ payPeriodList is null");
+        }
     }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -258,13 +271,22 @@ public class AttendanceBiweekly extends javax.swing.JFrame {
             return;
         }
         
-        String[] dates = jComboBoxAttendancePeriod.getSelectedItem().toString().split(" : ");
+        String selected = jComboBoxAttendancePeriod.getSelectedItem().toString();
+           if (!selected.contains(" : ")) {
+            JOptionPane.showMessageDialog(this, "Invalid pay period format. Please select a proper one.");
+        return;
+    }
+        String[] dates = selected.split(" : ");
+            if (dates.length < 2) {
+               JOptionPane.showMessageDialog(this, "Invalid pay period format. Unable to parse dates.");
+        return;
+    }
         String startDate = dates[0];
         String endDate = dates[1];
         
         PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodServicewService();
-        
-        PayPeriod selectedPayPeriod = payPeriodService.searchByDateRange(dates[0], dates[1]).get();
+        PayPeriod selectedPayPeriod = payPeriodService.searchByDateRange(startDate, endDate).get();
+    
         AttendanceService dtrManager = new AttendanceService();
         jTableBiweeklyAttendace.setModel(dtrManager.getProcessedAttendanceTableModel(selectedPayPeriod));
         
@@ -279,10 +301,6 @@ public class AttendanceBiweekly extends javax.swing.JFrame {
         Access.accessProfilePage(this.admin);
         this.setVisible(false);
     }//GEN-LAST:event_jButton3SelfServicePortalActionPerformed
-
-    private void jButton4AttendanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4AttendanceActionPerformed
-        
-    }//GEN-LAST:event_jButton4AttendanceActionPerformed
 
     private void jButton1EmployeeInformationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1EmployeeInformationActionPerformed
         Access.accessEmployeeInformation(this.admin);
@@ -299,6 +317,7 @@ public class AttendanceBiweekly extends javax.swing.JFrame {
         if (!isSelectRecord()) {
             return;
         }
+    
         
         if (jComboBoxAttendancePeriod.getSelectedIndex() < 0 || jComboBoxAttendancePeriod.getSelectedItem() == null) {
             return;
@@ -318,6 +337,12 @@ public class AttendanceBiweekly extends javax.swing.JFrame {
         Access.accessDTR(this.admin, Integer.parseInt(employeeID), selectedPayPeriod);
         this.setVisible(false);
     }//GEN-LAST:event_jTableBiweeklyAttendaceMouseClicked
+
+    private void jButton4AttendanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4AttendanceActionPerformed
+        AttendanceBiweekly attendancePage = new AttendanceBiweekly(admin);
+        attendancePage.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_jButton4AttendanceActionPerformed
 
     /**
      * @param args the command line arguments
@@ -382,5 +407,38 @@ public class AttendanceBiweekly extends javax.swing.JFrame {
         }
         return true;
     }
+  
 
-}
+    private void loadAttendanceData() {
+        DefaultTableModel model = (DefaultTableModel) jTableBiweeklyAttendace.getModel();
+        model.setRowCount(0); // clear table
+
+        try (Connection conn = DatabaseService.connectToMotorPH()) {
+            String sql = "SELECT * FROM attendance_processing";
+            try (PreparedStatement stmt = conn.prepareStatement(sql);
+                 ResultSet rs = stmt.executeQuery()) {
+
+                while (rs.next()) {
+                    int attendanceId = rs.getInt("attendance_processing_id");
+                    int employeeId = rs.getInt("employee_id");
+                    int payPeriodId = rs.getInt("pay_period_id");
+                    double totalLateHours = rs.getDouble("total_late_hours");
+                    double overtime = rs.getDouble("total_approved_overtime_hours");
+                    double workedHours = rs.getDouble("total_worked_hours");
+                    double paidLeave = rs.getDouble("total_paid_leave_hours");
+                    double payable = rs.getDouble("payable_hours");
+                    String status = rs.getString("status");
+
+                    model.addRow(new Object[]{
+                        attendanceId, employeeId, payPeriodId, totalLateHours,
+                        overtime, workedHours, paidLeave, payable, status
+                    });
+                }
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error loading data: " + ex.getMessage());
+        }
+    }
+} 

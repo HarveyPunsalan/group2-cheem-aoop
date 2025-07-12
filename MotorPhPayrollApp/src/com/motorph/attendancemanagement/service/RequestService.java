@@ -7,217 +7,217 @@ package com.motorph.attendancemanagement.service;
 import com.motorph.attendancemanagement.model.Overtime;
 import com.motorph.attendancemanagement.model.Request;
 import com.motorph.attendancemanagement.model.Leave;
-import CSVFileManager.CsvFile;
-import Class.CSVFileManagement.CSVFileSerializer;
-import com.motorph.attendancemanagement.model.LeaveType;
 import com.motorph.common.util.CollectionUtils;
 import com.motorph.employeemanagement.model.Employee;
 import com.motorph.employeemanagement.service.csvversion.EmployeeService;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import com.motorph.database.connection.DatabaseService;
+
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.table.DefaultTableModel;
+import java.sql.*;
+import java.util.*;
 
-/**
- *
- * @author 63909
- */
 public class RequestService {
-    private List<Request> requestList;
-    private List<Leave> leaveList;
-    private List<Overtime> overtimeList;
-    private Map<String, Request> requestMapByRequestID;
-    private Map<String, Request> requestMapByRequestTypeID;
-    private Map<String, Leave> leaveMapByLeaveID;
-    private Map<String, LeaveType> leaveMapByLeaveTypeID;
-    private Map<String, Overtime> overtimeMapByOvertimeID;
+
+    private final List<Request> requestList;
+    private final List<Leave> leaveList;
+    private final List<Overtime> overtimeList;
+
+    private final Map<String, Request> requestMapByRequestID;
+    private final Map<String, Leave> leaveMapByLeaveID;
+    private final Map<String, Overtime> overtimeMapByOvertimeID;
 
     public RequestService() {
-        this.requestList =  CsvFile.REQUEST.readFile(Request::new);
-        this.leaveList =  CsvFile.LEAVE.readFile(Leave::new);
-        this.overtimeList =  CsvFile.OVERTIME.readFile(Overtime::new);
-        
+        this.requestList = fetchAllRequests();
+        this.leaveList = fetchAllLeaveRequests();
+        this.overtimeList = fetchAllOvertimeRequests();
+
         this.requestMapByRequestID = CollectionUtils.listToMap(requestList, Request::getID);
-        this.requestMapByRequestTypeID = CollectionUtils.listToMap(requestList, Request::getRequestTypeID);
         this.leaveMapByLeaveID = CollectionUtils.listToMap(leaveList, Leave::getID);
         this.overtimeMapByOvertimeID = CollectionUtils.listToMap(overtimeList, Overtime::getID);
     }
-    
-    public Leave getLeaveRecord(String leaveID){
-        if (leaveID == null || !this.leaveMapByLeaveID.containsKey(leaveID)) {
-            return null;
-        }
-        return this.leaveMapByLeaveID.get(leaveID);
-    }
-    
-    public Overtime getOvertimeRecord(String overtimeID){
-        if (overtimeID == null || !this.overtimeMapByOvertimeID.containsKey(overtimeID)) {
-            return null;
-        }
-        return this.overtimeMapByOvertimeID.get(overtimeID);
-    }
-    
-    public Request getRequestRecord(String requestTypeID){
-        return this.requestMapByRequestTypeID.get(requestTypeID);
-    }
-    
-    public DefaultComboBoxModel<String> getStatusComboBoxModel(){
-        // Convert payPeriodList to a String[]
-            String[] statusArray = {"All", "PENDING", "APPROVED", "REJECTED"};
 
-        return new DefaultComboBoxModel<String>(statusArray); // Use DefaultComboBoxModel
+    private Connection getConnection() throws SQLException {
+        return DatabaseService.connectToMotorPH();
     }
-    
-    public DefaultTableModel getLeaveRequestTableModel() {   
+
+    private List<Request> fetchAllRequests() {
+        List<Request> requests = new ArrayList<>();
+        String query = "SELECT * FROM request";
+
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            while (rs.next()) {
+                requests.add(new Request(new String[]{
+                        rs.getString("request_id"),
+                        rs.getString("request_type_id"),
+                        rs.getString("employee_id"),
+                        rs.getString("request_date"),
+                        rs.getString("reason"),
+                        rs.getString("request_status"),
+                        rs.getString("processed_by"),
+                        rs.getString("processed_date"),
+                        rs.getString("remarks"),
+                        rs.getString("created_at")
+                }));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return requests;
+    }
+
+    private List<Leave> fetchAllLeaveRequests() {
+        List<Leave> leaves = new ArrayList<>();
+        String query = "SELECT * FROM employee_leave";
+
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            while (rs.next()) {
+                leaves.add(new Leave(new String[]{
+                        rs.getString("leave_id"),
+                        rs.getString("employee_id"),
+                        rs.getString("leave_type"),
+                        rs.getString("start_date"),
+                        rs.getString("end_date"),
+                        rs.getString("total_days"),
+                        rs.getString("request_id")
+                }));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return leaves;
+    }
+
+    private List<Overtime> fetchAllOvertimeRequests() {
+        List<Overtime> overtimes = new ArrayList<>();
+        String query = "SELECT * FROM overtime";
+
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            while (rs.next()) {
+                overtimes.add(new Overtime(new String[]{
+                        rs.getString("overtime_id"),
+                        rs.getString("employee_id"),
+                        rs.getString("date"),
+                        rs.getString("start_time"),
+                        rs.getString("end_time"),
+                        rs.getString("total_hours"),
+                        rs.getString("payable_hours"),
+                        rs.getString("is_approved"),
+                        rs.getString("request_id"),
+                        rs.getString("dtr_id")
+                }));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return overtimes;
+    }
+
+    public Leave getLeaveRecord(String leaveID) {
+        return leaveMapByLeaveID.get(leaveID);
+    }
+
+    public Overtime getOvertimeRecord(String overtimeID) {
+        return overtimeMapByOvertimeID.get(overtimeID);
+    }
+
+    public Request getRequestRecord(String requestID) {
+        return requestMapByRequestID.get(requestID);
+    }
+
+    public DefaultComboBoxModel<String> getStatusComboBoxModel() {
+        return new DefaultComboBoxModel<>(new String[]{"All", "PENDING", "APPROVED", "REJECTED"});
+    }
+
+    public DefaultTableModel getLeaveRequestTableModel() {
         String[] columnNames = {
-            "Request ID", "Request Date", "Employee Name",
-            "Start Date", "End Date", "Leave Type", "Total Days", "Notes", "Status"
+                "Request ID", "Request Date", "Employee Name",
+                "Start Date", "End Date", "Leave Type", "Total Days", "Notes", "Status"
         };
-        
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0){
+
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Make all cells non-editable
+                return false;
             }
         };
-        
+
         EmployeeService employeeService = new EmployeeService();
-        
-        for (Leave leaveRequest : leaveList) {            
-            Employee employee = employeeService.getEmployeeInformation(leaveRequest.getEmployeeID());
-            Request request = getRequestRecord(leaveRequest.getID());
-            
-            // Handle case where employee is null (terminated)
-            String employeeName = (employee != null) ? employee.getFirstName() + " " + employee.getLastName() : "Terminated Employee";
 
-            // Construct a row using the aggregated values.
-            Object[] row = {
-                leaveRequest.getID(),
-                request.getRequestDate(),
-                employeeName,
-                leaveRequest.getStartDate(),
-                leaveRequest.getEndDate(),
-                leaveRequest.getLeaveType(),
-                leaveRequest.getTotalDays(),
-                request.getReason(),
-                request.getStatus()
-            };
-
-            model.addRow(row);
-            
-        }
-        
-        return model;
-    }
-    
-    public DefaultTableModel getOvertimeRequestTableModel() {   
-        String[] columnNames = {
-            "Request ID", "Request Date", "Employee Name",
-            "Start Time", "End Time", "Total Hours", "Notes", "Status"
-        };
-        
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0){
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; // Make all cells non-editable
-            }
-        };
-        
-        EmployeeService employeeService = new EmployeeService();
-        
-        for (Overtime overtimeRequest : overtimeList) {            
-            Employee employee = employeeService.getEmployeeInformation(overtimeRequest.getEmployeeID());
-            Request request = getRequestRecord(overtimeRequest.getID());
-            
-            // Handle case where employee is null (terminated)
-            String employeeName = (employee != null) ? employee.getFirstName() + " " + employee.getLastName() : "Terminated Employee";
-            
-            // Construct a row using the aggregated values.
-            Object[] row = {
-                overtimeRequest.getID(),
-                request.getRequestDate(),
-                employeeName,
-                overtimeRequest.getStartTime(),
-                overtimeRequest.getEndTime(),
-                overtimeRequest.getTotalHours(),
-                request.getReason(),
-                request.getStatus()
-            };
-
-            model.addRow(row);
-            
-        }
-        
-        return model;
-    }
-    
-    public void saveRequestRecord(Request updatedRequest){
-        // Check if the employee exists in the map.
-        if (!requestMapByRequestTypeID.containsKey(updatedRequest.getRequestTypeID())) return; // Employee not found; exit the method.
-
-        requestMapByRequestTypeID.replace(updatedRequest.getRequestTypeID(), updatedRequest); // Update the employee information in the map.
-        
-        // Update the employee information in the list while preserving order.
-        for (int i = 0; i < requestList.size(); i++) {
-            if (requestList.get(i).getID().equals(updatedRequest.getID())) {
-                requestList.set(i, updatedRequest);
-                break;
-            }
-        }
-        
-        // Convert the updated employee list to a List of String arrays.
-        List<String[]> updatedRequestRecord = new ArrayList<>();
-        for (Request request : requestList) {
-            updatedRequestRecord.add(CSVFileSerializer.toCsv(request));
-        }
-        
-        CsvFile.REQUEST.writeFile(updatedRequestRecord); // Write the updated records to the CSV file.
-    }
-    
-    public void saveLeaveRecord(Leave updatedLeave){
-        // Check if the employee exists in the map.
-        if (!leaveMapByLeaveID.containsKey(updatedLeave.getID())) return; // Employee not found; exit the method.
-
-        leaveMapByLeaveID.replace(updatedLeave.getID(), updatedLeave); // Update the employee information in the map.
-        
-        // Update the employee information in the list while preserving order.
-        for (int i = 0; i < leaveList.size(); i++) {
-            if (leaveList.get(i).getID().equals(updatedLeave.getID())) {
-                leaveList.set(i, updatedLeave);
-                break;
-            }
-        }
-        
-        // Convert the updated employee list to a List of String arrays.
-        List<String[]> updatedLeaveRecord = new ArrayList<>();
         for (Leave leave : leaveList) {
-            updatedLeaveRecord.add(CSVFileSerializer.toCsv(leave));
-        }
-        
-        CsvFile.LEAVE.writeFile(updatedLeaveRecord); // Write the updated records to the CSV file.
-    }
-    
-    public void saveOvertimeRecord(Overtime updatedOvertime){
-        // Check if the employee exists in the map.
-        if (!overtimeMapByOvertimeID.containsKey(updatedOvertime.getID())) return; // Employee not found; exit the method.
+            Employee employee = employeeService.getEmployeeInformation(leave.getEmployeeID());
+            Request request = getRequestRecord(String.valueOf(leave.getRequestId()));
 
-        overtimeMapByOvertimeID.replace(updatedOvertime.getID(), updatedOvertime); // Update the employee information in the map.
-        
-        // Update the employee information in the list while preserving order.
-        for (int i = 0; i < overtimeList.size(); i++) {
-            if (overtimeList.get(i).getID().equals(updatedOvertime.getID())) {
-                overtimeList.set(i, updatedOvertime);
-                break;
+            String employeeName = (employee != null)
+                    ? employee.getFirstName() + " " + employee.getLastName()
+                    : "Terminated Employee";
+
+            model.addRow(new Object[]{
+                    leave.getID(),
+                    request != null ? request.getRequestDate() : "",
+                    employeeName,
+                    leave.getStartDate(),
+                    leave.getEndDate(),
+                    leave.getLeaveType(),
+                    leave.getTotalDays(),
+                    request != null ? request.getReason() : "",
+                    request != null ? request.getStatus() : ""
+            });
+        }
+
+        return model;
+    }
+
+    public DefaultTableModel getOvertimeRequestTableModel() {
+        String[] columnNames = {
+                "Request ID", "Request Date", "Employee Name",
+                "Start Time", "End Time", "Total Hours", "Notes", "Status"
+        };
+
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
             }
-        }
-        
-        // Convert the updated employee list to a List of String arrays.
-        List<String[]> updatedOvertimeRecord = new ArrayList<>();
+        };
+
+        EmployeeService employeeService = new EmployeeService();
+
         for (Overtime overtime : overtimeList) {
-            updatedOvertimeRecord.add(CSVFileSerializer.toCsv(overtime));
+            Employee employee = employeeService.getEmployeeInformation(overtime.getEmployeeID());
+            Request request = getRequestRecord(String.valueOf(overtime.getRequestId()));
+
+            String employeeName = (employee != null)
+                    ? employee.getFirstName() + " " + employee.getLastName()
+                    : "Terminated Employee";
+
+            model.addRow(new Object[]{
+                    overtime.getID(),
+                    request != null ? request.getRequestDate() : "",
+                    employeeName,
+                    overtime.getStartTime(),
+                    overtime.getEndTime(),
+                    overtime.getTotalHours(),
+                    request != null ? request.getReason() : "",
+                    request != null ? request.getStatus() : ""
+            });
         }
-        
-        CsvFile.OVERTIME.writeFile(updatedOvertimeRecord); // Write the updated records to the CSV file.
+
+        return model;
     }
 }

@@ -5,11 +5,11 @@
 package com.motorph.attendancemanagement.model;
 
 /**
- *
- * @author 63909
+ * Enum representing the status of a request.
  */
 public enum RequestStatus {
     PENDING,
     APPROVED,
     REJECTED
 }
+
