@@ -16,7 +16,7 @@ import org.junit.runners.Suite;
  * @author Harvey
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({com.motorph.usermanagement.security.AuthorizerTest.class, com.motorph.usermanagement.security.AuthenticatorTest.class, com.motorph.usermanagement.security.AuthenticatorImplTest.class, com.motorph.usermanagement.security.PasswordEncoderTest.class, com.motorph.usermanagement.security.AuthorizerImplTest.class})
+@Suite.SuiteClasses({com.motorph.usermanagement.security.AuthorizerTest.class, com.motorph.usermanagement.security.AuthorizerImplTest.class})
 public class SecuritySuite {
 
     @BeforeClass

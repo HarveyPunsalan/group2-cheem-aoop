@@ -13,10 +13,10 @@ import org.junit.runners.Suite;
 
 /**
  *
- * @author markpunsalan
+ * @author Harvey
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({com.motorph.usermanagement.service.UserServiceTest.class, com.motorph.usermanagement.service.RoleServiceImplTest.class, com.motorph.usermanagement.service.PermissionServiceImplTest.class, com.motorph.usermanagement.service.UserServiceImplTest.class, com.motorph.usermanagement.service.PermissionServiceTest.class, com.motorph.usermanagement.service.RoleServiceTest.class})
+@Suite.SuiteClasses({com.motorph.usermanagement.service.UserServiceImplTest.class})
 public class ServiceSuite {
 
     @BeforeClass

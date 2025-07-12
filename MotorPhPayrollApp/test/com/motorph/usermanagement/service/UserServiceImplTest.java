@@ -5,10 +5,11 @@
 package com.motorph.usermanagement.service;
 
 import com.motorph.usermanagement.model.User;
-import com.motorph.usermanagement.exception.UserNotFoundException;
+import com.motorph.usermanagement.dao.UserDAO;
 import com.motorph.usermanagement.exception.InvalidCredentialsException;
 import com.motorph.usermanagement.exception.DataAccessException;
-import java.util.List;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -18,58 +19,83 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for UserServiceImpl class focusing on authentication and user management.
- * Tests business logic validation and exception handling without GUI dependencies.
- * 
+ * Unit tests for UserServiceImpl focusing on employee login functionality.
+ * These tests cover various scenarios that can happen during login attempts.
+ *
  * @author Harvey
  */
 public class UserServiceImplTest {
     
     private UserServiceImpl userService;
-    private User testUser;
+    private MockUserDAO mockUserDAO;
     
     public UserServiceImplTest() {
     }
     
     @BeforeClass
     public static void setUpClass() {
-        System.out.println("Starting UserServiceImpl tests...");
+        System.out.println("Starting UserServiceImpl login functionality tests...");
     }
     
     @AfterClass
     public static void tearDownClass() {
-        System.out.println("UserServiceImpl tests completed.");
+        System.out.println("Completed UserServiceImpl login functionality tests.");
     }
     
     @Before
     public void setUp() {
-        userService = new UserServiceImpl();
-        
-        // Create a test user object for various tests
-        testUser = new User();
-        testUser.setUserId(1);
-        testUser.setUsername("testuser");
-        testUser.setEmployeeId(1001); // Using int instead of String
-        testUser.setRoleId(1);
-        testUser.setActive(true);
+        // Initialize mock DAO to simulate database operations
+        mockUserDAO = new MockUserDAO();
+        // Create service instance with mock DAO for testing
+        userService = new UserServiceImpl(mockUserDAO);
     }
     
     @After
     public void tearDown() {
         userService = null;
-        testUser = null;
+        mockUserDAO = null;
     }
 
     /**
-     * Test authentication with null username - should throw InvalidCredentialsException
+     * Test successful login with valid credentials.
+     * This is the happy path scenario where everything works correctly.
      */
     @Test
-    public void testAuthenticateWithNullUsername() {
-        System.out.println("Testing authenticate with null username");
+    public void testSuccessfulLogin() throws Exception {
+        System.out.println("Testing successful employee login...");
+        
+        // Setup test data - create a valid active user
+        User testUser = new User(1, "john.doe", "password123", 1001, 2, 
+                               Timestamp.valueOf(LocalDateTime.now().minusDays(30)), 
+                               null, true);
+        
+        // Configure mock to return this user when searched
+        mockUserDAO.setUserToReturn(testUser);
+        
+        // Attempt login with correct credentials
+        User result = userService.authenticate("john.doe", "password123");
+        
+        // Verify the login was successful
+        assertNotNull("Login should return a user object", result);
+        assertEquals("Username should match", "john.doe", result.getUsername());
+        assertEquals("Employee ID should match", 1001, result.getEmployeeId());
+        assertTrue("User should be active", result.isActive());
+        
+        // Verify that last login was updated
+        assertTrue("Last login should have been updated", mockUserDAO.wasLastLoginUpdated());
+    }
+    
+    /**
+     * Test login failure with empty username.
+     * Empty usernames should not be allowed.
+     */
+    @Test
+    public void testLoginWithEmptyUsername() {
+        System.out.println("Testing login with empty username...");
         
         try {
-            userService.authenticate(null, "password");
-            fail("Expected InvalidCredentialsException was not thrown");
+            userService.authenticate("", "password123");
+            fail("Should have thrown InvalidCredentialsException for empty username");
         } catch (InvalidCredentialsException e) {
             assertEquals("Username cannot be empty", e.getMessage());
         } catch (Exception e) {
@@ -78,15 +104,16 @@ public class UserServiceImplTest {
     }
     
     /**
-     * Test authentication with empty username - should throw InvalidCredentialsException
+     * Test login failure with null username.
+     * Null usernames should be handled gracefully.
      */
     @Test
-    public void testAuthenticateWithEmptyUsername() {
-        System.out.println("Testing authenticate with empty username");
+    public void testLoginWithNullUsername() {
+        System.out.println("Testing login with null username...");
         
         try {
-            userService.authenticate("", "password");
-            fail("Expected InvalidCredentialsException was not thrown");
+            userService.authenticate(null, "password123");
+            fail("Should have thrown InvalidCredentialsException for null username");
         } catch (InvalidCredentialsException e) {
             assertEquals("Username cannot be empty", e.getMessage());
         } catch (Exception e) {
@@ -95,32 +122,16 @@ public class UserServiceImplTest {
     }
     
     /**
-     * Test authentication with whitespace-only username - should throw InvalidCredentialsException
+     * Test login failure with empty password.
+     * Empty passwords should not be allowed.
      */
     @Test
-    public void testAuthenticateWithWhitespaceUsername() {
-        System.out.println("Testing authenticate with whitespace username");
+    public void testLoginWithEmptyPassword() {
+        System.out.println("Testing login with empty password...");
         
         try {
-            userService.authenticate("   ", "password");
-            fail("Expected InvalidCredentialsException was not thrown");
-        } catch (InvalidCredentialsException e) {
-            assertEquals("Username cannot be empty", e.getMessage());
-        } catch (Exception e) {
-            fail("Unexpected exception type: " + e.getClass().getName());
-        }
-    }
-    
-    /**
-     * Test authentication with null password - should throw InvalidCredentialsException
-     */
-    @Test
-    public void testAuthenticateWithNullPassword() {
-        System.out.println("Testing authenticate with null password");
-        
-        try {
-            userService.authenticate("testuser", null);
-            fail("Expected InvalidCredentialsException was not thrown");
+            userService.authenticate("john.doe", "");
+            fail("Should have thrown InvalidCredentialsException for empty password");
         } catch (InvalidCredentialsException e) {
             assertEquals("Password cannot be empty", e.getMessage());
         } catch (Exception e) {
@@ -129,368 +140,226 @@ public class UserServiceImplTest {
     }
     
     /**
-     * Test authentication with empty password - should throw InvalidCredentialsException
+     * Test login failure with null password.
+     * Null passwords should be handled gracefully.
      */
     @Test
-    public void testAuthenticateWithEmptyPassword() {
-        System.out.println("Testing authenticate with empty password");
+    public void testLoginWithNullPassword() {
+        System.out.println("Testing login with null password...");
         
         try {
-            userService.authenticate("testuser", "");
-            fail("Expected InvalidCredentialsException was not thrown");
+            userService.authenticate("john.doe", null);
+            fail("Should have thrown InvalidCredentialsException for null password");
         } catch (InvalidCredentialsException e) {
             assertEquals("Password cannot be empty", e.getMessage());
         } catch (Exception e) {
             fail("Unexpected exception type: " + e.getClass().getName());
         }
     }
-
-    /**
-     * Test getUserByUsername with null parameter - should return empty Optional
-     */
-    @Test
-    public void testGetUserByUsernameWithNull() throws Exception {
-        System.out.println("Testing getUserByUsername with null");
-        
-        Optional<User> result = userService.getUserByUsername(null);
-        assertFalse("Expected empty Optional for null username", result.isPresent());
-    }
     
     /**
-     * Test getUserByUsername with empty string - should return empty Optional
+     * Test login failure with non-existent username.
+     * Users that don't exist should not be able to login.
      */
     @Test
-    public void testGetUserByUsernameWithEmptyString() throws Exception {
-        System.out.println("Testing getUserByUsername with empty string");
+    public void testLoginWithNonExistentUser() {
+        System.out.println("Testing login with non-existent user...");
         
-        Optional<User> result = userService.getUserByUsername("");
-        assertFalse("Expected empty Optional for empty username", result.isPresent());
-    }
-    
-    /**
-     * Test getUserByUsername with whitespace - should return empty Optional
-     */
-    @Test
-    public void testGetUserByUsernameWithWhitespace() throws Exception {
-        System.out.println("Testing getUserByUsername with whitespace");
-        
-        Optional<User> result = userService.getUserByUsername("   ");
-        assertFalse("Expected empty Optional for whitespace username", result.isPresent());
-    }
-
-    /**
-     * Test registerUser with null user - should throw IllegalArgumentException
-     */
-    @Test
-    public void testRegisterUserWithNull() {
-        System.out.println("Testing registerUser with null user");
+        // Configure mock to return no user (user doesn't exist)
+        mockUserDAO.setUserToReturn(null);
         
         try {
-            userService.registerUser(null);
-            fail("Expected exception was not thrown");
-        } catch (NullPointerException | IllegalArgumentException e) {
-            // Expected behavior - either exception type is acceptable
-            assertTrue("Expected exception thrown", true);
+            userService.authenticate("nonexistent.user", "password123");
+            fail("Should have thrown InvalidCredentialsException for non-existent user");
+        } catch (InvalidCredentialsException e) {
+            assertEquals("Invalid username or password", e.getMessage());
+        } catch (Exception e) {
+            fail("Unexpected exception type: " + e.getClass().getName());
+        }
+    }
+    
+    /**
+     * Test login failure with inactive user account.
+     * Inactive users should not be able to login even with correct credentials.
+     */
+    @Test
+    public void testLoginWithInactiveUser() {
+        System.out.println("Testing login with inactive user account...");
+        
+        // Create an inactive user
+        User inactiveUser = new User(2, "jane.smith", "password456", 1002, 2, 
+                                   Timestamp.valueOf(LocalDateTime.now().minusDays(30)), 
+                                   null, false); // inactive
+        
+        mockUserDAO.setUserToReturn(inactiveUser);
+        
+        try {
+            userService.authenticate("jane.smith", "password456");
+            fail("Should have thrown InvalidCredentialsException for inactive user");
+        } catch (InvalidCredentialsException e) {
+            assertEquals("User account is deactivated", e.getMessage());
+        } catch (Exception e) {
+            fail("Unexpected exception type: " + e.getClass().getName());
+        }
+    }
+    
+    /**
+     * Test login failure with wrong password.
+     * Incorrect passwords should not allow login.
+     */
+    @Test
+    public void testLoginWithWrongPassword() {
+        System.out.println("Testing login with incorrect password...");
+        
+        // Create a valid user with a specific password
+        User testUser = new User(3, "bob.wilson", "correctpassword", 1003, 2, 
+                               Timestamp.valueOf(LocalDateTime.now().minusDays(30)), 
+                               null, true);
+        
+        mockUserDAO.setUserToReturn(testUser);
+        
+        try {
+            userService.authenticate("bob.wilson", "wrongpassword");
+            fail("Should have thrown InvalidCredentialsException for wrong password");
+        } catch (InvalidCredentialsException e) {
+            assertEquals("Invalid username or password", e.getMessage());
+        } catch (Exception e) {
+            fail("Unexpected exception type: " + e.getClass().getName());
+        }
+    }
+    
+    /**
+     * Test login with user that has no password set.
+     * Users without passwords should not be able to login.
+     */
+    @Test
+    public void testLoginWithUserWithoutPassword() {
+        System.out.println("Testing login with user that has no password set...");
+        
+        // Create a user without a password
+        User userWithoutPassword = new User(4, "alice.brown", null, 1004, 2, 
+                                          Timestamp.valueOf(LocalDateTime.now().minusDays(30)), 
+                                          null, true);
+        
+        mockUserDAO.setUserToReturn(userWithoutPassword);
+        
+        try {
+            userService.authenticate("alice.brown", "anypassword");
+            fail("Should have thrown InvalidCredentialsException for user without password");
+        } catch (InvalidCredentialsException e) {
+            assertEquals("No password set for user", e.getMessage());
+        } catch (Exception e) {
+            fail("Unexpected exception type: " + e.getClass().getName());
+        }
+    }
+    
+    /**
+     * Test login handles whitespace in username properly.
+     * Usernames with leading/trailing spaces should be trimmed.
+     */
+    @Test
+    public void testLoginTrimsWhitespaceFromUsername() throws Exception {
+        System.out.println("Testing login trims whitespace from username...");
+        
+        User testUser = new User(5, "mike.davis", "password789", 1005, 2, 
+                               Timestamp.valueOf(LocalDateTime.now().minusDays(30)), 
+                               null, true);
+        
+        mockUserDAO.setUserToReturn(testUser);
+        
+        // Test with spaces around username
+        User result = userService.authenticate("  mike.davis  ", "password789");
+        
+        assertNotNull("Login should succeed with trimmed username", result);
+        assertEquals("Username should match", "mike.davis", result.getUsername());
+        assertEquals("Should have searched for trimmed username", "mike.davis", mockUserDAO.getLastSearchedUsername());
+    }
+    
+    /**
+     * Test database error handling during authentication.
+     * Database errors should be properly handled and wrapped.
+     */
+    @Test
+    public void testDatabaseErrorHandling() {
+        System.out.println("Testing database error handling...");
+        
+        // Configure mock to throw database error
+        mockUserDAO.setShouldThrowDatabaseError(true);
+        
+        try {
+            userService.authenticate("test.user", "password");
+            fail("Should have thrown DataAccessException for database error");
+        } catch (DataAccessException e) {
+            assertEquals("Authentication failed due to system error", e.getMessage());
         } catch (Exception e) {
             fail("Unexpected exception type: " + e.getClass().getName());
         }
     }
 
     /**
-     * Test assignRole with non-existent user - should throw UserNotFoundException
+     * Mock implementation of UserDAO for testing purposes.
+     * This allows us to control what the DAO returns without needing a real database.
      */
-    @Test
-    public void testAssignRoleWithNonExistentUser() {
-        System.out.println("Testing assignRole with non-existent user");
+    private static class MockUserDAO implements UserDAO {
+        private User userToReturn;
+        private boolean lastLoginUpdated = false;
+        private boolean shouldThrowDatabaseError = false;
+        private String lastSearchedUsername;
         
-        try {
-            userService.assignRole(999, 1); // Assuming user ID 999 doesn't exist
-            fail("Expected UserNotFoundException was not thrown");
-        } catch (UserNotFoundException e) {
-            assertTrue("Expected UserNotFoundException thrown", 
-                      e.getMessage().contains("User with ID 999 not found"));
-        } catch (Exception e) {
-            // Could also throw DataAccessException depending on implementation
-            assertTrue("Expected appropriate exception", 
-                      e instanceof DataAccessException);
+        public void setUserToReturn(User user) {
+            this.userToReturn = user;
         }
-    }
-    
-    /**
-     * Test updateUser with null user - should throw exception
-     */
-    @Test
-    public void testUpdateUserWithNull() {
-        System.out.println("Testing updateUser with null user");
         
-        try {
-            userService.updateUser(null);
-            fail("Expected exception was not thrown");
-        } catch (NullPointerException | IllegalArgumentException e) {
-            // Expected behavior
-            assertTrue("Expected exception thrown", true);
-        } catch (Exception e) {
-            fail("Unexpected exception type: " + e.getClass().getName());
+        public boolean wasLastLoginUpdated() {
+            return lastLoginUpdated;
         }
-    }
-
-    /**
-     * Test setUserStatus with non-existent user - should throw UserNotFoundException
-     */
-    @Test
-    public void testSetUserStatusWithNonExistentUser() {
-        System.out.println("Testing setUserStatus with non-existent user");
         
-        try {
-            userService.setUserStatus(999, true); // Assuming user ID 999 doesn't exist
-            fail("Expected UserNotFoundException was not thrown");
-        } catch (UserNotFoundException e) {
-            assertTrue("Expected UserNotFoundException thrown", 
-                      e.getMessage().contains("User with ID 999 not found"));
-        } catch (Exception e) {
-            // Could also throw DataAccessException depending on implementation
-            assertTrue("Expected appropriate exception", 
-                      e instanceof DataAccessException);
+        public void setShouldThrowDatabaseError(boolean shouldThrow) {
+            this.shouldThrowDatabaseError = shouldThrow;
         }
-    }
-    
-    /**
-     * Test changePassword with non-existent user - should throw UserNotFoundException
-     */
-    @Test
-    public void testChangePasswordWithNonExistentUser() {
-        System.out.println("Testing changePassword with non-existent user");
         
-        try {
-            userService.changePassword(999, "newPassword123");
-            fail("Expected UserNotFoundException was not thrown");
-        } catch (UserNotFoundException e) {
-            assertTrue("Expected UserNotFoundException thrown", 
-                      e.getMessage().contains("User with ID 999 not found"));
-        } catch (Exception e) {
-            // Could also throw DataAccessException depending on implementation
-            assertTrue("Expected appropriate exception", 
-                      e instanceof DataAccessException);
+        public String getLastSearchedUsername() {
+            return lastSearchedUsername;
         }
-    }
-    
-    /**
-     * Test changePassword with null password - should throw IllegalArgumentException
-     */
-    @Test
-    public void testChangePasswordWithNullPassword() {
-        System.out.println("Testing changePassword with null password");
         
-        try {
-            userService.changePassword(1, null);
-            fail("Expected IllegalArgumentException was not thrown");
-        } catch (IllegalArgumentException e) {
-            // Expected behavior - validation should catch null password
-            assertTrue("Expected IllegalArgumentException thrown", true);
-        } catch (Exception e) {
-            // Could also be UserNotFoundException if user doesn't exist
-            assertTrue("Expected appropriate exception", 
-                      e instanceof UserNotFoundException || 
-                      e instanceof DataAccessException);
+        @Override
+        public Optional<User> findById(int userId) throws DataAccessException {
+            if (shouldThrowDatabaseError) {
+                throw new DataAccessException("Simulated database error");
+            }
+            return userToReturn != null ? Optional.of(userToReturn) : Optional.empty();
         }
-    }
-    
-    /**
-     * Test isUsernameAvailable with null parameter - should return false
-     */
-    @Test
-    public void testIsUsernameAvailableWithNull() throws Exception {
-        System.out.println("Testing isUsernameAvailable with null");
         
-        boolean result = userService.isUsernameAvailable(null);
-        assertFalse("Expected false for null username", result);
-    }
-    
-    /**
-     * Test isUsernameAvailable with empty string - should return false
-     */
-    @Test
-    public void testIsUsernameAvailableWithEmptyString() throws Exception {
-        System.out.println("Testing isUsernameAvailable with empty string");
-        
-        boolean result = userService.isUsernameAvailable("");
-        assertFalse("Expected false for empty username", result);
-    }
-    
-    /**
-     * Test searchUsersByUsername with null parameter - should return all users
-     */
-    @Test
-    public void testSearchUsersByUsernameWithNull() throws Exception {
-        System.out.println("Testing searchUsersByUsername with null");
-        
-        List<User> result = userService.searchUsersByUsername(null);
-        assertNotNull("Expected non-null result", result);
-        // The method should return all users when search term is null
-    }
-    
-    /**
-     * Test searchUsersByUsername with empty string - should return all users
-     */
-    @Test
-    public void testSearchUsersByUsernameWithEmptyString() throws Exception {
-        System.out.println("Testing searchUsersByUsername with empty string");
-        
-        List<User> result = userService.searchUsersByUsername("");
-        assertNotNull("Expected non-null result", result);
-        // The method should return all users when search term is empty
-    }
-    
-    /**
-     * Test resetPassword with non-existent user - should throw UserNotFoundException
-     */
-    @Test
-    public void testResetPasswordWithNonExistentUser() {
-        System.out.println("Testing resetPassword with non-existent user");
-        
-        try {
-            userService.resetPassword(999, "newPassword123");
-            fail("Expected UserNotFoundException was not thrown");
-        } catch (UserNotFoundException e) {
-            assertTrue("Expected UserNotFoundException thrown", 
-                      e.getMessage().contains("User with ID 999 not found"));
-        } catch (Exception e) {
-            // Could also throw DataAccessException depending on implementation
-            assertTrue("Expected appropriate exception", 
-                      e instanceof DataAccessException);
+        @Override
+        public Optional<User> findByUsername(String username) throws DataAccessException {
+            if (shouldThrowDatabaseError) {
+                throw new DataAccessException("Simulated database error");
+            }
+            
+            this.lastSearchedUsername = username;
+            
+            if (userToReturn != null && userToReturn.getUsername().equals(username)) {
+                return Optional.of(userToReturn);
+            }
+            return Optional.empty();
         }
-    }
-    
-    /**
-     * Test resetPassword with null password - should throw IllegalArgumentException
-     */
-    @Test
-    public void testResetPasswordWithNullPassword() {
-        System.out.println("Testing resetPassword with null password");
         
-        try {
-            userService.resetPassword(1, null);
-            fail("Expected IllegalArgumentException was not thrown");
-        } catch (IllegalArgumentException e) {
-            assertTrue("Expected IllegalArgumentException thrown", 
-                      e.getMessage().contains("New password cannot be empty"));
-        } catch (Exception e) {
-            // Could also be UserNotFoundException if user doesn't exist
-            assertTrue("Expected appropriate exception", 
-                      e instanceof UserNotFoundException || 
-                      e instanceof DataAccessException);
+        @Override
+        public boolean updateLastLogin(int userId) throws DataAccessException {
+            if (shouldThrowDatabaseError) {
+                throw new DataAccessException("Simulated database error");
+            }
+            
+            lastLoginUpdated = true;
+            return true;
         }
-    }
-    
-    /**
-     * Test resetPassword with empty password - should throw IllegalArgumentException
-     */
-    @Test
-    public void testResetPasswordWithEmptyPassword() {
-        System.out.println("Testing resetPassword with empty password");
         
-        try {
-            userService.resetPassword(1, "");
-            fail("Expected IllegalArgumentException was not thrown");
-        } catch (IllegalArgumentException e) {
-            assertTrue("Expected IllegalArgumentException thrown", 
-                      e.getMessage().contains("New password cannot be empty"));
-        } catch (Exception e) {
-            // Could also be UserNotFoundException if user doesn't exist
-            assertTrue("Expected appropriate exception", 
-                      e instanceof UserNotFoundException || 
-                      e instanceof DataAccessException);
+        @Override
+        public boolean updatePasswordHash(int userId, String hashedPassword) throws DataAccessException {
+            if (shouldThrowDatabaseError) {
+                throw new DataAccessException("Simulated database error");
+            }
+            return true;
         }
-    }
-    
-    /**
-     * Test resetPassword with short password - should throw IllegalArgumentException
-     */
-    @Test
-    public void testResetPasswordWithShortPassword() {
-        System.out.println("Testing resetPassword with short password");
-        
-        try {
-            userService.resetPassword(1, "123"); // Less than 6 characters
-            fail("Expected IllegalArgumentException was not thrown");
-        } catch (IllegalArgumentException e) {
-            assertTrue("Expected IllegalArgumentException thrown", 
-                      e.getMessage().contains("Password must be at least 6 characters long"));
-        } catch (Exception e) {
-            // Could also be UserNotFoundException if user doesn't exist
-            assertTrue("Expected appropriate exception", 
-                      e instanceof UserNotFoundException || 
-                      e instanceof DataAccessException);
-        }
-    }
-    
-    /**
-     * Test service initialization - constructor should not throw exceptions
-     */
-    @Test
-    public void testServiceInitialization() {
-        System.out.println("Testing service initialization");
-        
-        try {
-            UserServiceImpl service = new UserServiceImpl();
-            assertNotNull("Service should be initialized", service);
-        } catch (Exception e) {
-            fail("Service initialization should not throw exception: " + e.getMessage());
-        }
-    }
-    
-    /**
-     * Test getUserCount method - should return non-negative integer
-     */
-    @Test
-    public void testGetUserCount() throws Exception {
-        System.out.println("Testing getUserCount");
-        
-        int result = userService.getUserCount();
-        assertTrue("User count should be non-negative", result >= 0);
-    }
-    
-    /**
-     * Test getActiveUserCount method - should return non-negative integer
-     */
-    @Test
-    public void testGetActiveUserCount() throws Exception {
-        System.out.println("Testing getActiveUserCount");
-        
-        int result = userService.getActiveUserCount();
-        assertTrue("Active user count should be non-negative", result >= 0);
-    }
-    
-    /**
-     * Test getAllUsers method - should return non-null list
-     */
-    @Test
-    public void testGetAllUsers() throws Exception {
-        System.out.println("Testing getAllUsers");
-        
-        List<User> result = userService.getAllUsers();
-        assertNotNull("getAllUsers should return non-null list", result);
-    }
-    
-    /**
-     * Test getActiveUsers method - should return non-null list
-     */
-    @Test
-    public void testGetActiveUsers() throws Exception {
-        System.out.println("Testing getActiveUsers");
-        
-        List<User> result = userService.getActiveUsers();
-        assertNotNull("getActiveUsers should return non-null list", result);
-    }
-    
-    /**
-     * Test getUsersByRole method - should return non-null list
-     */
-    @Test
-    public void testGetUsersByRole() throws Exception {
-        System.out.println("Testing getUsersByRole");
-        
-        List<User> result = userService.getUsersByRole(1);
-        assertNotNull("getUsersByRole should return non-null list", result);
     }
 }

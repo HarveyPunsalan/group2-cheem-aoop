@@ -74,4 +74,22 @@ public interface Authorizer {
      * @throws DataAccessException if database operation fails
      */
     boolean isAdmin(User user) throws DataAccessException;
+    
+    /**
+     * Checks if a user has Admin role - includes both role ID and specific user checks.
+     * 
+     * @param user User to check
+     * @return true if user has admin role
+     * @throws DataAccessException if database operation fails
+     */
+    boolean isAdminRole(User user) throws DataAccessException;
+    
+    /**
+     * Checks if a user has NonAdmin role - includes both role ID and specific user checks.
+     * 
+     * @param user User to check
+     * @return true if user has non-admin role
+     * @throws DataAccessException if database operation fails
+     */
+    boolean isNonAdminRole(User user) throws DataAccessException;
 }
