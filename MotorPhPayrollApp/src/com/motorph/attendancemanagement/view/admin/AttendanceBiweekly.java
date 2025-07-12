@@ -288,7 +288,7 @@ public class AttendanceBiweekly extends javax.swing.JFrame {
         PayPeriod selectedPayPeriod = payPeriodService.searchByDateRange(startDate, endDate).get();
     
         AttendanceService dtrManager = new AttendanceService();
-        jTableBiweeklyAttendace.setModel(dtrManager.getProcessedAttendanceTableModel(selectedPayPeriod));
+//        jTableBiweeklyAttendace.setModel(dtrManager.getProcessedAttendanceTableModel(selectedPayPeriod));
         
     }//GEN-LAST:event_jComboBoxAttendancePeriodActionPerformed
 
