@@ -4,106 +4,107 @@
  */
 package com.motorph.attendancemanagement.model;
 
-/**
- *
- * @author 63909
- */
-import Class.EntityManagement.EntityManager;
-import Class.EntityManagement.EntityType;
-import Class.IDManagement.IDManager;
 import Class.IDManagement.Identifiable;
 import com.motorph.common.util.Parser;
+
 import java.time.LocalDate;
 
 public class Leave implements Identifiable {
+
     private String leaveID;
-    private int employeeID;    
+    private int employeeID;
+    private String leaveType;
     private LocalDate startDate;
     private LocalDate endDate;
-    private String leaveType;
-    private int totalDays;
-    private int payableDays;
-    private boolean isApproved;
+    private double totalDays;
+    private int requestId; // Foreign key to the request table
 
-    public Leave() {
-    }
-        
-    // Constructor using String array
-    public Leave(String[] leaveData) {
-        if (leaveData == null) {
-            throw new IllegalArgumentException("Leave data cannot be null.");
-        }
+    public Leave() {}
 
-        switch (leaveData.length) {
-            case 5 -> {
-                // New leave request (ID is generated)
-                EntityManager entityManager = new EntityManager(EntityType.LEAVE);
-                this.leaveID = IDManager.generateID(entityManager.getEntityType().getIdPrefix());
-                IDManager.saveIDCounters();
-                
-                this.employeeID = Integer.parseInt(leaveData[0]);
-                this.startDate = Parser.parseLocalDate(leaveData[1], null);
-                this.endDate = Parser.parseLocalDate(leaveData[2], null);
-                this.leaveType = leaveData[3];
-                this.totalDays = Parser.parseInteger(leaveData[4], 0);
-                
-                this.payableDays = 0; // Default to 0 since it's not provided in this case
-                this.isApproved = false; // New requests are not approved by default
+    // Constructor from raw String[] data (CSV or SQL)
+    public Leave(String[] data) {
+        if (data == null) throw new IllegalArgumentException("Leave data cannot be null.");
+
+        switch (data.length) {
+            case 6 -> {
+                // SQL data: [leave_id, employee_id, leave_type, start_date, end_date, total_days]
+                this.leaveID = data[0];
+                this.employeeID = Integer.parseInt(data[1]);
+                this.leaveType = data[2];
+                this.startDate = Parser.parseLocalDate(data[3], null);
+                this.endDate = Parser.parseLocalDate(data[4], null);
+                this.totalDays = Parser.parseDouble(data[5], 0.0);
+                this.requestId = 0;
             }
-            case 8 -> {
-                // Existing leave request (ID is provided)
-                this.leaveID = leaveData[0];
-                this.employeeID = Integer.parseInt(leaveData[1]);
-                this.startDate = Parser.parseLocalDate(leaveData[2], null);
-                this.endDate = Parser.parseLocalDate(leaveData[3], null);
-                this.leaveType = leaveData[4];
-                this.totalDays = Parser.parseInteger(leaveData[5], 0);
-                this.payableDays = Parser.parseInteger(leaveData[6], 0);
-                this.isApproved = leaveData[7].isEmpty() ? null : Boolean.parseBoolean(leaveData[7]);
+            case 7 -> {
+                // SQL data with request ID: [leave_id, employee_id, leave_type, start_date, end_date, total_days, request_id]
+                this.leaveID = data[0];
+                this.employeeID = Integer.parseInt(data[1]);
+                this.leaveType = data[2];
+                this.startDate = Parser.parseLocalDate(data[3], null);
+                this.endDate = Parser.parseLocalDate(data[4], null);
+                this.totalDays = Parser.parseDouble(data[5], 0.0);
+                this.requestId = Parser.parseInteger(data[6], 0);
             }
-            default -> throw new IllegalArgumentException("Invalid input data format. Expected 5 (new) or 8 (existing) parameters.");
+            default -> throw new IllegalArgumentException("Invalid input data format.");
         }
     }
-    
-    // Getters and Setters
+
+    // ✅ Getters and Setters
     @Override
     public String getID() {
         return leaveID;
+    }
+
+    public void setLeaveID(String leaveID) {
+        this.leaveID = leaveID;
     }
 
     public int getEmployeeID() {
         return employeeID;
     }
 
+    public void setEmployeeID(int employeeID) {
+        this.employeeID = employeeID;
+    }
+
     public String getLeaveType() {
         return leaveType;
     }
-    
+
+    public void setLeaveType(String leaveType) {
+        this.leaveType = leaveType;
+    }
+
     public LocalDate getStartDate() {
         return startDate;
     }
-    
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
     public LocalDate getEndDate() {
         return endDate;
     }
 
-    public int getTotalDays() {
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public double getTotalDays() {
         return totalDays;
     }
 
-    public int getPayableDays() {
-        return payableDays;
+    public void setTotalDays(double totalDays) {
+        this.totalDays = totalDays;
     }
-    public void setPayableDays(int payableDays) {
-        this.payableDays = payableDays;
-    }    
 
-    public boolean isIsApproved() {
-        return isApproved;
-    }   
-    public void setIsApproved(boolean isApproved) {
-        this.isApproved = isApproved;
+    public int getRequestId() {
+        return requestId;
     }
-    
+
+    public void setRequestId(int requestId) {
+        this.requestId = requestId;
+    }
 }
-
