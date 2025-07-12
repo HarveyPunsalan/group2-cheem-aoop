@@ -9,15 +9,21 @@ package com.motorph.payrollprocessing.view.admin;
  * @author Charm
  */
 import com.motorph.common.swing.TableConfigurator;
+import com.motorph.common.swing.validation.SelectionValidator;
 import com.motorph.usermanagement.view.LoginPage;
 import com.motorph.payrollprocessing.model.payroll.PayPeriod;
 import com.motorph.payrollprocessing.tablemodel.BiWeeklyPayrollSummaryTableModel;
+import com.motorph.payrollprocessing.tablemodel.BiWeeklyPayrollTableModel;
+import com.motorph.payrollprocessing.viewmodel.model.BiWeeklyPayrollViewModel;
 import com.motorph.payrollprocessing.viewmodel.model.EmployeeWorkedHoursSummaryViewModel;
 import com.motorph.payrollprocessing.viewmodel.service.BiWeeklyPayrollViewService;
 import com.motorph.payrollprocessing.viewmodel.service.ViewModelServiceFactory;
+import com.motorph.reportmanagement.controller.PayrollBiWeeklySummaryController;
 import com.motorph.reportmanagement.model.PayrollBiWeeklySummaryReport;
 import com.motorph.usermanagement.model.Admin;
 import com.motorph.usermanagement.model.Access;
+import java.text.DecimalFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
