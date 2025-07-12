@@ -4,123 +4,140 @@
  */
 package com.motorph.attendancemanagement.model;
 
-/**
- *
- * @author 63909
- */
-import Class.EntityManagement.EntityManager;
-import Class.EntityManagement.EntityType;
-import Class.IDManagement.IDManager;
 import Class.IDManagement.Identifiable;
 import com.motorph.common.util.Parser;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class Overtime implements Identifiable{
+public class Overtime implements Identifiable {
     private String overtimeID;
     private int employeeID;
     private LocalDate date;
     private LocalTime startTime;
     private LocalTime endTime;
     private double totalHours;
-    private Double payableHours; // Changed to Double to allow null values
+    private Double payableHours; // Nullable
     private boolean isApproved;
-    private transient static final LocalTime REGULAR_END_TIME = LocalTime.of(17, 0); // Regular shift ends at 5:00 PM
+    private int requestId; // FK to request table
+    private int dtrId;     // FK to daily_time_record table
 
-    public Overtime() {
-    }
-    
-    // Constructor that initializes using DailyAttendance
-    public Overtime(DailyAttendance attendance) {
-        if (attendance.hasOvertime()) {
-            this.date = attendance.getDate();
-            this.employeeID = attendance.getEmployee().getEmployeeId();
-            LocalTime timeIn = attendance.getTimeIn();
-            LocalTime timeOut = attendance.getTimeOut();
+    public Overtime() {}
 
-            // Overtime starts after regular working hours
-            this.startTime = (timeOut.isAfter(REGULAR_END_TIME)) ? REGULAR_END_TIME : timeOut;
-            this.endTime = timeOut;
-            
-            // Calculate overtime hours
-            this.totalHours = attendance.getHoursOvertime();
-        } else {
-            throw new IllegalArgumentException("No overtime recorded for this date.");
-        }
-    }
-
+    // CSV or SQL Constructor
     public Overtime(String[] overtimeData) {
-        if (overtimeData == null) {
-            throw new IllegalArgumentException("Overtime data cannot be null.");
-        }
+        if (overtimeData == null) throw new IllegalArgumentException("Overtime data cannot be null.");
 
         switch (overtimeData.length) {
-            case 5 -> {
-                // New overtime entry (ID is generated)
-                EntityManager entityManager = new EntityManager(EntityType.OVERTIME);
-                this.overtimeID = IDManager.generateID(entityManager.getEntityType().getIdPrefix());
-                IDManager.saveIDCounters();
-                
+            case 6 -> {
+                // CSV or simple data: [employeeID, date, startTime, endTime, totalHours, requestId]
+                this.overtimeID = null;
                 this.employeeID = Integer.parseInt(overtimeData[0]);
                 this.date = Parser.parseLocalDate(overtimeData[1], null);
-                this.startTime = Parser.parseValue(overtimeData[2], null, LocalTime::parse);
-                this.endTime = Parser.parseValue(overtimeData[3], null, LocalTime::parse);
+                this.startTime = Parser.parseLocalTime(overtimeData[2], null, "H:mm");
+                this.endTime = Parser.parseLocalTime(overtimeData[3], null, "H:mm");
                 this.totalHours = Parser.parseDouble(overtimeData[4], 0.0);
-                
-                this.payableHours = 0.0; // Default to null since it's not provided in this case
-                this.isApproved = false; // New requests are not approved by default
+                this.requestId = Parser.parseInteger(overtimeData[5], 0);
+                this.payableHours = null;
+                this.isApproved = false;
+                this.dtrId = 0; // default, since it's not included in this constructor
             }
-            case 8 -> {
-                // Existing overtime entry (ID is provided)
+            case 10 -> {
+                // Full SQL record: [overtimeID, employeeID, date, startTime, endTime, totalHours, payableHours, isApproved, requestId, dtrId]
                 this.overtimeID = overtimeData[0];
                 this.employeeID = Integer.parseInt(overtimeData[1]);
                 this.date = Parser.parseLocalDate(overtimeData[2], null);
                 this.startTime = Parser.parseLocalTime(overtimeData[3], null, "H:mm");
                 this.endTime = Parser.parseLocalTime(overtimeData[4], null, "H:mm");
                 this.totalHours = Parser.parseDouble(overtimeData[5], 0.0);
-                this.payableHours = Parser.parseDouble(overtimeData[6], null); // ✅ Nullable
-                this.isApproved = (overtimeData[7] == null || overtimeData[7].isEmpty()) ? null : Boolean.parseBoolean(overtimeData[7]);
+                this.payableHours = Parser.parseDouble(overtimeData[6], null);
+                this.isApproved = Boolean.parseBoolean(overtimeData[7]);
+                this.requestId = Parser.parseInteger(overtimeData[8], 0);
+                this.dtrId = Parser.parseInteger(overtimeData[9], 0);
             }
-            default -> throw new IllegalArgumentException("Invalid input data format. Expected 5 (new) or 8 (existing) parameters.");
+            default -> throw new IllegalArgumentException("Invalid input data format.");
         }
     }
 
-    // Getters and Setters
+    // ✅ Getters and Setters
     @Override
-    public String getID() {        
+    public String getID() {
         return overtimeID;
+    }
+
+    public void setID(String id) {
+        this.overtimeID = id;
     }
 
     public int getEmployeeID() {
         return employeeID;
     }
-    
+
+    public void setEmployeeID(int employeeID) {
+        this.employeeID = employeeID;
+    }
+
     public LocalDate getDate() {
         return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
     public LocalTime getStartTime() {
         return startTime;
     }
 
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
     public LocalTime getEndTime() {
         return endTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
     }
 
     public double getTotalHours() {
         return totalHours;
     }
 
+    public void setTotalHours(double totalHours) {
+        this.totalHours = totalHours;
+    }
+
     public Double getPayableHours() {
         return payableHours;
     }
 
-    public boolean isIsApproved() {
+    public void setPayableHours(Double payableHours) {
+        this.payableHours = payableHours;
+    }
+
+    public boolean isApproved() {
         return isApproved;
     }
-    public void setIsApproved(boolean isApproved) {
-        this.isApproved = isApproved;
-    }
-        
-}
 
+    public void setApproved(boolean approved) {
+        isApproved = approved;
+    }
+
+    public int getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(int requestId) {
+        this.requestId = requestId;
+    }
+
+    public int getDtrId() {
+        return dtrId;
+    }
+
+    public void setDtrId(int dtrId) {
+        this.dtrId = dtrId;
+    }
+}

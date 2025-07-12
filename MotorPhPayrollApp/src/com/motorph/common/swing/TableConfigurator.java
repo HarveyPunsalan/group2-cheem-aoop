@@ -108,7 +108,7 @@ public class TableConfigurator {
     public static void configureBiWeeklyPayrollSummaryTable(JTable table) {
         TableColumnModel columnModel = table.getColumnModel();
 
-        int[] preferredWidths = {50, 180, 100, 100, 100, 100, 100, 100, 100, 100, 100};
+        int[] preferredWidths = {50, 150, 120, 100, 100, 100, 100, 100, 100, 100, 100};
         int[] alignments = {
             SwingConstants.LEFT,  // Employee No
             SwingConstants.LEFT,  // Employee Full Name

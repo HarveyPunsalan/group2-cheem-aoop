@@ -864,10 +864,10 @@ public class RequestCenter extends javax.swing.JFrame {
         LocalDate selectedDate = LocalDate.parse((String) jComboBoxOvertimeDate.getSelectedItem(), formatterDate);
         
         DailyAttendance userAttendance = dtrManager.getEmployeeDailyAttendance(new Employee(), selectedDate);
-        Overtime userOvertime = new Overtime(userAttendance);
-        jTextField5OvertimeStart.setText(userOvertime.getStartTime().toString());
-        jTextField4OvertimeEnd.setText(userOvertime.getEndTime().toString());
-        jTextField1TotalOvertime.setText(userAttendance.getHoursOvertime().toString());
+//        Overtime userOvertime = new Overtime(userAttendance);
+//        jTextField5OvertimeStart.setText(userOvertime.getStartTime().toString());
+//        jTextField4OvertimeEnd.setText(userOvertime.getEndTime().toString());
+//        jTextField1TotalOvertime.setText(userAttendance.getHoursOvertime().toString());
     }//GEN-LAST:event_jComboBoxOvertimeDateActionPerformed
 
 //    /**

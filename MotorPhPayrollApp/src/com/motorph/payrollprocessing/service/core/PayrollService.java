@@ -39,8 +39,8 @@ public class PayrollService {
     public PayrollService() {
 //        this.payPeriodList = CsvFile.PAYPERIOD.readFile(PayPeriod::new);
         this.employeeService = new EmployeeService();
-        this.attendanceService = new AttendanceService(); 
-    }    
+        this.attendanceService = new AttendanceService();
+    }
        
     /**
      * Generates a list of PayrollRecords for all employees in a given pay period.

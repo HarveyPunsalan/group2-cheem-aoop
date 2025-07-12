@@ -11,9 +11,6 @@ package com.motorph.payrollprocessing.view.admin;
 import com.motorph.common.swing.TableConfigurator;
 import com.motorph.common.swing.validation.SelectionValidator;
 import com.motorph.usermanagement.view.LoginPage;
-import com.motorph.payrollprocessing.service.processor.PayrollCalculator;
-import com.motorph.payrollprocessing.service.core.PayrollService;
-import com.motorph.payrollprocessing.model.payroll.PayrollSummary;
 import com.motorph.payrollprocessing.model.payroll.PayPeriod;
 import com.motorph.payrollprocessing.tablemodel.BiWeeklyPayrollSummaryTableModel;
 import com.motorph.payrollprocessing.tablemodel.BiWeeklyPayrollTableModel;
@@ -32,12 +29,8 @@ import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 
 public class PayrollSummaryPage extends javax.swing.JFrame {
-    DateTimeFormatter formatterDate1  = DateTimeFormatter.ofPattern("MMMM dd");
-    DateTimeFormatter formatterDate2  = DateTimeFormatter.ofPattern("MMMM dd yyyy");
-    private static DecimalFormat decimalFormat = new DecimalFormat("0.00");
     Admin admin;
     PayPeriod payrollPayPeriod;
-    PayrollService payrollService = new PayrollService();
     BiWeeklyPayrollViewService service;  
     
     public PayrollSummaryPage() {
@@ -272,11 +265,11 @@ public class PayrollSummaryPage extends javax.swing.JFrame {
                         .addComponent(jButtonBack)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButtonNext))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 840, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabelParollSubmitted)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 561, Short.MAX_VALUE)
+                        .addComponent(jButton1))
+                    .addComponent(jScrollPane1))
                 .addContainerGap())
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );

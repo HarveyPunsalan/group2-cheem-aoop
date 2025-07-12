@@ -951,7 +951,7 @@ CREATE TABLE `system_user` (
 
 LOCK TABLES `system_user` WRITE;
 /*!40000 ALTER TABLE `system_user` DISABLE KEYS */;
-INSERT INTO `system_user` VALUES (1,'manuel.garcia','$2a$12$poyU63kc60LOv0qyBPrgH.jX5PixC3fEwog56SX0rEHOlOgxsSiP6',10001,1,'2025-06-03 13:05:05','2025-07-07 17:42:01',1),(2,'antonio.lim','$2a$12$HRU4gcJ40nCRqQ7KBeQv6eAF3ItceYr91z4.6lMkT9gT55l15BjOa',10002,1,'2025-06-03 13:05:05','2025-07-07 12:24:31',1),(3,'bianca.aquino','password123',10003,1,'2025-06-03 13:05:05',NULL,1),(4,'isabella.reyes','password123',10004,1,'2025-06-03 13:05:05',NULL,1),(5,'eduard.hernandez','password123',10005,4,'2025-06-03 13:05:05',NULL,1),(6,'andrea.villanueva','$2a$12$blma95JApux1CCW3gcskPulEfHxfNc4VHxxYytkTFBHTgJQD2ydmG',10006,2,'2025-06-03 13:05:05','2025-07-07 13:39:24',1),(7,'brad.sanjose','password123',10007,4,'2025-06-03 13:05:05',NULL,1),(8,'roderick.alvaro','password123',10010,4,'2025-06-03 13:05:05',NULL,1),(9,'anthony.salcedo','$2a$12$xy3GQZkVJCQcOUMfkfZXjuRgvPDfVqglpkzHoQJmYeQUWU8Lj8r1S',10011,3,'2025-06-03 13:05:05','2025-07-01 11:17:10',1),(10,'josie.lopez','password123',10012,4,'2025-06-03 13:05:05',NULL,1),(11,'christian.mata','password123',10016,4,'2025-06-03 13:05:05',NULL,1),(12,'selena.deleon','$2a$12$ifQLS/Bw4wUsOlqRcCDtNuJGA8wu577H9Zz81MrvUXWhLjboiH.t6',10017,4,'2025-06-03 13:05:05','2025-07-01 11:17:35',1),(13,'alice.romualdez','$2a$12$srIiFHaSjV47VDvlAPM2D.M85epPGOjL5lgwUOJlZ96nigUFZX8Cy',10008,5,'2025-06-03 13:05:05','2025-07-01 11:12:01',1),(14,'rosie.atienza','password123',10009,5,'2025-06-03 13:05:05',NULL,1),(15,'martha.farala','$2y$10$D9eVRbS2Hv.3u9MWmH4sQOIA2b8OYa9DkOrglikAnK0hqa7DaPzfi',10013,5,'2025-06-03 13:05:05',NULL,1),(16,'leila.martinez','$2y$10$D9eVRbS2Hv.3u9MWmH4sQOIA2b8OYa9DkOrglikAnK0hqa7DaPzfi',10014,5,'2025-06-03 13:05:05',NULL,1),(17,'allison.sanjose','$2y$10$D9eVRbS2Hv.3u9MWmH4sQOIA2b8OYa9DkOrglikAnK0hqa7DaPzfi',10018,5,'2025-06-03 13:05:05',NULL,1);
+INSERT INTO `system_user` VALUES (1,'manuel.garcia','$2a$12$poyU63kc60LOv0qyBPrgH.jX5PixC3fEwog56SX0rEHOlOgxsSiP6',10001,1,'2025-06-03 13:05:05','2025-07-12 04:17:33',1),(2,'antonio.lim','$2a$12$HRU4gcJ40nCRqQ7KBeQv6eAF3ItceYr91z4.6lMkT9gT55l15BjOa',10002,1,'2025-06-03 13:05:05','2025-07-07 12:24:31',1),(3,'bianca.aquino','password123',10003,1,'2025-06-03 13:05:05',NULL,1),(4,'isabella.reyes','password123',10004,1,'2025-06-03 13:05:05',NULL,1),(5,'eduard.hernandez','password123',10005,4,'2025-06-03 13:05:05',NULL,1),(6,'andrea.villanueva','$2a$12$blma95JApux1CCW3gcskPulEfHxfNc4VHxxYytkTFBHTgJQD2ydmG',10006,2,'2025-06-03 13:05:05','2025-07-07 13:39:24',1),(7,'brad.sanjose','password123',10007,4,'2025-06-03 13:05:05',NULL,1),(8,'roderick.alvaro','password123',10010,4,'2025-06-03 13:05:05',NULL,1),(9,'anthony.salcedo','$2a$12$xy3GQZkVJCQcOUMfkfZXjuRgvPDfVqglpkzHoQJmYeQUWU8Lj8r1S',10011,3,'2025-06-03 13:05:05','2025-07-01 11:17:10',1),(10,'josie.lopez','password123',10012,4,'2025-06-03 13:05:05',NULL,1),(11,'christian.mata','password123',10016,4,'2025-06-03 13:05:05',NULL,1),(12,'selena.deleon','$2a$12$ifQLS/Bw4wUsOlqRcCDtNuJGA8wu577H9Zz81MrvUXWhLjboiH.t6',10017,4,'2025-06-03 13:05:05','2025-07-01 11:17:35',1),(13,'alice.romualdez','$2a$12$srIiFHaSjV47VDvlAPM2D.M85epPGOjL5lgwUOJlZ96nigUFZX8Cy',10008,5,'2025-06-03 13:05:05','2025-07-01 11:12:01',1),(14,'rosie.atienza','password123',10009,5,'2025-06-03 13:05:05',NULL,1),(15,'martha.farala','$2y$10$D9eVRbS2Hv.3u9MWmH4sQOIA2b8OYa9DkOrglikAnK0hqa7DaPzfi',10013,5,'2025-06-03 13:05:05',NULL,1),(16,'leila.martinez','$2y$10$D9eVRbS2Hv.3u9MWmH4sQOIA2b8OYa9DkOrglikAnK0hqa7DaPzfi',10014,5,'2025-06-03 13:05:05',NULL,1),(17,'allison.sanjose','$2y$10$D9eVRbS2Hv.3u9MWmH4sQOIA2b8OYa9DkOrglikAnK0hqa7DaPzfi',10018,5,'2025-06-03 13:05:05',NULL,1);
 /*!40000 ALTER TABLE `system_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1071,6 +1071,32 @@ LOCK TABLES `user_role` WRITE;
 INSERT INTO `user_role` VALUES (1,'System Administrator','Full access to system settings and database maintenance'),(2,'HR Manager','Can manage employee records, approve leaves, and generate payroll reports'),(3,'Payroll Administrator','Responsible for salary computation and payslip generation'),(4,'Department Head','Supervises team members and approves requests within department'),(5,'Employee','Access to self-service portal to view payslips and request leaves');
 /*!40000 ALTER TABLE `user_role` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `view_bi_weekly_payroll_summary`
+--
+
+DROP TABLE IF EXISTS `view_bi_weekly_payroll_summary`;
+/*!50001 DROP VIEW IF EXISTS `view_bi_weekly_payroll_summary`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `view_bi_weekly_payroll_summary` AS SELECT 
+ 1 AS `pay_period_id`,
+ 1 AS `Employee No`,
+ 1 AS `Employee Full Name`,
+ 1 AS `Position`,
+ 1 AS `Department`,
+ 1 AS `Gross Income`,
+ 1 AS `Social Security No.`,
+ 1 AS `Social Security Contribution`,
+ 1 AS `Philhealth No.`,
+ 1 AS `Philhealth Contribution`,
+ 1 AS `Pag-ibig No.`,
+ 1 AS `Pag-Ibig Contribution`,
+ 1 AS `TIN`,
+ 1 AS `Withholding Tax`,
+ 1 AS `Net Pay`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Temporary view structure for view `view_employee_work_hours_summary`
@@ -1817,6 +1843,24 @@ DELIMITER ;
 /*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
+-- Final view structure for view `view_bi_weekly_payroll_summary`
+--
+
+/*!50001 DROP VIEW IF EXISTS `view_bi_weekly_payroll_summary`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `view_bi_weekly_payroll_summary` AS select `pp`.`pay_period_id` AS `pay_period_id`,`pr`.`employee_id` AS `Employee No`,concat(`e`.`last_name`,', ',`e`.`first_name`) AS `Employee Full Name`,`j`.`job_title` AS `Position`,`d`.`department_name` AS `Department`,round(sum(`pr`.`gross_salary`),2) AS `Gross Income`,`egi`.`sss_number` AS `Social Security No.`,round(sum(ifnull(`sss`.`amount`,0)),2) AS `Social Security Contribution`,`egi`.`philhealth_number` AS `Philhealth No.`,round(sum(ifnull(`phi`.`amount`,0)),2) AS `Philhealth Contribution`,`egi`.`pagibig_number` AS `Pag-ibig No.`,round(sum(ifnull(`pg`.`amount`,0)),2) AS `Pag-Ibig Contribution`,`egi`.`tax_identification_number` AS `TIN`,round(sum(ifnull(`wt`.`amount`,0)),2) AS `Withholding Tax`,round(sum(`pr`.`net_salary`),2) AS `Net Pay` from ((((((((((`payroll_record` `pr` join `pay_period` `pp` on((`pr`.`pay_period_id` = `pp`.`pay_period_id`))) join `employee_personal_information` `e` on((`pr`.`employee_id` = `e`.`employee_id`))) join `employee_employment_information` `ee` on((`pr`.`employee_id` = `ee`.`employee_id`))) join `job` `j` on((`ee`.`job_id` = `j`.`job_id`))) join `department` `d` on((`j`.`department_id` = `d`.`department_id`))) join `employee_government_information` `egi` on((`pr`.`employee_id` = `egi`.`employee_id`))) left join (select `egd`.`payroll_id` AS `payroll_id`,sum(`egd`.`amount`) AS `amount` from (`employee_government_deduction` `egd` join `government_deduction_chart` `gdc` on((`egd`.`chart_id` = `gdc`.`gov_deduction_chart_id`))) where (`gdc`.`gov_deduction_type_id` = 1) group by `egd`.`payroll_id`) `sss` on((`pr`.`payroll_id` = `sss`.`payroll_id`))) left join (select `egd`.`payroll_id` AS `payroll_id`,sum(`egd`.`amount`) AS `amount` from (`employee_government_deduction` `egd` join `government_deduction_chart` `gdc` on((`egd`.`chart_id` = `gdc`.`gov_deduction_chart_id`))) where (`gdc`.`gov_deduction_type_id` = 3) group by `egd`.`payroll_id`) `phi` on((`pr`.`payroll_id` = `phi`.`payroll_id`))) left join (select `egd`.`payroll_id` AS `payroll_id`,sum(`egd`.`amount`) AS `amount` from (`employee_government_deduction` `egd` join `government_deduction_chart` `gdc` on((`egd`.`chart_id` = `gdc`.`gov_deduction_chart_id`))) where (`gdc`.`gov_deduction_type_id` = 2) group by `egd`.`payroll_id`) `pg` on((`pr`.`payroll_id` = `pg`.`payroll_id`))) left join (select `egd`.`payroll_id` AS `payroll_id`,sum(`egd`.`amount`) AS `amount` from (`employee_government_deduction` `egd` join `government_deduction_chart` `gdc` on((`egd`.`chart_id` = `gdc`.`gov_deduction_chart_id`))) where (`gdc`.`gov_deduction_type_id` = 4) group by `egd`.`payroll_id`) `wt` on((`pr`.`payroll_id` = `wt`.`payroll_id`))) group by `pr`.`pay_period_id`,`pr`.`employee_id`,`e`.`first_name`,`e`.`last_name`,`j`.`job_title`,`d`.`department_name`,`egi`.`sss_number`,`egi`.`philhealth_number`,`egi`.`pagibig_number`,`egi`.`tax_identification_number` order by `pp`.`start_date`,`e`.`last_name`,`e`.`first_name` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
 -- Final view structure for view `view_employee_work_hours_summary`
 --
 
@@ -1879,4 +1923,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-07-08 20:41:23
+-- Dump completed on 2025-07-12 12:20:45

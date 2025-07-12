@@ -604,11 +604,11 @@ public class EmployeeRequests extends javax.swing.JFrame {
             return;
         }
         
-        updateOvertime.setIsApproved(true);
+        updateOvertime.setApproved(true);
         updateRequest.approve(admin.getEmployeeId());
         
-        requestService.saveOvertimeRecord(updateOvertime);
-        requestService.saveRequestRecord(updateRequest);
+//        requestService.saveOvertimeRecord(updateOvertime);
+//        requestService.saveRequestRecord(updateRequest);
         
         JOptionPane.showMessageDialog(null, "Request Approved!", "Approval", JOptionPane.INFORMATION_MESSAGE);
         
@@ -651,11 +651,11 @@ public class EmployeeRequests extends javax.swing.JFrame {
             rejectionReason = "Not approved due to company policies.";
         }
         
-        updateOvertime.setIsApproved(false);
+        updateOvertime.setApproved(false);
         updateRequest.reject(admin.getEmployeeId(), rejectionReason);
         
-        requestService.saveOvertimeRecord(updateOvertime);
-        requestService.saveRequestRecord(updateRequest);
+//        requestService.saveOvertimeRecord(updateOvertime);
+//        requestService.saveRequestRecord(updateRequest);
         
         // Show confirmation with the reason
         JOptionPane.showMessageDialog(null, 
@@ -717,11 +717,11 @@ public class EmployeeRequests extends javax.swing.JFrame {
             return;
         }
         
-        updateLeave.setIsApproved(true);
-        updateRequest.approve(admin.getEmployeeId());
-        
-        requestService.saveLeaveRecord(updateLeave);
-        requestService.saveRequestRecord(updateRequest);
+//        updateLeave.setIsApproved(true);
+//        updateRequest.approve(admin.getEmployeeId());
+//        
+//        requestService.saveLeaveRecord(updateLeave);
+//        requestService.saveRequestRecord(updateRequest);
         
         JOptionPane.showMessageDialog(null, "Request Approved!", "Approval", JOptionPane.INFORMATION_MESSAGE);
         
@@ -764,14 +764,14 @@ public class EmployeeRequests extends javax.swing.JFrame {
             rejectionReason = "Not approved due to company policies.";
         }
         
-        updateLeave.setIsApproved(false);
+//        updateLeave.setIsApproved(false);
         updateRequest.reject(admin.getEmployeeId(), rejectionReason);
                 
         EntityManager leave = new EntityManager(EntityType.LEAVE);
         EntityManager request = new EntityManager(EntityType.REQUEST);
         
-        requestService.saveLeaveRecord(updateLeave);
-        requestService.saveRequestRecord(updateRequest);
+//        requestService.saveLeaveRecord(updateLeave);
+//        requestService.saveRequestRecord(updateRequest);
         
         // Show confirmation with the reason
         JOptionPane.showMessageDialog(null, 
