@@ -4,68 +4,39 @@
  */
 package com.motorph.attendancemanagement.model;
 
-import Class.IDManagement.Identifiable;
-import com.motorph.common.util.Parser;
-
 import java.time.LocalDate;
+import java.sql.Date;
+import java.sql.Timestamp;
 
-public class Leave implements Identifiable {
+public class Leave extends Request {
 
-    private String leaveID;
-    private int employeeID;
+    private String leaveID;         
     private String leaveType;
     private LocalDate startDate;
     private LocalDate endDate;
     private double totalDays;
-    private int requestId; // Foreign key to the request table
 
-    public Leave() {}
-
-    // Constructor from raw String[] data (CSV or SQL)
-    public Leave(String[] data) {
-        if (data == null) throw new IllegalArgumentException("Leave data cannot be null.");
-
-        switch (data.length) {
-            case 6 -> {
-                // SQL data: [leave_id, employee_id, leave_type, start_date, end_date, total_days]
-                this.leaveID = data[0];
-                this.employeeID = Integer.parseInt(data[1]);
-                this.leaveType = data[2];
-                this.startDate = Parser.parseLocalDate(data[3], null);
-                this.endDate = Parser.parseLocalDate(data[4], null);
-                this.totalDays = Parser.parseDouble(data[5], 0.0);
-                this.requestId = 0;
-            }
-            case 7 -> {
-                // SQL data with request ID: [leave_id, employee_id, leave_type, start_date, end_date, total_days, request_id]
-                this.leaveID = data[0];
-                this.employeeID = Integer.parseInt(data[1]);
-                this.leaveType = data[2];
-                this.startDate = Parser.parseLocalDate(data[3], null);
-                this.endDate = Parser.parseLocalDate(data[4], null);
-                this.totalDays = Parser.parseDouble(data[5], 0.0);
-                this.requestId = Parser.parseInteger(data[6], 0);
-            }
-            default -> throw new IllegalArgumentException("Invalid input data format.");
-        }
+    public Leave() {
+        super();
     }
 
-    // ✅ Getters and Setters
-    @Override
-    public String getID() {
+    public Leave(String leaveID, String leaveType, LocalDate startDate, LocalDate endDate, double totalDays,
+                 int requestId, int employeeId, Date requestDate, String reason, String requestStatus,
+                 Timestamp createdAt, int processedBy, Date processedDate, String remarks) {
+        super(requestId, employeeId, requestDate, reason, requestStatus, createdAt, processedBy, processedDate, remarks);
+        this.leaveID = leaveID;
+        this.leaveType = leaveType;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.totalDays = totalDays;
+    }
+
+    public String getLeaveID() {
         return leaveID;
     }
 
     public void setLeaveID(String leaveID) {
         this.leaveID = leaveID;
-    }
-
-    public int getEmployeeID() {
-        return employeeID;
-    }
-
-    public void setEmployeeID(int employeeID) {
-        this.employeeID = employeeID;
     }
 
     public String getLeaveType() {
@@ -100,11 +71,30 @@ public class Leave implements Identifiable {
         this.totalDays = totalDays;
     }
 
-    public int getRequestId() {
-        return requestId;
+    @Override
+    public String getID() {
+        return leaveID;
     }
 
-    public void setRequestId(int requestId) {
-        this.requestId = requestId;
+    // Add alias methods to match what's being called in RequestService
+    public void setEmployeeID(int employeeId) {
+        setEmployeeId(employeeId); // inherited from Request
+    }
+
+    public int getEmployeeID() {
+        return getEmployeeId(); // inherited from Request
+    }
+
+    @Override
+    public String toString() {
+        return "Leave{" +
+                "leaveID='" + leaveID + '\'' +
+                ", leaveType='" + leaveType + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", totalDays=" + totalDays +
+                ", requestID=" + getRequestId() +
+                ", employeeID=" + getEmployeeId() +
+                '}';
     }
 }

@@ -5,104 +5,97 @@
 package com.motorph.attendancemanagement.service;
 
 import com.motorph.attendancemanagement.model.Overtime;
-import com.motorph.database.connection.DatabaseService;
+import java.util.List;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
-
 public class OvertimeServiceTest {
 
-    private final OvertimeService instance = new OvertimeService();
+    private static OvertimeService service;
+    private static int insertedId;
 
-    // Helper method to get a valid request_id
-    private int getValidRequestId() {
-        try (Connection conn = DatabaseService.connectToMotorPH();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT request_id FROM request LIMIT 1")) {
-            if (rs.next()) return rs.getInt("request_id");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 1; // fallback
+    @BeforeClass
+    public static void setUpClass() {
+        service = new OvertimeService();
+        insertedId = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+        // Just in case, ensure there's no existing test record
+        service.deleteOvertime(insertedId);
+    }
+
+    @AfterClass
+    public static void tearDownClass() {
+        service.deleteOvertime(insertedId);
     }
 
     @Test
-    public void testGetOvertimeByEmployeeId() {
-        int employeeId = 10001; // Must exist
-        List<Overtime> result = instance.getOvertimeByEmployeeId(employeeId);
-
-        assertNotNull("Result should not be null", result);
-        System.out.println("✅ Retrieved " + result.size() + " overtime record(s).");
-    }
-
-    @Test
-    public void testSaveOvertime() {
+    public void testAddOvertime() {
         Overtime overtime = new Overtime();
-        overtime.setEmployeeID(10001); // Must exist
-        overtime.setRequestId(getValidRequestId()); // Must exist
-        overtime.setDtrId(1); // Must exist
-
-        overtime.setDate(LocalDate.now());
-        overtime.setStartTime(LocalTime.of(18, 0));
-        overtime.setEndTime(LocalTime.of(20, 0));
-        overtime.setTotalHours(2.0);
-        overtime.setPayableHours(1.5);
+        overtime.setOvertimeId(insertedId);
+        overtime.setRequestId(1);
+        overtime.setEmployeeId(10001);
+        overtime.setDtrId(1);
         overtime.setApproved(false);
 
-        boolean result = instance.saveOvertime(overtime);
-        assertTrue("Overtime should be saved successfully", result);
-        System.out.println("✅ Overtime inserted successfully.");
+        service.addOvertime(overtime);
+
+        List<Overtime> all = service.getAllOvertimes();
+        assertFalse(all.isEmpty());
+
+        Overtime latest = all.stream()
+                .filter(o -> o.getOvertimeId() == insertedId)
+                .findFirst()
+                .orElse(null);
+
+        assertNotNull(latest);
+        assertEquals(1, latest.getRequestId());
+        assertEquals(10001, latest.getEmployeeId());
+        assertEquals(1, latest.getDtrId());
+        assertFalse(latest.isApproved());
     }
 
     @Test
-    public void testUpdateOvertimeRequest() {
-        int employeeId = 10001;
-        int requestId = getValidRequestId();
-        int dtrId = 1;
+    public void testUpdateOvertime() {
+        // Make sure the record exists before updating
+        Overtime original = new Overtime();
+        original.setOvertimeId(insertedId);
+        original.setRequestId(1);
+        original.setEmployeeId(10001);
+        original.setDtrId(1);
+        original.setApproved(false);
+        service.addOvertime(original);
 
-        // Save a dummy record first
-        Overtime overtime = new Overtime();
-        overtime.setEmployeeID(employeeId);
-        overtime.setRequestId(requestId);
-        overtime.setDtrId(dtrId);
-        instance.saveOvertime(overtime);
+        Overtime updated = new Overtime();
+        updated.setOvertimeId(insertedId);
+        updated.setRequestId(2);
+        updated.setEmployeeId(10002);
+        updated.setDtrId(2);
+        updated.setApproved(true);
 
-        // Get the last inserted overtime_id
-        List<Overtime> overtimeList = instance.getOvertimeByEmployeeId(employeeId);
-        String latestOvertimeId = overtimeList.get(overtimeList.size() - 1).getID();
+        service.updateOvertime(updated);
 
-        // Update the request ID
-        boolean result = instance.updateOvertimeRequest(latestOvertimeId, requestId);
-        assertTrue("Overtime request ID should be updated", result);
-        System.out.println("✅ Overtime request updated for ID: " + latestOvertimeId);
+        List<Overtime> all = service.getAllOvertimes();
+        Overtime fetched = all.stream()
+                .filter(o -> o.getOvertimeId() == insertedId)
+                .findFirst()
+                .orElse(null);
+
+        assertNotNull(fetched);
+        assertEquals(2, fetched.getRequestId());
+        assertEquals(10002, fetched.getEmployeeId());
+        assertEquals(2, fetched.getDtrId());
+        assertTrue(fetched.isApproved());
     }
 
     @Test
-    public void testDeleteOvertimeById() {
-        int employeeId = 10001;
-        int requestId = getValidRequestId();
-        int dtrId = 1;
+    public void testDeleteOvertime() {
+        service.deleteOvertime(insertedId);
 
-        // Insert a dummy record first
-        Overtime overtime = new Overtime();
-        overtime.setEmployeeID(employeeId);
-        overtime.setRequestId(requestId);
-        overtime.setDtrId(dtrId);
-        instance.saveOvertime(overtime);
+        List<Overtime> all = service.getAllOvertimes();
+        boolean exists = all.stream()
+                .anyMatch(o -> o.getOvertimeId() == insertedId);
 
-        // Get the latest inserted overtime record
-        List<Overtime> overtimeList = instance.getOvertimeByEmployeeId(employeeId);
-        String latestOvertimeId = overtimeList.get(overtimeList.size() - 1).getID();
-
-        // Delete it
-        boolean result = instance.deleteOvertimeById(latestOvertimeId);
-        assertTrue("Overtime should be deleted successfully", result);
-        System.out.println("✅ Overtime deleted with ID: " + latestOvertimeId);
+        assertFalse(exists);
     }
 }
