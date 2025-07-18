@@ -6,6 +6,7 @@ package com.motorph.payrollprocessing.viewmodel.service;
 
 import com.motorph.payrollprocessing.viewmodel.dao.BiWeeklyPayrollViewDAO;
 import com.motorph.payrollprocessing.viewmodel.model.BiWeeklyPayrollViewModel;
+import com.motorph.reportmanagement.model.PayrollBiWeeklySummaryReport;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +34,15 @@ public class BiWeeklyPayrollViewService {
     public List<BiWeeklyPayrollViewModel> getAllBiWeeklyPayroll() {
         try {
             return viewDAO.findAll();
+        } catch (Exception e) {
+            // log and wrap into service-level exception
+            throw new RuntimeException("Failed to fetch bi-weekly payroll view", e);
+        }
+    }
+    
+    public List<PayrollBiWeeklySummaryReport> getAllBiWeeklyPayrollByEmployeeIds(int payPeriodId, List<Integer> employeeIds) {
+        try {
+            return viewDAO.findByIds(payPeriodId, employeeIds);
         } catch (Exception e) {
             // log and wrap into service-level exception
             throw new RuntimeException("Failed to fetch bi-weekly payroll view", e);

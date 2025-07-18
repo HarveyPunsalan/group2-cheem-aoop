@@ -8,25 +8,30 @@ package com.motorph.payrollprocessing.view.admin;
  *
  * @author Charm
  */
+import com.motorph.common.swing.TableConfigurator;
+import com.motorph.common.swing.validation.SelectionValidator;
 import com.motorph.usermanagement.view.LoginPage;
-import com.motorph.payrollprocessing.service.processor.PayrollCalculator;
-import com.motorph.payrollprocessing.service.core.PayrollService;
-import com.motorph.payrollprocessing.model.payroll.PayrollSummary;
 import com.motorph.payrollprocessing.model.payroll.PayPeriod;
+import com.motorph.payrollprocessing.tablemodel.BiWeeklyPayrollSummaryTableModel;
+import com.motorph.payrollprocessing.tablemodel.BiWeeklyPayrollTableModel;
+import com.motorph.payrollprocessing.viewmodel.model.BiWeeklyPayrollViewModel;
+import com.motorph.payrollprocessing.viewmodel.model.EmployeeWorkedHoursSummaryViewModel;
+import com.motorph.payrollprocessing.viewmodel.service.BiWeeklyPayrollViewService;
+import com.motorph.payrollprocessing.viewmodel.service.ViewModelServiceFactory;
+import com.motorph.reportmanagement.controller.PayrollBiWeeklySummaryController;
+import com.motorph.reportmanagement.model.PayrollBiWeeklySummaryReport;
 import com.motorph.usermanagement.model.Admin;
 import com.motorph.usermanagement.model.Access;
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.swing.JOptionPane;
 
 public class PayrollSummaryPage extends javax.swing.JFrame {
-    DateTimeFormatter formatterDate1  = DateTimeFormatter.ofPattern("MMMM dd");
-    DateTimeFormatter formatterDate2  = DateTimeFormatter.ofPattern("MMMM dd yyyy");
-    private static DecimalFormat decimalFormat = new DecimalFormat("0.00");
     Admin admin;
     PayPeriod payrollPayPeriod;
-    PayrollService payrollService = new PayrollService();
-    PayrollSummary payrollSummary;
+    BiWeeklyPayrollViewService service;  
     
     public PayrollSummaryPage() {
         initComponents();        
@@ -38,16 +43,7 @@ public class PayrollSummaryPage extends javax.swing.JFrame {
         this.payrollPayPeriod = payPeriod;
         jPanel1.setVisible(false);
         
-        jLabelPayPeriod.setText("Payroll Summary for the period of " + payPeriod.getStartDate().format(formatterDate1) + " - " + payPeriod.getEndDate().format(formatterDate2));
-        payrollSummary = PayrollCalculator.calculatePayrollSummary(payrollService.generatePayrollRecord(payPeriod));
-        jLabelTotalBasicSalaryResult.setText(payrollSummary.getTotalBasicSalary().toString());
-        jLabelTotalGrossSalaryResult.setText(payrollSummary.getTotalGrossSalary().toString());        
-        jLabelTotalGovernmentContributionResult.setText(payrollSummary.getTotalGovernmentContribution().toString());
-        jLabelTotalWithholdingTaxResult.setText(payrollSummary.getTotalWithholdingTax().toString());
-        jLabelTotalDeductionResult.setText(payrollSummary.getTotalDeductions().toString());
-        jLabelTotalNetSalaryResult.setText(payrollSummary.getTotalNetSalary().toString());
-
-        
+//        jLabelParollSubmitted.setText("Payroll Summary for the period of " + payPeriod.getStartDate().format(formatterDate1) + " - " + payPeriod.getEndDate().format(formatterDate2)); 
     }
 
     public PayrollSummaryPage(Admin admin, PayPeriod payPeriod) {
@@ -56,18 +52,41 @@ public class PayrollSummaryPage extends javax.swing.JFrame {
         this.payrollPayPeriod = payPeriod;
         jPanel1.setVisible(false);
         
-        jLabelPayPeriod.setText("Payroll Summary for the period of " + payPeriod.getStartDate().format(formatterDate1) + " - " + payPeriod.getEndDate().format(formatterDate2));
-        payrollSummary = PayrollCalculator.calculatePayrollSummary(payrollService.generatePayrollRecord(payPeriod));
-        jLabelTotalBasicSalaryResult.setText(payrollSummary.getTotalBasicSalary().toString());
-        jLabelTotalGrossSalaryResult.setText(payrollSummary.getTotalGrossSalary().toString());        
-        jLabelTotalGovernmentContributionResult.setText(payrollSummary.getTotalGovernmentContribution().toString());
-        jLabelTotalWithholdingTaxResult.setText(payrollSummary.getTotalWithholdingTax().toString());
-        jLabelTotalDeductionResult.setText(payrollSummary.getTotalDeductions().toString());
-        jLabelTotalNetSalaryResult.setText(payrollSummary.getTotalNetSalary().toString());
-
+//        jLabelParollSubmitted.setText("Payroll Summary for the period of " + payPeriod.getStartDate().format(formatterDate1) + " - " + payPeriod.getEndDate().format(formatterDate2));
+        
     }
-
     
+    public PayrollSummaryPage(Admin admin, PayPeriod payPeriod, List<EmployeeWorkedHoursSummaryViewModel> viewModel) {
+        initComponents();
+        this.payrollPayPeriod = payPeriod;
+        initService();
+        List<Integer> employeeIds = viewModel.stream()
+            .map(EmployeeWorkedHoursSummaryViewModel::getEmployeeId)
+            .collect(Collectors.toList());
+
+        loadTable(employeeIds);
+        this.admin = admin;
+        
+        jPanel1.setVisible(false);
+        
+//        jLabelParollSubmitted.setText("Payroll Summary for the period of " + payPeriod.getStartDate().format(formatterDate1) + " - " + payPeriod.getEndDate().format(formatterDate2));
+    }  
+    
+    private void initService() {
+        try {
+            this.service = ViewModelServiceFactory.createBiWeeklyPayrollViewService();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Failed to load service: " + e.getMessage());
+        }
+    }
+    
+    private void loadTable(List<Integer> employeeIds) {
+        List<PayrollBiWeeklySummaryReport> payrollBiWeeklySummaryReportList = this.service.getAllBiWeeklyPayrollByEmployeeIds(this.payrollPayPeriod.getPayPeriodId(), employeeIds);
+        BiWeeklyPayrollSummaryTableModel tableModel = new BiWeeklyPayrollSummaryTableModel(payrollBiWeeklySummaryReportList);
+        
+        jTablePayrollSummary.setModel(tableModel);
+        TableConfigurator.configureBiWeeklyPayrollSummaryTable(jTablePayrollSummary);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -90,21 +109,12 @@ public class PayrollSummaryPage extends javax.swing.JFrame {
         jButton6LogOut = new javax.swing.JButton();
         jButton3SelfServicePortal = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        jLabelTotalBasicSalary = new javax.swing.JLabel();
-        jLabelTotalBasicSalaryResult = new javax.swing.JLabel();
-        jLabelTotalGrossSalary = new javax.swing.JLabel();
-        jLabelTotalGrossSalaryResult = new javax.swing.JLabel();
-        jLabelTotalGovernmentContribution = new javax.swing.JLabel();
-        jLabelTotalGovernmentContributionResult = new javax.swing.JLabel();
-        jLabelTotalWithholdingTax = new javax.swing.JLabel();
-        jLabelTotalWithholdingTaxResult = new javax.swing.JLabel();
-        jLabelTotalDeduction = new javax.swing.JLabel();
-        jLabelTotalDeductionResult = new javax.swing.JLabel();
-        jLabelTotalNetSalary = new javax.swing.JLabel();
-        jLabelTotalNetSalaryResult = new javax.swing.JLabel();
-        jLabelPayPeriod = new javax.swing.JLabel();
+        jLabelParollSubmitted = new javax.swing.JLabel();
         jButtonNext = new javax.swing.JButton();
         jButtonBack = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTablePayrollSummary = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
 
         jButton5.setBackground(new java.awt.Color(0, 102, 153));
         jButton5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -192,7 +202,7 @@ public class PayrollSummaryPage extends javax.swing.JFrame {
                 .addComponent(jButton1EmployeeInformation)
                 .addGap(34, 34, 34)
                 .addComponent(jButton4Payroll)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 152, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 239, Short.MAX_VALUE)
                 .addComponent(jButton6LogOut)
                 .addContainerGap())
         );
@@ -211,44 +221,8 @@ public class PayrollSummaryPage extends javax.swing.JFrame {
             .addGap(0, 23, Short.MAX_VALUE)
         );
 
-        jLabelTotalBasicSalary.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabelTotalBasicSalary.setText("Total Basic Salary: ");
-
-        jLabelTotalBasicSalaryResult.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabelTotalBasicSalaryResult.setText("Result");
-
-        jLabelTotalGrossSalary.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabelTotalGrossSalary.setText("Total Gross Salary: ");
-
-        jLabelTotalGrossSalaryResult.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabelTotalGrossSalaryResult.setText("Result");
-
-        jLabelTotalGovernmentContribution.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabelTotalGovernmentContribution.setText("Total Government Contribution: ");
-
-        jLabelTotalGovernmentContributionResult.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabelTotalGovernmentContributionResult.setText("Result");
-
-        jLabelTotalWithholdingTax.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabelTotalWithholdingTax.setText("Total Withholding Tax: ");
-
-        jLabelTotalWithholdingTaxResult.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabelTotalWithholdingTaxResult.setText("Result");
-
-        jLabelTotalDeduction.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabelTotalDeduction.setText("Total Deduction: ");
-
-        jLabelTotalDeductionResult.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabelTotalDeductionResult.setText("Result");
-
-        jLabelTotalNetSalary.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabelTotalNetSalary.setText("Total Net Salary: ");
-
-        jLabelTotalNetSalaryResult.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabelTotalNetSalaryResult.setText("Result");
-
-        jLabelPayPeriod.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabelPayPeriod.setText("Payroll Summary for the period of PayPeriod");
+        jLabelParollSubmitted.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabelParollSubmitted.setText("Payroll Submit");
 
         jButtonNext.setText("Submit");
         jButtonNext.addActionListener(new java.awt.event.ActionListener() {
@@ -264,91 +238,56 @@ public class PayrollSummaryPage extends javax.swing.JFrame {
             }
         });
 
+        jTablePayrollSummary.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane1.setViewportView(jTablePayrollSummary);
+
+        jButton1.setText("View Full Report");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(62, 62, 62)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                    .addComponent(jLabelTotalNetSalary)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(jLabelTotalNetSalaryResult))
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabelTotalDeduction)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jLabelTotalDeductionResult))
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addComponent(jLabelTotalBasicSalary)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(jLabelTotalBasicSalaryResult))
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addComponent(jLabelTotalGrossSalary)
-                                            .addGap(18, 18, 18)
-                                            .addComponent(jLabelTotalGrossSalaryResult)))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabelTotalGovernmentContribution)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jLabelTotalGovernmentContributionResult))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabelTotalWithholdingTax)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jLabelTotalWithholdingTaxResult))))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabelPayPeriod)
-                                .addGap(71, 71, 71)))
-                        .addContainerGap(287, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
                         .addComponent(jButtonBack)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButtonNext)
-                        .addContainerGap())))
+                        .addComponent(jButtonNext))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabelParollSubmitted)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 561, Short.MAX_VALUE)
+                        .addComponent(jButton1))
+                    .addComponent(jScrollPane1))
+                .addContainerGap())
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(23, 23, 23)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabelParollSubmitted)
+                            .addComponent(jButton1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(33, 33, 33)
-                        .addComponent(jLabelPayPeriod)
-                        .addGap(32, 32, 32)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabelTotalBasicSalary)
-                            .addComponent(jLabelTotalBasicSalaryResult))
+                        .addComponent(jScrollPane1)
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabelTotalGrossSalary)
-                            .addComponent(jLabelTotalGrossSalaryResult))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabelTotalGovernmentContribution)
-                            .addComponent(jLabelTotalGovernmentContributionResult))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabelTotalWithholdingTax)
-                            .addComponent(jLabelTotalWithholdingTaxResult))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabelTotalDeduction)
-                            .addComponent(jLabelTotalDeductionResult))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabelTotalNetSalary)
-                            .addComponent(jLabelTotalNetSalaryResult))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButtonNext)
                             .addComponent(jButtonBack))
@@ -376,6 +315,19 @@ public class PayrollSummaryPage extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3SelfServicePortalActionPerformed
 
     private void jButtonNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNextActionPerformed
+//        BiWeeklyPayrollViewModel selectedBiWeeklyPayroll = this.service.getBiWeeklyPayroll(this.payrollPayPeriod.getPayPeriodId()).get();
+//        if (!SelectionValidator.isPayrollProcessed(selectedBiWeeklyPayroll, this)) return;
+//        
+//        PayrollBiWeeklySummaryController controller = new PayrollBiWeeklySummaryController();
+//        controller.generatePayrollBiWeeklySummaryPDF(this.payrollPayPeriod.getPayPeriodId());
+        
+        JOptionPane.showMessageDialog(
+            null,
+            "Payroll was successfully generated!",
+            "Success",
+            JOptionPane.INFORMATION_MESSAGE
+        );
+        
         Access.accessPayrollList(this.admin);
         this.setVisible(false);
     }//GEN-LAST:event_jButtonNextActionPerformed
@@ -416,6 +368,7 @@ public class PayrollSummaryPage extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton1EmployeeInformation;
     private javax.swing.JButton jButton3EmployeeRequest;
     private javax.swing.JButton jButton3SelfServicePortal;
@@ -424,24 +377,14 @@ public class PayrollSummaryPage extends javax.swing.JFrame {
     private javax.swing.JButton jButton6LogOut;
     private javax.swing.JButton jButtonBack;
     private javax.swing.JButton jButtonNext;
-    private javax.swing.JLabel jLabelPayPeriod;
-    private javax.swing.JLabel jLabelTotalBasicSalary;
-    private javax.swing.JLabel jLabelTotalBasicSalaryResult;
-    private javax.swing.JLabel jLabelTotalDeduction;
-    private javax.swing.JLabel jLabelTotalDeductionResult;
-    private javax.swing.JLabel jLabelTotalGovernmentContribution;
-    private javax.swing.JLabel jLabelTotalGovernmentContributionResult;
-    private javax.swing.JLabel jLabelTotalGrossSalary;
-    private javax.swing.JLabel jLabelTotalGrossSalaryResult;
-    private javax.swing.JLabel jLabelTotalNetSalary;
-    private javax.swing.JLabel jLabelTotalNetSalaryResult;
-    private javax.swing.JLabel jLabelTotalWithholdingTax;
-    private javax.swing.JLabel jLabelTotalWithholdingTaxResult;
+    private javax.swing.JLabel jLabelParollSubmitted;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPopupMenu jPopupMenu1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTablePayrollSummary;
     // End of variables declaration//GEN-END:variables
 }

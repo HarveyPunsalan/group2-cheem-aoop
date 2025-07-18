@@ -4,220 +4,154 @@
  */
 package com.motorph.attendancemanagement.service;
 
-import com.motorph.attendancemanagement.model.Overtime;
 import com.motorph.attendancemanagement.model.Request;
-import com.motorph.attendancemanagement.model.Leave;
-import com.motorph.common.util.CollectionUtils;
-import com.motorph.employeemanagement.model.Employee;
-import com.motorph.employeemanagement.service.csvversion.EmployeeService;
 import com.motorph.database.connection.DatabaseService;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.table.DefaultTableModel;
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RequestService {
 
-    private final List<Request> requestList;
-    private final List<Leave> leaveList;
-    private final List<Overtime> overtimeList;
-
-    private final Map<String, Request> requestMapByRequestID;
-    private final Map<String, Leave> leaveMapByLeaveID;
-    private final Map<String, Overtime> overtimeMapByOvertimeID;
+    private Connection connection;
 
     public RequestService() {
-        this.requestList = fetchAllRequests();
-        this.leaveList = fetchAllLeaveRequests();
-        this.overtimeList = fetchAllOvertimeRequests();
-
-        this.requestMapByRequestID = CollectionUtils.listToMap(requestList, Request::getID);
-        this.leaveMapByLeaveID = CollectionUtils.listToMap(leaveList, Leave::getID);
-        this.overtimeMapByOvertimeID = CollectionUtils.listToMap(overtimeList, Overtime::getID);
+        connection = DatabaseService.connectToMotorPH(); // Ensure this returns a working connection
     }
 
-    private Connection getConnection() throws SQLException {
-        return DatabaseService.connectToMotorPH();
-    }
+    // CREATE
+    public boolean addRequest(Request request) {
+        String sql = "INSERT INTO request (employee_id, request_date, reason, request_status, created_at, processed_by, processed_date, remarks) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, request.getEmployeeId());
+            stmt.setDate(2, request.getRequestDate());
+            stmt.setString(3, request.getReason());
+            stmt.setString(4, request.getRequestStatus());
+            stmt.setTimestamp(5, request.getCreatedAt());
 
-    private List<Request> fetchAllRequests() {
-        List<Request> requests = new ArrayList<>();
-        String query = "SELECT * FROM request";
-
-        try (Connection conn = getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-
-            while (rs.next()) {
-                requests.add(new Request(new String[]{
-                        rs.getString("request_id"),
-                        rs.getString("request_type_id"),
-                        rs.getString("employee_id"),
-                        rs.getString("request_date"),
-                        rs.getString("reason"),
-                        rs.getString("request_status"),
-                        rs.getString("processed_by"),
-                        rs.getString("processed_date"),
-                        rs.getString("remarks"),
-                        rs.getString("created_at")
-                }));
+            // Optional: processed_by
+            if (request.getProcessedBy() > 0) {
+                stmt.setInt(6, request.getProcessedBy());
+            } else {
+                stmt.setNull(6, Types.INTEGER);
             }
 
+            // Optional: processed_date
+            if (request.getProcessedDate() != null) {
+                stmt.setDate(7, request.getProcessedDate());
+            } else {
+                stmt.setNull(7, Types.DATE);
+            }
+
+            // Optional: remarks
+            if (request.getRemarks() != null) {
+                stmt.setString(8, request.getRemarks());
+            } else {
+                stmt.setNull(8, Types.VARCHAR);
+            }
+
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // READ (GET BY ID)
+    public Request getRequestById(int id) {
+        String sql = "SELECT * FROM request WHERE request_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return extractRequestFromResultSet(rs);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return requests;
+        return null;
     }
 
-    private List<Leave> fetchAllLeaveRequests() {
-        List<Leave> leaves = new ArrayList<>();
-        String query = "SELECT * FROM employee_leave";
-
-        try (Connection conn = getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-
+    // READ (GET ALL)
+    public List<Request> getAllRequests() {
+        List<Request> requestList = new ArrayList<>();
+        String sql = "SELECT * FROM request";
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                leaves.add(new Leave(new String[]{
-                        rs.getString("leave_id"),
-                        rs.getString("employee_id"),
-                        rs.getString("leave_type"),
-                        rs.getString("start_date"),
-                        rs.getString("end_date"),
-                        rs.getString("total_days"),
-                        rs.getString("request_id")
-                }));
+                requestList.add(extractRequestFromResultSet(rs));
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return leaves;
+        return requestList;
     }
 
-    private List<Overtime> fetchAllOvertimeRequests() {
-        List<Overtime> overtimes = new ArrayList<>();
-        String query = "SELECT * FROM overtime";
+    // UPDATE
+    public boolean updateRequest(Request request) {
+        String sql = "UPDATE request SET employee_id = ?, request_date = ?, reason = ?, request_status = ?, " +
+                     "created_at = ?, processed_by = ?, processed_date = ?, remarks = ? WHERE request_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, request.getEmployeeId());
+            stmt.setDate(2, request.getRequestDate());
+            stmt.setString(3, request.getReason());
+            stmt.setString(4, request.getRequestStatus());
+            stmt.setTimestamp(5, request.getCreatedAt());
 
-        try (Connection conn = getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-
-            while (rs.next()) {
-                overtimes.add(new Overtime(new String[]{
-                        rs.getString("overtime_id"),
-                        rs.getString("employee_id"),
-                        rs.getString("date"),
-                        rs.getString("start_time"),
-                        rs.getString("end_time"),
-                        rs.getString("total_hours"),
-                        rs.getString("payable_hours"),
-                        rs.getString("is_approved"),
-                        rs.getString("request_id"),
-                        rs.getString("dtr_id")
-                }));
+            // Optional: processed_by
+            if (request.getProcessedBy() > 0) {
+                stmt.setInt(6, request.getProcessedBy());
+            } else {
+                stmt.setNull(6, Types.INTEGER);
             }
 
+            // Optional: processed_date
+            if (request.getProcessedDate() != null) {
+                stmt.setDate(7, request.getProcessedDate());
+            } else {
+                stmt.setNull(7, Types.DATE);
+            }
+
+            // Optional: remarks
+            if (request.getRemarks() != null) {
+                stmt.setString(8, request.getRemarks());
+            } else {
+                stmt.setNull(8, Types.VARCHAR);
+            }
+
+            stmt.setInt(9, request.getRequestId());
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
-
-        return overtimes;
     }
 
-    public Leave getLeaveRecord(String leaveID) {
-        return leaveMapByLeaveID.get(leaveID);
-    }
-
-    public Overtime getOvertimeRecord(String overtimeID) {
-        return overtimeMapByOvertimeID.get(overtimeID);
-    }
-
-    public Request getRequestRecord(String requestID) {
-        return requestMapByRequestID.get(requestID);
-    }
-
-    public DefaultComboBoxModel<String> getStatusComboBoxModel() {
-        return new DefaultComboBoxModel<>(new String[]{"All", "PENDING", "APPROVED", "REJECTED"});
-    }
-
-    public DefaultTableModel getLeaveRequestTableModel() {
-        String[] columnNames = {
-                "Request ID", "Request Date", "Employee Name",
-                "Start Date", "End Date", "Leave Type", "Total Days", "Notes", "Status"
-        };
-
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        EmployeeService employeeService = new EmployeeService();
-
-        for (Leave leave : leaveList) {
-            Employee employee = employeeService.getEmployeeInformation(leave.getEmployeeID());
-            Request request = getRequestRecord(String.valueOf(leave.getRequestId()));
-
-            String employeeName = (employee != null)
-                    ? employee.getFirstName() + " " + employee.getLastName()
-                    : "Terminated Employee";
-
-            model.addRow(new Object[]{
-                    leave.getID(),
-                    request != null ? request.getRequestDate() : "",
-                    employeeName,
-                    leave.getStartDate(),
-                    leave.getEndDate(),
-                    leave.getLeaveType(),
-                    leave.getTotalDays(),
-                    request != null ? request.getReason() : "",
-                    request != null ? request.getStatus() : ""
-            });
+    // DELETE
+    public boolean deleteRequest(int requestId) {
+        String sql = "DELETE FROM request WHERE request_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, requestId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
-
-        return model;
     }
 
-    public DefaultTableModel getOvertimeRequestTableModel() {
-        String[] columnNames = {
-                "Request ID", "Request Date", "Employee Name",
-                "Start Time", "End Time", "Total Hours", "Notes", "Status"
-        };
-
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        EmployeeService employeeService = new EmployeeService();
-
-        for (Overtime overtime : overtimeList) {
-            Employee employee = employeeService.getEmployeeInformation(overtime.getEmployeeID());
-            Request request = getRequestRecord(String.valueOf(overtime.getRequestId()));
-
-            String employeeName = (employee != null)
-                    ? employee.getFirstName() + " " + employee.getLastName()
-                    : "Terminated Employee";
-
-            model.addRow(new Object[]{
-                    overtime.getID(),
-                    request != null ? request.getRequestDate() : "",
-                    employeeName,
-                    overtime.getStartTime(),
-                    overtime.getEndTime(),
-                    overtime.getTotalHours(),
-                    request != null ? request.getReason() : "",
-                    request != null ? request.getStatus() : ""
-            });
-        }
-
-        return model;
+    // Helper to extract a Request object from a ResultSet row
+    private Request extractRequestFromResultSet(ResultSet rs) throws SQLException {
+        return new Request(
+            rs.getInt("request_id"),
+            rs.getInt("employee_id"),
+            rs.getDate("request_date"),
+            rs.getString("reason"),
+            rs.getString("request_status"),
+            rs.getTimestamp("created_at"),
+            rs.getInt("processed_by"),
+            rs.getDate("processed_date"),
+            rs.getString("remarks")
+        );
     }
 }

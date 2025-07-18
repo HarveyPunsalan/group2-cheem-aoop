@@ -26,6 +26,7 @@ public class PayrollEmployeeSelection extends javax.swing.JFrame {
     Admin admin;
     PayPeriod payrollPayPeriod;
     EmployeeWorkedHoursSummaryService service;
+    EmployeeWorkedHoursSummaryTableModel tableModel;
     
     public PayrollEmployeeSelection( ) {
         initComponents(); 
@@ -65,7 +66,7 @@ public class PayrollEmployeeSelection extends javax.swing.JFrame {
     
     private void loadTable(PayPeriod payPeriod) {
         List<EmployeeWorkedHoursSummaryViewModel> EmployeeWorkedHourList = this.service.getSummaryByPayPeriodId(payPeriod.getPayPeriodId());
-        EmployeeWorkedHoursSummaryTableModel tableModel = new EmployeeWorkedHoursSummaryTableModel(EmployeeWorkedHourList);
+        this.tableModel = new EmployeeWorkedHoursSummaryTableModel(EmployeeWorkedHourList);
         
         jTablePayrollEmployeeSelection.setModel(tableModel);
         TableConfigurator.configureEmployeeWorkedHoursSummaryTable(jTablePayrollEmployeeSelection);
@@ -317,7 +318,8 @@ public class PayrollEmployeeSelection extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonCancelActionPerformed
 
     private void jButtonNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNextActionPerformed
-        Access.accessPayrollEarnings(this.admin, this.payrollPayPeriod);
+        List<EmployeeWorkedHoursSummaryViewModel> viewModel = tableModel.getSelectedEmployees();
+        Access.accessPayrollSummaryPage(this.admin, this.payrollPayPeriod, viewModel);
         this.setVisible(false);
     }//GEN-LAST:event_jButtonNextActionPerformed
 

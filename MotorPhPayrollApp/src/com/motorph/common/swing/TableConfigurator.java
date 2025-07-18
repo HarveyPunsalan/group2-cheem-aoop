@@ -104,5 +104,38 @@ public class TableConfigurator {
         table.setRowHeight(24);
         table.getTableHeader().setReorderingAllowed(false);
     }
+    
+    public static void configureBiWeeklyPayrollSummaryTable(JTable table) {
+        TableColumnModel columnModel = table.getColumnModel();
+
+        int[] preferredWidths = {50, 150, 120, 100, 100, 100, 100, 100, 100, 100, 100};
+        int[] alignments = {
+            SwingConstants.LEFT,  // Employee No
+            SwingConstants.LEFT,  // Employee Full Name
+            SwingConstants.LEFT,// Position
+            SwingConstants.LEFT, // Department
+            
+            SwingConstants.RIGHT,   // Gross Income
+            
+            SwingConstants.RIGHT, // SSS Contribution
+            SwingConstants.RIGHT, // Philhealth Contribution
+            SwingConstants.RIGHT,   // Pag-Ibig Contribution
+            SwingConstants.RIGHT, // Withholding  Tax
+            SwingConstants.RIGHT   // Net Pay
+        };
+
+        for (int i = 0; i < columnModel.getColumnCount(); i++) {
+            TableColumn column = columnModel.getColumn(i);
+            column.setPreferredWidth(preferredWidths[i]);
+
+            DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+            renderer.setHorizontalAlignment(alignments[i]);
+            column.setCellRenderer(renderer);
+        }
+
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.setRowHeight(24);
+        table.getTableHeader().setReorderingAllowed(false);
+    }
 }
 

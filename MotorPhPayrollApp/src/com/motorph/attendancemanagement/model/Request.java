@@ -4,135 +4,112 @@
  */
 package com.motorph.attendancemanagement.model;
 
-import Class.EntityManagement.EntityManager;
-import Class.EntityManagement.EntityType;
-import Class.IDManagement.IDManager;
-import Class.IDManagement.Identifiable;
-import com.motorph.common.util.Parser;
+import java.sql.Date;
+import java.sql.Timestamp;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-public class Request implements Identifiable {
-    private String requestID;
-    private String requestTypeID;
-    private int employeeID;
-    private LocalDate requestDate;
+public class Request {
+    private int requestId;
+    private int employeeId;
+    private Date requestDate;
     private String reason;
-    private String status;
+    private String requestStatus;
+    private Timestamp createdAt;
     private int processedBy;
-    private LocalDate processedDate;
+    private Date processedDate;
     private String remarks;
-    private LocalDateTime createdAt; // ✅ SQL-aligned
 
-    public Request() {
+    // No-arg constructor
+    public Request() {}
+
+    // Full constructor
+    public Request(int requestId, int employeeId, Date requestDate, String reason, String requestStatus,
+                   Timestamp createdAt, int processedBy, Date processedDate, String remarks) {
+        this.requestId = requestId;
+        this.employeeId = employeeId;
+        this.requestDate = requestDate;
+        this.reason = reason;
+        this.requestStatus = requestStatus;
+        this.createdAt = createdAt;
+        this.processedBy = processedBy;
+        this.processedDate = processedDate;
+        this.remarks = remarks;
     }
 
-    public Request(String[] requestData) {
-        if (requestData == null) {
-            throw new IllegalArgumentException("Request data cannot be null.");
-        }
-
-        switch (requestData.length) {
-            case 4 -> {
-                // New request (without requestID, processed fields)
-                EntityManager request = new EntityManager(EntityType.REQUEST);
-                this.requestID = IDManager.generateID(request.getEntityType().getIdPrefix());
-                IDManager.saveIDCounters();
-
-                this.requestTypeID = requestData[0];
-                this.employeeID = Parser.parseInteger(requestData[1], 0);
-                this.requestDate = Parser.parseLocalDate(requestData[2], null);
-                this.reason = requestData[3].isEmpty() ? null : requestData[3];
-
-                this.status = RequestStatus.PENDING.toString();
-                this.processedBy = 0;
-                this.processedDate = null;
-                this.remarks = null;
-                this.createdAt = LocalDateTime.now(); // ✅ auto timestamp
-            }
-            case 10 -> {
-                // Fully loaded from SQL
-                this.requestID = requestData[0];
-                this.requestTypeID = requestData[1];
-                this.employeeID = Parser.parseInteger(requestData[2], 0);
-                this.requestDate = Parser.parseLocalDate(requestData[3], null);
-                this.reason = requestData[4].isEmpty() ? null : requestData[4];
-                this.status = RequestStatus.valueOf(requestData[5]).toString();
-                this.processedBy = Parser.parseInteger(requestData[6], -1);
-                this.processedDate = Parser.parseLocalDate(requestData[7], null);
-                this.remarks = requestData[8].isEmpty() ? null : requestData[8];
-                this.createdAt = requestData[9].isEmpty() ? null : LocalDateTime.parse(requestData[9]);
-            }
-            default -> throw new IllegalArgumentException("Invalid input data format. Expected 4 or 10 parameters.");
-        }
+    // ✅ Public getters and setters
+    public int getRequestId() {
+        return requestId;
     }
 
-    @Override
-    public String getID() {
-        return requestID;
+    public void setRequestId(int requestId) {
+        this.requestId = requestId;
     }
 
-    public String getRequestTypeID() {
-        return requestTypeID;
+    public int getEmployeeId() {
+        return employeeId;
     }
 
-    public int getEmployeeID() {
-        return employeeID;
+    public void setEmployeeId(int employeeId) {
+        this.employeeId = employeeId;
     }
 
-    public LocalDate getRequestDate() {
+    public Date getRequestDate() {
         return requestDate;
+    }
+
+    public void setRequestDate(Date requestDate) {
+        this.requestDate = requestDate;
     }
 
     public String getReason() {
         return reason;
     }
 
-    public String getStatus() {
-        return status;
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public String getRequestStatus() {
+        return requestStatus;
+    }
+
+    public void setRequestStatus(String requestStatus) {
+        this.requestStatus = requestStatus;
+    }
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
     }
 
     public int getProcessedBy() {
         return processedBy;
     }
 
-    public LocalDate getProcessedDate() {
+    public void setProcessedBy(int processedBy) {
+        this.processedBy = processedBy;
+    }
+
+    public Date getProcessedDate() {
         return processedDate;
+    }
+
+    public void setProcessedDate(Date processedDate) {
+        this.processedDate = processedDate;
     }
 
     public String getRemarks() {
         return remarks;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void approve(int processedBy) {
-        if (processedBy <= 0) {
-            throw new IllegalArgumentException("Processed by must be a valid employee ID.");
-        }
-        this.processedBy = processedBy;
-        this.status = RequestStatus.APPROVED.toString();
-        this.processedDate = LocalDate.now();
-    }
-
-    public void reject(int processedBy, String remarks) {
-        if (processedBy <= 0) {
-            throw new IllegalArgumentException("Processed by must be a valid employee ID.");
-        }
-        if (remarks == null || remarks.isEmpty()) {
-            throw new IllegalArgumentException("Rejection remarks cannot be empty.");
-        }
-
-        this.processedBy = processedBy;
-        this.status = RequestStatus.REJECTED.toString();
+    public void setRemarks(String remarks) {
         this.remarks = remarks;
-        this.processedDate = LocalDate.now();
+    }
+
+    // For polymorphic use
+    public String getID() {
+        return String.valueOf(requestId);
     }
 }

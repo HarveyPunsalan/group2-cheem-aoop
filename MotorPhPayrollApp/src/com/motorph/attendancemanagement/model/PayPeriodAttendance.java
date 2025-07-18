@@ -31,15 +31,19 @@ public class PayPeriodAttendance {
 
     public PayPeriodAttendance(String[] data) {
         if (data == null || data.length < 11) {
-            throw new IllegalArgumentException("Invalid pay period attendance data provided: " + Arrays.toString(data));
+            throw new IllegalArgumentException("Invalid pay period attendance data: " + Arrays.toString(data));
         }
 
         try {
             this.payPeriodAttendanceID = data[0];
-            this.employee = new Employee(); // TODO: Replace with actual employee lookup using data[1]
+
+            // Create new Employee and set employeeId
+            Employee emp = new Employee();
+            emp.setEmployeeId(Integer.parseInt(data[1]));
+            this.employee = emp;
 
             PayPeriodService payPeriodService = ServiceFactory.createPayPeriodServicewService();
-            this.payPeriod = payPeriodService.searchByDateRange(data[2], data[3]).orElse(null); // date range: startDate, endDate
+            this.payPeriod = payPeriodService.searchByDateRange(data[2], data[3]).orElse(null);
 
             this.totalWorkedHours = Double.parseDouble(data[4]);
             this.totalLateHours = Double.parseDouble(data[5]);
@@ -48,7 +52,14 @@ public class PayPeriodAttendance {
             this.payableHours = Double.parseDouble(data[8]);
             this.status = data[9];
 
-            this.approvedBy = (data[10] != null && !data[10].trim().isEmpty()) ? new Employee() : null; // TODO: Replace with actual employee lookup
+            // Handle approvedBy field (optional)
+            if (data[10] != null && !data[10].trim().isEmpty()) {
+                Employee approver = new Employee();
+                approver.setEmployeeId(Integer.parseInt(data[10]));
+                this.approvedBy = approver;
+            } else {
+                this.approvedBy = null;
+            }
         } catch (Exception e) {
             throw new IllegalArgumentException("Error parsing pay period attendance data: " + Arrays.toString(data), e);
         }

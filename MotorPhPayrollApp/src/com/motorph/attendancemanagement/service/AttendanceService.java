@@ -6,106 +6,136 @@ package com.motorph.attendancemanagement.service;
 
 import com.motorph.attendancemanagement.model.DailyAttendance;
 import com.motorph.employeemanagement.model.Employee;
-import CSVFileManager.CsvFile;
-import com.motorph.common.util.CollectionUtils;
-import com.motorph.common.ui.model.TableModel;
-import com.motorph.payrollprocessing.model.payroll.PayPeriod;
+import com.motorph.database.connection.DatabaseService;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.table.DefaultTableModel;
+import java.sql.*;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AttendanceService {
-    private List<DailyAttendance> dailyAttendanceList;
-    private List<Employee> employeeList;
 
-    public AttendanceService() {
-        this.dailyAttendanceList = CsvFile.DAILYATTENDANCE.readFile(DailyAttendance::new);
-        // this.employeeList = CsvFile.EMPLOYEEINFORMATION.readFile(Employee::new);
-    }
+    // Retrieve attendance records for an employee
+    public List<DailyAttendance> getAllAttendanceRecords(Employee employee) {
+        List<DailyAttendance> attendanceList = new ArrayList<>();
+        String sql = "SELECT attendance_id, employee_id, date, time_in, time_out, late_hours, overtime_hours, worked_hours " +
+                     "FROM attendance WHERE employee_id = ?";
 
-    public DailyAttendance getEmployeeDailyAttendance(Employee employee, LocalDate date) {
-        return dailyAttendanceList.stream()
-                .filter(dtr -> dtr.getEmployee().getEmployeeId() == employee.getEmployeeId())
-                .filter(dtr -> dtr.getDate().equals(date))
-                .findFirst()
-                .orElse(null);
-    }
+        try (Connection conn = DatabaseService.connectToMotorPH();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-    public DefaultComboBoxModel<String> getOvertimeDatesComboBoxModel(List<DailyAttendance> dtrList) {
-        String[] overtimeDatesArray = dtrList.stream()
-                .filter(DailyAttendance::hasOvertime)
-                .map(dtr -> dtr.getDate().toString())
-                .toArray(String[]::new);
-        return new DefaultComboBoxModel<>(overtimeDatesArray);
-    }
+            stmt.setInt(1, employee.getEmployeeId());
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    DailyAttendance attendance = mapResultSetToAttendance(rs, employee);
+                    attendanceList.add(attendance);
+                }
+            }
 
-    public List<DailyAttendance> getFilteredDailyAttendance(Employee employee, PayPeriod payPeriod) {
-        return dailyAttendanceList.stream()
-                .filter(dtr -> dtr.getEmployee().getEmployeeId() == employee.getEmployeeId())
-                .filter(dtr -> !dtr.getDate().isBefore(payPeriod.getStartDate())
-                        && !dtr.getDate().isAfter(payPeriod.getEndDate()))
-                .collect(Collectors.toList());
-    }
-
-    public DefaultTableModel getAttendanceTableModel(Employee employee, PayPeriod payPeriod) {
-        int[] selectedColumns = {2, 3, 4, 5, 6, 7};
-        String[] selectedHeaders = new String[selectedColumns.length];
-
-        for (int i = 0; i < selectedColumns.length; i++) {
-            selectedHeaders[i] = CsvFile.DAILYATTENDANCE.getTableHeader()[selectedColumns[i]];
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
-        List<LocalDate> allDates = payPeriod.getStartDate().datesUntil(payPeriod.getEndDate().plusDays(1))
-                .collect(Collectors.toList());
-
-        List<DailyAttendance> filteredList = getFilteredDailyAttendance(employee, payPeriod);
-        Map<LocalDate, DailyAttendance> attendanceMap = CollectionUtils.listToMap(filteredList, DailyAttendance::getDate);
-
-        List<String[]> tableRows = new ArrayList<>();
-        for (LocalDate date : allDates) {
-            DailyAttendance dtr = attendanceMap.get(date);
-
-            String[] row = new String[]{
-                    date.format(DateTimeFormatter.ofPattern("M/d/yyyy")),
-                    (dtr != null && dtr.getTimeIn() != null) ? dtr.getTimeIn().format(DateTimeFormatter.ofPattern("H:mm")) : "N/A",
-                    (dtr != null && dtr.getTimeOut() != null) ? dtr.getTimeOut().format(DateTimeFormatter.ofPattern("H:mm")) : "N/A",
-                    (dtr != null) ? String.valueOf(dtr.getHoursLate()) : "0.0",
-                    (dtr != null) ? String.valueOf(dtr.getHoursOvertime()) : "0.0",
-                    (dtr != null) ? String.valueOf(dtr.getHoursWorked()) : "0.0"
-            };
-
-            tableRows.add(row);
-        }
-
-        return new TableModel(tableRows, selectedHeaders, row -> row).getTableModel();
+        return attendanceList;
     }
 
-    public void updateDailyAttendanceFile() {
-        boolean updateNeeded = dailyAttendanceList.stream().anyMatch(d ->
-                d.getTimeIn() != null && d.getTimeOut() != null &&
-                        (d.getHoursLate() == 0.0 && d.getHoursWorked() == 0.0 && d.getHoursOvertime() == 0.0)
-        );
+    // Create a new attendance record
+    public boolean createAttendance(DailyAttendance attendance) {
+        String sql = "INSERT INTO attendance (attendance_id, employee_id, date, time_in, time_out, late_hours, overtime_hours, worked_hours) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-        if (!updateNeeded) return;
+        try (Connection conn = DatabaseService.connectToMotorPH();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-        List<String[]> dataToWrite = dailyAttendanceList.stream()
-                .map(dtr -> new String[]{
-                        dtr.getAttendanceID(),
-                        String.valueOf(dtr.getEmployee().getEmployeeId()),
-                        dtr.getDate().format(DateTimeFormatter.ofPattern("M/d/yyyy")),
-                        (dtr.getTimeIn() != null) ? dtr.getTimeIn().format(DateTimeFormatter.ofPattern("H:mm")) : "",
-                        (dtr.getTimeOut() != null) ? dtr.getTimeOut().format(DateTimeFormatter.ofPattern("H:mm")) : "",
-                        String.valueOf(dtr.getHoursLate()),
-                        String.valueOf(dtr.getHoursOvertime()),
-                        String.valueOf(dtr.getHoursWorked())
-                })
-                .collect(Collectors.toList());
+            stmt.setString(1, attendance.getAttendanceId());
+            stmt.setInt(2, attendance.getEmployee().getEmployeeId());
+            stmt.setDate(3, Date.valueOf(attendance.getDate()));
+            stmt.setTime(4, Time.valueOf(attendance.getTimeIn()));
+            stmt.setTime(5, Time.valueOf(attendance.getTimeOut()));
+            stmt.setDouble(6, attendance.getHoursLate());
+            stmt.setDouble(7, attendance.getHoursOvertime());
+            stmt.setDouble(8, attendance.getHoursWorked());
 
-        CsvFile.DAILYATTENDANCE.writeFile(dataToWrite);
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Update an existing attendance record
+    public boolean updateAttendance(DailyAttendance attendance) {
+        String sql = "UPDATE attendance SET date = ?, time_in = ?, time_out = ?, late_hours = ?, overtime_hours = ?, worked_hours = ? " +
+                     "WHERE attendance_id = ?";
+
+        try (Connection conn = DatabaseService.connectToMotorPH();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setDate(1, Date.valueOf(attendance.getDate()));
+            stmt.setTime(2, Time.valueOf(attendance.getTimeIn()));
+            stmt.setTime(3, Time.valueOf(attendance.getTimeOut()));
+            stmt.setDouble(4, attendance.getHoursLate());
+            stmt.setDouble(5, attendance.getHoursOvertime());
+            stmt.setDouble(6, attendance.getHoursWorked());
+            stmt.setString(7, attendance.getAttendanceId());
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Delete attendance record by ID
+    public boolean deleteAttendance(String attendanceId) {
+        String sql = "DELETE FROM attendance WHERE attendance_id = ?";
+
+        try (Connection conn = DatabaseService.connectToMotorPH();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, attendanceId);
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Get a single attendance record by ID
+    public DailyAttendance getAttendanceById(String attendanceId, Employee employee) {
+        String sql = "SELECT attendance_id, employee_id, date, time_in, time_out, late_hours, overtime_hours, worked_hours " +
+                     "FROM attendance WHERE attendance_id = ?";
+
+        try (Connection conn = DatabaseService.connectToMotorPH();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, attendanceId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToAttendance(rs, employee);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // Helper: maps ResultSet row to DailyAttendance object
+    private DailyAttendance mapResultSetToAttendance(ResultSet rs, Employee employee) throws SQLException {
+        String attendanceId = rs.getString("attendance_id");
+        LocalDate date = rs.getDate("date").toLocalDate();
+        LocalTime timeIn = rs.getTime("time_in").toLocalTime();
+        LocalTime timeOut = rs.getTime("time_out").toLocalTime();
+        double lateHours = rs.getDouble("late_hours");
+        double overtimeHours = rs.getDouble("overtime_hours");
+        double workedHours = rs.getDouble("worked_hours");
+
+        return new DailyAttendance(attendanceId, employee, date, timeIn, timeOut, lateHours, overtimeHours, workedHours);
     }
 }
-

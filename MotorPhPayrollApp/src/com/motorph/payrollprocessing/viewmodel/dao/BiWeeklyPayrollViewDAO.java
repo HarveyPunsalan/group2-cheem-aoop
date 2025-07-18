@@ -7,11 +7,17 @@ package com.motorph.payrollprocessing.viewmodel.dao;
 import com.motorph.common.dao.AbstractDAO;
 import com.motorph.common.dao.DAOException;
 import com.motorph.database.execution.SQLExecutor;
-import com.motorph.payrollprocessing.viewmodel.Script.BiWeeklyPayrollViewScipt;
+import com.motorph.payrollprocessing.viewmodel.Script.BiWeeklyPayrollViewScript;
 import java.util.List;
 import java.util.Optional;
 import com.motorph.common.mapper.ModelMapper;
+import com.motorph.database.execution.script.Script;
 import com.motorph.payrollprocessing.viewmodel.model.BiWeeklyPayrollViewModel;
+import com.motorph.reportmanagement.model.PayrollBiWeeklySummaryReport;
+import com.motorph.reportmanagement.service.PayrollBiWeeklySummaryResultMapper;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class BiWeeklyPayrollViewDAO extends AbstractDAO<BiWeeklyPayrollViewModel> {
     
@@ -21,12 +27,26 @@ public class BiWeeklyPayrollViewDAO extends AbstractDAO<BiWeeklyPayrollViewModel
     
     @Override
     public Optional<BiWeeklyPayrollViewModel> findById(int id) throws DAOException {
-        return findById(id, BiWeeklyPayrollViewScipt.SELECT_BY_ID);
+        return findById(id, BiWeeklyPayrollViewScript.SELECT_BY_ID);
+    }
+    
+    public List<PayrollBiWeeklySummaryReport> findByIds(int payPeriodId, List<Integer> employeeIds) throws DAOException, SQLException {
+        if (employeeIds == null || employeeIds.isEmpty()) {
+            return Collections.emptyList(); // or throw an IllegalArgumentException
+        }
+        
+        Script script = BiWeeklyPayrollViewScript.SELECT_BY_IDs.formatScriptWithPlaceholders(employeeIds.size());
+        
+        List<Object> params = new ArrayList<>();
+        params.add(payPeriodId);              // Add the single value
+        params.addAll(employeeIds);           // Add the list
+        
+        return executor.executeQuery(script, params, PayrollBiWeeklySummaryResultMapper::map);
     }
 
     @Override
     public List<BiWeeklyPayrollViewModel> findAll() throws DAOException {
-        return findAll(BiWeeklyPayrollViewScipt.SELECT_ALL);
+        return findAll(BiWeeklyPayrollViewScript.SELECT_ALL);
     }
 
     // Optional: Add methods like findByStatus, findByDateRange, etc.

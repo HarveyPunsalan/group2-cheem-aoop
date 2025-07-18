@@ -30,11 +30,13 @@ public interface Authenticator {
     boolean verifyPassword(String plainTextPassword, String hashedPassword);
     
     /**
-     * Generates a secure random salt for password hashing.
+     * Authenticates a user by username and password.
      * 
-     * @return Random salt string
+     * @param username User's login username
+     * @param plainPassword User's plain text password
+     * @return true if authentication successful
      */
-    String generateSalt();
+    boolean authenticate(String username, String plainPassword);
     
     /**
      * Checks if a password meets security requirements.

@@ -5,154 +5,124 @@
 package com.motorph.attendancemanagement.service;
 
 import com.motorph.attendancemanagement.model.Leave;
-import com.motorph.attendancemanagement.model.LeaveType;
-import com.motorph.common.util.CollectionUtils;
 import com.motorph.database.connection.DatabaseService;
 
-import javax.swing.DefaultComboBoxModel;
 import java.sql.*;
-import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LeaveService {
-    private List<LeaveType> leaveTypeList;
-    private Map<String, LeaveType> leaveMapByLeaveTypeID;
+
+    private final Connection conn;
 
     public LeaveService() {
-        this.leaveTypeList = loadLeaveTypesFromDB();
-        this.leaveMapByLeaveTypeID = CollectionUtils.listToMap(leaveTypeList, LeaveType::getID);
+        this.conn = DatabaseService.connectToMotorPH();
     }
 
-    // ✅ COMBOBOX for UI
-    public DefaultComboBoxModel<String> getLeaveTypeComboBoxModel() {
-        String[] leaveTypeArray = leaveTypeList.stream()
-            .map(LeaveType::getLeaveTypeName)
-            .toArray(String[]::new);
-        return new DefaultComboBoxModel<>(leaveTypeArray);
-    }
-
-    // ✅ SQL → Load Leave Type Records
-    private List<LeaveType> loadLeaveTypesFromDB() {
-        List<LeaveType> types = new ArrayList<>();
-        String sql = "SELECT * FROM leave_type";
-
-        try (Connection conn = DatabaseService.connectToMotorPH();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
-            while (rs.next()) {
-                LeaveType type = new LeaveType(
-                    rs.getString("leave_type_id"),
-                    rs.getString("leave_type_name"),
-                    rs.getString("description"),
-                    rs.getBoolean("is_paid_leave"),
-                    rs.getInt("min_days_allowed"),
-                    rs.getInt("max_days_allowed")
-                );
-                types.add(type);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace(); // Log better in production
-        }
-
-        return types;
-    }
-
-    // ✅ SQL → Get leave records by employee ID
-    public List<Leave> getLeavesByEmployeeId(int employeeId) {
-        List<Leave> leaves = new ArrayList<>();
-        String sql = "SELECT * FROM employee_leave WHERE employee_id = ?";
-
-        try (Connection conn = DatabaseService.connectToMotorPH();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, employeeId);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    String[] leaveData = new String[] {
-                        String.valueOf(rs.getString("leave_id")),
-                        String.valueOf(rs.getInt("employee_id")),
-                        rs.getString("leave_type"),
-                        rs.getDate("start_date").toLocalDate().toString(),
-                        rs.getDate("end_date").toLocalDate().toString(),
-                        String.valueOf(rs.getDouble("total_days")),
-                        String.valueOf(rs.getInt("request_id"))
-                    };
-
-                    Leave leave = new Leave(leaveData);
-                    leaves.add(leave);
-                }
-            }
-
+    /**
+     * Creates a new leave entry in the database.
+     */
+    public boolean createLeave(Leave leave) {
+        String sql = "INSERT INTO employee_leave (leave_id, employee_id, leave_type, start_date, end_date, total_days, request_id) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, leave.getLeaveID());
+            stmt.setInt(2, leave.getEmployeeId());
+            stmt.setString(3, leave.getLeaveType());
+            stmt.setDate(4, Date.valueOf(leave.getStartDate()));
+            stmt.setDate(5, Date.valueOf(leave.getEndDate()));
+            stmt.setDouble(6, leave.getTotalDays());
+            stmt.setInt(7, leave.getRequestId());
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
+    }
 
+    /**
+     * Returns all leave entries from the database.
+     */
+    public List<Leave> getAllLeaves() {
+        List<Leave> leaves = new ArrayList<>();
+        String sql = "SELECT * FROM employee_leave";
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                Leave leave = new Leave();
+                leave.setLeaveID(rs.getString("leave_id"));
+                leave.setEmployeeId(rs.getInt("employee_id"));
+                leave.setLeaveType(rs.getString("leave_type"));
+                leave.setStartDate(rs.getDate("start_date").toLocalDate());
+                leave.setEndDate(rs.getDate("end_date").toLocalDate());
+                leave.setTotalDays(rs.getDouble("total_days"));
+                leave.setRequestId(rs.getInt("request_id"));
+                leaves.add(leave);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return leaves;
     }
 
-    // ✅ SQL → Approve or Reject Leave by request_id
-    public boolean approveLeave(int requestId, boolean isApproved) {
-        String sql = "UPDATE request SET request_status = ?, processed_date = ?, processed_by = ? WHERE request_id = ?";
-        String status = isApproved ? "APPROVED" : "REJECTED";
-
-        try (Connection conn = DatabaseService.connectToMotorPH();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, status);
-            stmt.setDate(2, java.sql.Date.valueOf(LocalDate.now()));
-            stmt.setInt(3, 999); // Replace with actual user ID
-            stmt.setInt(4, requestId);
-
-            return stmt.executeUpdate() > 0;
-
+    /**
+     * Retrieves a leave entry by its leave ID.
+     */
+    public Leave getLeaveById(String leaveId) {
+        String sql = "SELECT * FROM employee_leave WHERE leave_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, leaveId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Leave leave = new Leave();
+                    leave.setLeaveID(rs.getString("leave_id"));
+                    leave.setEmployeeId(rs.getInt("employee_id"));
+                    leave.setLeaveType(rs.getString("leave_type"));
+                    leave.setStartDate(rs.getDate("start_date").toLocalDate());
+                    leave.setEndDate(rs.getDate("end_date").toLocalDate());
+                    leave.setTotalDays(rs.getDouble("total_days"));
+                    leave.setRequestId(rs.getInt("request_id"));
+                    return leave;
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return false;
+        return null;
     }
 
-    // ✅ SQL → INSERT new leave record
-    public boolean insertLeave(Leave leave) {
-        String sql = "INSERT INTO employee_leave (leave_id, employee_id, leave_type, start_date, end_date, total_days, request_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-        try (Connection conn = DatabaseService.connectToMotorPH();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, leave.getID());
-            stmt.setInt(2, leave.getEmployeeID());
-            stmt.setString(3, leave.getLeaveType());
-            stmt.setDate(4, java.sql.Date.valueOf(leave.getStartDate()));
-            stmt.setDate(5, java.sql.Date.valueOf(leave.getEndDate()));
-            stmt.setDouble(6, leave.getTotalDays());
-            stmt.setInt(7, leave.getRequestId());
-
+    /**
+     * Updates an existing leave entry.
+     */
+    public boolean updateLeave(Leave leave) {
+        String sql = "UPDATE employee_leave SET employee_id = ?, leave_type = ?, start_date = ?, end_date = ?, " +
+                     "total_days = ?, request_id = ? WHERE leave_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, leave.getEmployeeId());
+            stmt.setString(2, leave.getLeaveType());
+            stmt.setDate(3, Date.valueOf(leave.getStartDate()));
+            stmt.setDate(4, Date.valueOf(leave.getEndDate()));
+            stmt.setDouble(5, leave.getTotalDays());
+            stmt.setInt(6, leave.getRequestId());
+            stmt.setString(7, leave.getLeaveID());
             return stmt.executeUpdate() > 0;
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return false;
     }
 
-    // ✅ SQL → DELETE leave record by ID
-    public boolean deleteLeaveById(String leaveId) {
+    /**
+     * Deletes a leave entry by its leave ID.
+     */
+    public boolean deleteLeave(String leaveId) {
         String sql = "DELETE FROM employee_leave WHERE leave_id = ?";
-
-        try (Connection conn = DatabaseService.connectToMotorPH();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, leaveId);
             return stmt.executeUpdate() > 0;
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return false;
     }
 }

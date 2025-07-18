@@ -5,112 +5,51 @@
 package com.motorph.attendancemanagement.service;
 
 import com.motorph.attendancemanagement.model.Overtime;
-import com.motorph.database.connection.DatabaseService;
-
-import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class OvertimeService {
+    private final List<Overtime> overtimeList = new ArrayList<>();
 
-    /**
-     * Retrieves a list of Overtime records for a given employee ID.
-     * @param employeeId The employee's ID.
-     * @return List of Overtime objects, empty if none found.
-     */
-    public List<Overtime> getOvertimeByEmployeeId(int employeeId) {
-        List<Overtime> overtimeList = new ArrayList<>();
-        String sql = "SELECT * FROM overtime WHERE employee_id = ?";
+    // Create
+    public void addOvertime(Overtime overtime) {
+        overtimeList.add(overtime);
+    }
 
-        try (Connection conn = DatabaseService.connectToMotorPH();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+    // Read all
+    public List<Overtime> getAllOvertimes() {
+        return new ArrayList<>(overtimeList);
+    }
 
-            stmt.setInt(1, employeeId);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    Overtime overtime = new Overtime();
-                    overtime.setID(String.valueOf(rs.getInt("overtime_id")));
-                    overtime.setRequestId(rs.getInt("request_id"));
-                    overtime.setEmployeeID(rs.getInt("employee_id"));
-                    overtime.setDtrId(rs.getInt("dtr_id"));
-                    overtimeList.add(overtime);
-                }
+    // Read by ID
+    public Overtime getOvertimeById(int id) {
+        for (Overtime ot : overtimeList) {
+            if (ot.getOvertimeId() == id) {
+                return ot;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return overtimeList;
+        return null;
     }
 
-    /**
-     * Inserts a new Overtime record into the database.
-     * Note: The request_id, employee_id, and dtr_id must already exist in their tables.
-     * @param overtime The Overtime object to save.
-     * @return true if insert succeeded; false otherwise.
-     */
-    public boolean saveOvertime(Overtime overtime) {
-        String sql = "INSERT INTO overtime (request_id, employee_id, dtr_id) VALUES (?, ?, ?)";
-
-        try (Connection conn = DatabaseService.connectToMotorPH();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, overtime.getRequestId());
-            stmt.setInt(2, overtime.getEmployeeID());
-            stmt.setInt(3, overtime.getDtrId());
-
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+    // Update
+    public boolean updateOvertime(Overtime updatedOvertime) {
+        for (int i = 0; i < overtimeList.size(); i++) {
+            if (overtimeList.get(i).getOvertimeId() == updatedOvertime.getOvertimeId()) {
+                overtimeList.set(i, updatedOvertime);
+                return true;
+            }
         }
         return false;
     }
 
-    /**
-     * Updates the request_id of an existing overtime record.
-     * @param overtimeId The ID of the overtime record to update.
-     * @param newRequestId The new request ID to set.
-     * @return true if update succeeded; false otherwise.
-     */
-    public boolean updateOvertimeRequest(String overtimeId, int newRequestId) {
-        String sql = "UPDATE overtime SET request_id = ? WHERE overtime_id = ?";
-
-        try (Connection conn = DatabaseService.connectToMotorPH();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, newRequestId);
-            stmt.setInt(2, Integer.parseInt(overtimeId));
-
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
+    // Delete
+    public boolean deleteOvertime(int id) {
+        return overtimeList.removeIf(ot -> ot.getOvertimeId() == id);
     }
 
-    /**
-     * Deletes an overtime record by its ID.
-     * @param overtimeId The ID of the overtime record to delete.
-     * @return true if delete succeeded; false otherwise.
-     */
-    public boolean deleteOvertimeById(String overtimeId) {
-        String sql = "DELETE FROM overtime WHERE overtime_id = ?";
-
-        try (Connection conn = DatabaseService.connectToMotorPH();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, Integer.parseInt(overtimeId));
-
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
+    // For testing: get the most recently added Overtime
+    public Overtime getLatestOvertime() {
+        if (overtimeList.isEmpty()) return null;
+        return overtimeList.get(overtimeList.size() - 1);
     }
 }

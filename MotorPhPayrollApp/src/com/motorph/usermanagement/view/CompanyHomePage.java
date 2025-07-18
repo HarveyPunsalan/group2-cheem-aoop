@@ -5,12 +5,13 @@
 package com.motorph.usermanagement.view;
 
 import com.motorph.usermanagement.model.Admin;
-import com.motorph.usermanagement.model.Access;
+import com.motorph.usermanagement.controller.LoginController;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class CompanyHomePage extends javax.swing.JFrame {
-    Admin admin;
+    private Admin admin;
+    private LoginController controller;
     
     public CompanyHomePage() {
         initComponents();        
@@ -19,6 +20,8 @@ public class CompanyHomePage extends javax.swing.JFrame {
     public CompanyHomePage(Admin admin) {
         initComponents();
         this.admin = admin;
+        this.controller = new LoginController(null); 
+        
         if (admin != null) {
             addLogoutListener(this);
         }
@@ -32,18 +35,17 @@ public class CompanyHomePage extends javax.swing.JFrame {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                logout(frame);
+                if (controller != null) {
+                    controller.handleLogout(admin, frame);
+                } else {
+                    // Fallback logout
+                    frame.dispose();
+                    new com.motorph.usermanagement.view.LoginPage().setVisible(true);
+                }
             }
         });
     }
     
-    /**
-     * Handles user logout with confirmation dialog.
-     */
-    private void logout(javax.swing.JFrame frame) {
-        frame.dispose(); 
-        new com.motorph.usermanagement.view.LoginPage().setVisible(true); // Return to login screen
-    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -226,72 +228,42 @@ public class CompanyHomePage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1EmployeeInformationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1EmployeeInformationActionPerformed
-         if (this.admin != null) {
-            Access.accessEmployeeInformation(this.admin);
-            this.setVisible(false);
-        } else {
-            javax.swing.JOptionPane.showMessageDialog(this, 
-                "Error: Admin session not initialized.", 
-                "Access Error", 
-                javax.swing.JOptionPane.ERROR_MESSAGE);
+        if (controller != null) {
+            controller.handleEmployeeInformation(admin, this);
         }
     }//GEN-LAST:event_jButton1EmployeeInformationActionPerformed
 
     private void jButton6LogOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6LogOutActionPerformed
-        if (admin != null) {
-            logout(this);
+           if (controller != null) {
+            controller.handleLogout(admin, this);
         } else {
-            // Fallback logout if admin is null
+            // Fallback logout if controller is null
             this.dispose();
             new com.motorph.usermanagement.view.LoginPage().setVisible(true);
         }
     }//GEN-LAST:event_jButton6LogOutActionPerformed
 
     private void jButton3SelfServicePortalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3SelfServicePortalActionPerformed
-        if (this.admin != null) {
-            Access.accessSelfServicePortal(this.admin);
-            this.setVisible(false);
-        } else {
-            javax.swing.JOptionPane.showMessageDialog(this, 
-                "Error: Admin session not initialized.", 
-                "Access Error", 
-                javax.swing.JOptionPane.ERROR_MESSAGE);
+        if (controller != null) {
+            controller.handleSelfServicePortal(admin, this);
         }
     }//GEN-LAST:event_jButton3SelfServicePortalActionPerformed
 
     private void jButton4PayrollActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4PayrollActionPerformed
-        if (this.admin != null) {
-            Access.accessPayrollList(this.admin);
-            this.setVisible(false);
-        } else {
-            javax.swing.JOptionPane.showMessageDialog(this, 
-                "Error: Admin session not initialized.", 
-                "Access Error", 
-                javax.swing.JOptionPane.ERROR_MESSAGE);
+        if (controller != null) {
+            controller.handlePayroll(admin, this);
         }
     }//GEN-LAST:event_jButton4PayrollActionPerformed
 
     private void jButton4AttendanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4AttendanceActionPerformed
-        if (this.admin != null) {
-            Access.accessAttendanceBiweekly(this.admin);
-            this.setVisible(false);
-        } else {
-            javax.swing.JOptionPane.showMessageDialog(this, 
-                "Error: Admin session not initialized.", 
-                "Access Error", 
-                javax.swing.JOptionPane.ERROR_MESSAGE);
+        if (controller != null) {
+            controller.handleAttendance(admin, this);
         }
     }//GEN-LAST:event_jButton4AttendanceActionPerformed
 
     private void jButton3EmployeeRequestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3EmployeeRequestActionPerformed
-        if (this.admin != null) {
-            Access.accessEmployeeRequests(this.admin);
-            this.setVisible(false);
-        } else {
-            javax.swing.JOptionPane.showMessageDialog(this, 
-                "Error: Admin session not initialized.", 
-                "Access Error", 
-                javax.swing.JOptionPane.ERROR_MESSAGE);
+        if (controller != null) {
+            controller.handleEmployeeRequest(admin, this);
         }
     }//GEN-LAST:event_jButton3EmployeeRequestActionPerformed
 

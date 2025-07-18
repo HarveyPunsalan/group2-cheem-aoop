@@ -4,18 +4,8 @@
  */
 package com.motorph.usermanagement.view;
 
-import com.motorph.usermanagement.model.Admin;
-import com.motorph.usermanagement.model.NonAdmin;
-import com.motorph.employeemanagement.view.selfservice.ProfilePage;
-import com.motorph.usermanagement.service.UserService;
-import com.motorph.usermanagement.service.UserServiceImpl;
-import com.motorph.usermanagement.model.User;
-import com.motorph.usermanagement.exception.InvalidCredentialsException;
-import com.motorph.usermanagement.exception.DataAccessException;
-
-import javax.swing.JOptionPane;
+import com.motorph.usermanagement.controller.LoginController;
 import java.util.logging.Logger;
-import java.util.logging.Level;
 /**
  *
  * @author Harvey
@@ -24,17 +14,13 @@ import java.util.logging.Level;
 public class LoginPage extends javax.swing.JFrame {
 
     private static final Logger logger = Logger.getLogger(LoginPage.class.getName());
-    private final UserService userService;
+    private final LoginController loginController;
     
-    // Role constants for better maintainability
-    private static final int SYSTEM_ADMIN_ROLE_ID = 0;
-    private static final int ADMIN_ROLE_ID = 1;
-    private static final int NON_ADMIN_ROLE_ID = 2;
-
     public LoginPage() {
         initComponents();
         setupInitialState();
-        this.userService = new UserServiceImpl();
+        // Initialize the controller after GUI components are created
+        this.loginController = new LoginController(this);
     }
     
     /**
@@ -183,351 +169,109 @@ public class LoginPage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1LogInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1LogInActionPerformed
-       hideErrorMessage();
+       // Hide any previous error messages
+        hideErrorMessage();
         
+        // Get input values
         String username = getUsername();
         String password = getPassword();
         
-        // System Admin bypass (temporary - temporary for system admin only remove after setting up proper users
-        if (isSystemAdminBypass(username, password)) {
-            handleSystemAdminBypass();
-            return;
-        }
+        LoginController.LoginResult result = loginController.handleLogin(username, password);
         
-        // Validate input
-        if (!validateInput(username, password)) {
-            return;
-        }
-        
-        // Authenticate user
-        authenticateUser(username, password);
-    }
-    
-    /**
-     * Check for system admin bypass credentials
-     */
-    private boolean isSystemAdminBypass(String username, String password) {
-        return "systemadmin".equals(username) && "systemtest123".equals(password);
-    } 
-    
-    /**
-     * Handle SystemAdmin bypass login
-     */
-    private void handleSystemAdminBypass() {
-        logger.info("Temporary SystemAdmin bypass activated");
-        clearPassword();
-        
-        openSystemAdminDashboard();
-    }
-    
-    /**
-     * Validate user input
-     */
-    private boolean validateInput(String username, String password) {
-        if (username.isEmpty()) {
-            showWarning("Please enter your username.", jTextField1Username);
-            return false;
-        }
-        
-        if (password.isEmpty()) {
-            showWarning("Please enter your password.", jPasswordFieldPassword);
-            return false;
-        }
-        
-        return true;
-    }
-    
-    /**
-     * Authenticate user and handle login
-     */
-    private void authenticateUser(String username, String password) {
-        try {
-            User authenticatedUser = userService.authenticate(username, password);
-            
-            if (authenticatedUser != null) {
-                handleSuccessfulLogin(authenticatedUser);
-            } else {
-                handleFailedLogin("Authentication failed. Please try again.", username);
-            }
-            
-        } catch (InvalidCredentialsException e) {
-            handleFailedLogin("Invalid username or password.", username);
-        } catch (DataAccessException e) {
-            handleDatabaseError(e);
-        } catch (Exception e) {
-            handleUnexpectedError(e);
-        }
-    } 
-    
-    /**
-     * Handle successful login
-     */
-    private void handleSuccessfulLogin(User user) {
-        logger.info(() -> "User authenticated successfully: " + user.getUsername());
-        clearPassword();
-        
-        try {
-            openUserDashboard(user);
+        // Handle the result
+        if (result.isSuccess()) {
+            // Login successful - controller has already opened the dashboard
             this.dispose();
-        } catch (Exception dashboardError) {
-            handleDashboardError(dashboardError, user.getUsername());
-        }
-    }
-    
-    /**
-     * Handle failed login
-     */
-    private void handleFailedLogin(String message, String username) {
-        logger.warning(() -> "Login failed for username: " + username);
-        showLoginError(message);
-        clearPassword();
-        jTextField1Username.requestFocus();
-    }
-    
-    /**
-     * Handle database errors
-     */
-    private void handleDatabaseError(DataAccessException e) {
-        logger.log(Level.SEVERE, "Database error during authentication", e);
-        JOptionPane.showMessageDialog(this, 
-            """
-            Unable to connect to the system. Please try again later.
-            Technical details: """ + e.getMessage(), 
-            "System Error", 
-        JOptionPane.ERROR_MESSAGE);
-    }
-    
-    /**
-     * Handle unexpected errors
-     */
-    private void handleUnexpectedError(Exception e) {
-        logger.log(Level.SEVERE, "Unexpected error during authentication", e);
-        JOptionPane.showMessageDialog(this, 
-            """
-            An unexpected error occurred. Please contact support.
-            Technical details: """ + e.getMessage(), 
-            "System Error",  
-            JOptionPane.ERROR_MESSAGE);
-    }
-    
-    /**
-     * Handle dashboard opening errors
-     */
-    private void handleDashboardError(Exception error, String username) {
-        logger.log(Level.SEVERE, "Error opening dashboard for user: " + username, error);
-        JOptionPane.showMessageDialog(this, 
-            """
-            Login successful, but there was an error opening the dashboard.
-            Error: """ + error.getMessage() + """
-            Please contact your system administrator.
-            """, 
-            "Dashboard Error", 
-            JOptionPane.ERROR_MESSAGE);
-    }  
-    
-    /**
-     * Opens the appropriate dashboard based on user role
-     */
-    private void openUserDashboard(User user) throws Exception {
-        logger.info(() -> "Opening dashboard for user: " + user.getUsername() + ", Role ID: " + user.getRoleId() + ", Employee ID: " + user.getEmployeeId());
-        
-        // Debug: Check all role conditions
-        boolean isSystemAdmin = isSystemAdminRole(user);
-        boolean isAdmin = isAdminRole(user);
-        boolean isNonAdmin = isNonAdminRole(user);
-        
-        logger.info(() -> String.format("Role check results for %s: SystemAdmin=%s, Admin=%s, NonAdmin=%s", 
-                                      user.getUsername(), isSystemAdmin, isAdmin, isNonAdmin));
-        
-        try {
-            if (isSystemAdmin) {
-                logger.info(() -> "Opening SystemAdmin dashboard for: " + user.getUsername());
-                openSystemAdminDashboard();
-            } else if (isNonAdmin) {
-                // Check NonAdmin BEFORE Admin to avoid conflicts
-                logger.info(() -> "Opening NonAdmin dashboard for: " + user.getUsername());
-                openNonAdminDashboard(user);
-            } else if (isAdmin) {
-                logger.info(() -> "Opening Admin dashboard for: " + user.getUsername());
-                openAdminDashboard(user);
-            } else {
-                // Handle unknown role
-                throw new Exception("Unknown user role: " + user.getRoleId() + " for user: " + user.getUsername());
-            }
-            
-            logger.info(() -> "Dashboard opened successfully for user: " + user.getUsername());
-            
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Failed to open dashboard for user: " + user.getUsername(), e);
-            throw new Exception("Failed to open dashboard: " + getErrorMessage(e), e);
-        }
-    }   
-    
-    /**
-     * Open SystemAdmin dashboard
-     */
-    private void openSystemAdminDashboard() {
-        try {
-            SystemAdminPage systemAdminPage = new SystemAdminPage();
-            systemAdminPage.setVisible(true);
-            this.dispose();
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Error opening SystemAdmin dashboard", e);
-            JOptionPane.showMessageDialog(this, 
-                "Error opening SystemAdmin dashboard: " + e.getMessage(), 
-                "Dashboard Error", 
-                JOptionPane.ERROR_MESSAGE);
-        }
-    }
-    
-    /**
-     * Open Admin dashboard 
-     */
-    private void openAdminDashboard(User user) throws Exception {
-        logger.info(() -> "Opening admin dashboard for user: " + user.getUsername());
-        
-        // Create Admin object from authenticated user
-        Admin admin = new Admin(user);
-        
-        // Open the CompanyHomePage (Admin Dashboard)
-        CompanyHomePage adminDashboard = new CompanyHomePage(admin);
-        adminDashboard.setVisible(true);
-        
-        logger.info(() -> "Admin dashboard opened for user: " + user.getUsername());
-    }
-    
-    /**
-     * Open NonAdmin dashboard - directs to ProfilePage
-     */
-    private void openNonAdminDashboard(User user) throws Exception {
-       logger.info(() -> "Opening NonAdmin dashboard (ProfilePage) for user: " + user.getUsername());
-    
-       // Create NonAdmin object from authenticated user
-       NonAdmin nonAdmin = new NonAdmin(user);
-    
-       // Open the ProfilePage (NonAdmin Dashboard) - directly like Admin does
-       ProfilePage nonAdminDashboard = new ProfilePage(nonAdmin);
-       nonAdminDashboard.setVisible(true);
-    
-       logger.info(() -> "NonAdmin dashboard (ProfilePage) opened for user: " + user.getUsername());
-    }
-    
-    /**
-     * Determines if the user has SystemAdmin role
-     */
-    private boolean isSystemAdminRole(User user) {
-        return user.getRoleId() == SYSTEM_ADMIN_ROLE_ID;
-    }
-    
-    /**
-     * Determines if the user has Admin role 
-     * This will check if manuel.garcia (employee #1) should get admin access
-     */
-    private boolean isAdminRole(User user) {
-        int roleId = user.getRoleId();
-        int employeeId = user.getEmployeeId();
-        String username = user.getUsername();
-        
-        // Log the details for debugging
-        logger.info(() -> String.format("Checking admin role for user: %s, employeeId: %d, roleId: %d", 
-                                      username, employeeId, roleId));
-        
-        // Check if this is manuel.garcia with employee ID 1
-        boolean isManuelGarcia = "manuel.garcia".equals(username) && employeeId == 1;
-        
-        // Check standard admin role IDs
-        boolean hasAdminRoleId = (roleId == ADMIN_ROLE_ID);
-        
-        // Return true if either condition is met
-        boolean isAdmin = isManuelGarcia || hasAdminRoleId;
-        
-        logger.info(() -> String.format("Admin check result for %s: %s (manuel.garcia: %s, adminRole: %s)", 
-                                      username, isAdmin, isManuelGarcia, hasAdminRoleId));
-        
-        return isAdmin;       
+        } else {
+            // Login failed - show error and clear password
+            showLoginError(result.getMessage());
+            clearPassword();
+            jTextField1Username.requestFocus();
+        }     
     }//GEN-LAST:event_jButton1LogInActionPerformed
-     
-    /**
-     * Determines if the user has NonAdmin role
-     * This will check if andrea.villanueva (role id #2) should get NonAdmin access
-     */
-    private boolean isNonAdminRole(User user) {
-        int roleId = user.getRoleId();
-        int employeeId = user.getEmployeeId();
-        String username = user.getUsername();
-        
-        // Log the details for debugging
-        logger.info(() -> String.format("Checking NonAdmin role for user: %s, employeeId: %d, roleId: %d", 
-                                      username, employeeId, roleId));
-        
-        // Check if this is antonio.lim with employee ID 2
-        boolean isAndreaVillanueva = "andrea.villanueva".equals(username) && employeeId == 2;
-        
-        // Check standard NonAdmin role IDs
-        boolean hasNonAdminRoleId = (roleId == NON_ADMIN_ROLE_ID);
-        
-        // Return true if either condition is met
-        boolean isNonAdmin = isAndreaVillanueva || hasNonAdminRoleId;
-        
-        logger.info(() -> String.format("NonAdmin check result for %s: %s (andrea.villanueva: %s, nonAdminRole: %s)", 
-                                      username, isNonAdmin, isAndreaVillanueva, hasNonAdminRoleId));
-        
-        return isNonAdmin;
-    }
-    
+
     private void jTextField1UsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1UsernameActionPerformed
         // Move focus to password field when Enter is pressed in username field
         jPasswordFieldPassword.requestFocus();
     }//GEN-LAST:event_jTextField1UsernameActionPerformed
-    // Utility methods
+    
+    /**
+     * Hide error message label
+     */
     private void hideErrorMessage() {
         jLabelIncorrectCredentials.setVisible(false);
     }
     
+    /**
+     * Show error message in the label
+     */
     private void showLoginError(String message) {
         jLabelIncorrectCredentials.setText(message);
         jLabelIncorrectCredentials.setVisible(true);
     }
     
-    private void showWarning(String message, javax.swing.JComponent focusComponent) {
-        JOptionPane.showMessageDialog(this, message, "Login Error", JOptionPane.WARNING_MESSAGE);
-        focusComponent.requestFocus();
-    }
-    
-    private String getErrorMessage(Exception e) {
-        String errorDetails = e.getMessage();
-        return (errorDetails == null || errorDetails.trim().isEmpty()) ? 
-               e.getClass().getSimpleName() : errorDetails;
-    }
-    
-    // Public accessor methods
+    /**
+     * Get username from text field
+     */
     public String getUsername() {
         return jTextField1Username.getText().trim();
     }
     
+    /**
+     * Get password from password field
+     */
     public String getPassword() {
         return new String(jPasswordFieldPassword.getPassword());
     }
     
+    /**
+     * Clear username field
+     */
     public void clearUsername() {
         jTextField1Username.setText("");
     }
     
+    /**
+     * Clear password field
+     */
     public void clearPassword() {
         jPasswordFieldPassword.setText("");
     }
     
+    /**
+     * Clear both fields
+     */
     public void clearFields() {
         clearUsername();
         clearPassword();
     }
     
+    /**
+     * Set focus to username field
+     */
     public void focusUsername() {
         jTextField1Username.requestFocus();
     }
     
+    /**
+     * Set focus to password field
+     */
+    public void focusPassword() {
+        jPasswordFieldPassword.requestFocus();
+    }
+    
+    /**
+     * Set visibility of incorrect credentials label
+     */
     public void setIncorrectCredentialsVisible(boolean visible) {
         jLabelIncorrectCredentials.setVisible(visible);
+    }
+    
+    /**
+     * Set text of incorrect credentials label
+     */
+    public void setIncorrectCredentialsText(String text) {
+        jLabelIncorrectCredentials.setText(text);
     }
     /**
      * @param args the command line arguments
