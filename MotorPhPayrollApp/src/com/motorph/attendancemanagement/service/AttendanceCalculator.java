@@ -5,110 +5,97 @@
 package com.motorph.attendancemanagement.service;
 
 import com.motorph.attendancemanagement.model.DailyAttendance;
+
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.List;
 
-/**
- *
- * @author 63909
- */
 public class AttendanceCalculator {
-    private static DecimalFormat decimalFormat = new DecimalFormat("0.00");
-    
-//    public static PayPeriodAttendance calculateBiweeklyAttendance(List<DailyAttendance> filteredDailyAttendance, PayPeriod payPeriod){
-//        double payableHours = AttendanceCalculator.calculatePayableHours(filteredDailyAttendance);
-//        double regularHours = AttendanceCalculator.calculateRegularWorkedHours(filteredDailyAttendance);
-//        double overtime = AttendanceCalculator.calculateApprovedOverTimeHours(filteredDailyAttendance);
-//    }
-    
-    public static double[] calculateDailyAttendance(LocalTime timeIn, LocalTime timeOut) {        
-        double hoursLate = 0.0, hoursWorked = 0.0, hoursOvertime = 0.0;
+
+    private static final DecimalFormat decimalFormat = new DecimalFormat("0.00");
+
+    public static double[] calculateDailyAttendance(LocalTime timeIn, LocalTime timeOut) {
+        double hoursLate = 0.0;
+        double hoursWorked = 0.0;
+        double hoursOvertime = 0.0;
         double hoursBreak = 1.0;
 
-        // Define shift boundaries (start at 8:00 AM and end at 5:00 PM)
-        LocalTime startShift = LocalTime.of(8, 0);
-        LocalTime endShift = LocalTime.of(17, 0);
+        LocalTime shiftStart = LocalTime.of(8, 0);
+        LocalTime shiftEnd = LocalTime.of(17, 0);
 
-        // Calculate late hours (if clock-in is after 8:10 AM)
-        if (timeIn.isAfter(startShift.plusMinutes(10))) {
-            hoursLate = Duration.between(startShift, timeIn).toMinutes() / 60.0;
+        // Late if after 8:10 AM
+        if (timeIn.isAfter(shiftStart.plusMinutes(10))) {
+            hoursLate = Duration.between(shiftStart, timeIn).toMinutes() / 60.0;
         }
 
-        // For worked hours, cap the end time at 5:00 PM (exclude overtime)
-        LocalTime effectiveTimeOut = timeOut.isAfter(endShift) ? endShift : timeOut;
+        // Cap timeOut at shift end for regular hours
+        LocalTime effectiveTimeOut = timeOut.isAfter(shiftEnd) ? shiftEnd : timeOut;
         hoursWorked = Duration.between(timeIn, effectiveTimeOut).toMinutes() / 60.0;
 
-        // Deduct lunch break if work spans the lunch period (12 PM - 1 PM)
+        // Deduct 1-hour lunch if span includes 12-1 PM
         if (timeIn.isBefore(LocalTime.NOON) && timeOut.isAfter(LocalTime.of(13, 0))) {
             hoursWorked -= hoursBreak;
         }
 
-        // Calculate overtime separately if timeOut is after 5:00 PM
-        if (timeOut.isAfter(endShift)) {
-            hoursOvertime = Duration.between(endShift, timeOut).toMinutes() / 60.0;
+        // Add overtime if timeOut is after 5 PM
+        if (timeOut.isAfter(shiftEnd)) {
+            hoursOvertime = Duration.between(shiftEnd, timeOut).toMinutes() / 60.0;
         }
 
-        // Format values to two decimal places (assuming decimalFormat is defined elsewhere)
-        hoursWorked = Double.parseDouble(decimalFormat.format(hoursWorked));
-        hoursLate = Double.parseDouble(decimalFormat.format(hoursLate));
-        hoursOvertime = Double.parseDouble(decimalFormat.format(hoursOvertime));
+        // Round to 2 decimal places
+        return new double[] {
+            roundToTwoDecimalPlaces(hoursWorked),
+            roundToTwoDecimalPlaces(hoursLate),
+            roundToTwoDecimalPlaces(hoursOvertime)
+        };
+    }
 
-        return new double[]{hoursWorked, hoursLate, hoursOvertime};
-    }
-    
-    /**
-     * Aggregates the regular worked hours (excluding overtime) from a list of
-     * DailyAttendance records.
-     * @param filteredDailyAttendance
-     * @return 
-     */
-    public static double calculateRegularWorkedHours(List<DailyAttendance> filteredDailyAttendance) {
-        double totalRegular = 0.0;
-        for (DailyAttendance record : filteredDailyAttendance) {
-            totalRegular += record.getHoursWorked();
+    public static double calculateRegularWorkedHours(List<DailyAttendance> records) {
+        double total = 0.0;
+        for (DailyAttendance record : records) {
+            total += record.getHoursWorked();
         }
-        return Double.parseDouble(decimalFormat.format(totalRegular));
+        return roundToTwoDecimalPlaces(total);
     }
-    
-    /**
-     * Aggregates the late hours from a list of DailyAttendance records.
-     * @param filteredDailyAttendance
-     * @return 
-     */
-    public static double calculateLateHours(List<DailyAttendance> filteredDailyAttendance) {
-        double totalLate = 0.0;
-        for (DailyAttendance record : filteredDailyAttendance) {
-            totalLate += record.getHoursLate();
+
+    public static double calculateLateHours(List<DailyAttendance> records) {
+        double total = 0.0;
+        for (DailyAttendance record : records) {
+            total += record.getHoursLate();
         }
-        return Double.parseDouble(decimalFormat.format(totalLate));
+        return roundToTwoDecimalPlaces(total);
     }
-    
-    /**
-     * Aggregates the approved overtime hours from a list of DailyAttendance records.
-     * @param filteredDailyAttendance
-     * @return 
-     */
-    public static double calculateApprovedOverTimeHours(List<DailyAttendance> filteredDailyAttendance) {
-        double totalOvertime = 0.0;
-        for (DailyAttendance record : filteredDailyAttendance) {
-            totalOvertime += record.getHoursOvertime();
+
+    public static double calculateApprovedOverTimeHours(List<DailyAttendance> records) {
+        double total = 0.0;
+        for (DailyAttendance record : records) {
+            total += record.getHoursOvertime();
         }
-        return Double.parseDouble(decimalFormat.format(totalOvertime));
+        return roundToTwoDecimalPlaces(total);
+    }
+
+    public static double calculatePayableHours(List<DailyAttendance> records) {
+        double regular = calculateRegularWorkedHours(records);
+        double late = calculateLateHours(records);
+        double overtime = calculateApprovedOverTimeHours(records);
+
+        double adjustedRegular = Math.max(regular - late, 0.0);
+        double total = adjustedRegular + overtime;
+
+        return roundToTwoDecimalPlaces(total);
     }
     
-    /**
-     * Calculates the payable hours for the period.
-     * Here, we assume payable hours are computed as:
-     * (regular worked hours - late hours, not going below 0) + approved overtime hours.
-     * @param filteredDailyAttendance
-     * @return 
-     */
-    public static double calculatePayableHours(List<DailyAttendance> filteredDailyAttendance) {
-        double regular = calculateRegularWorkedHours(filteredDailyAttendance);
-        double overtime = calculateApprovedOverTimeHours(filteredDailyAttendance);
-        double payable = Math.max(regular, 0.0) + overtime;
-        return Double.parseDouble(decimalFormat.format(payable));
+        public static double calculateTotalHours(List<DailyAttendance> records) {
+        double total = 0.0;
+        for (DailyAttendance record : records) {
+            total += record.getHoursWorked();       // regular
+            total += record.getHoursOvertime();     // overtime
+        }
+        return roundToTwoDecimalPlaces(total);
+    }
+
+    private static double roundToTwoDecimalPlaces(double value) {
+        return Double.parseDouble(decimalFormat.format(value));
     }
 }
