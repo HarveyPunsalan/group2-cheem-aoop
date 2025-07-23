@@ -6,10 +6,6 @@ package com.motorph.payrollprocessing.view.selfservice;
 
 import com.motorph.usermanagement.view.LoginPage;
 import com.motorph.employeemanagement.model.Employee;
-import com.motorph.payrollprocessing.service.calculator.TaxCalculator;
-import com.motorph.payrollprocessing.service.calculator.AllowanceCalculator;
-import com.motorph.payrollprocessing.service.calculator.SalaryCalculator;
-import com.motorph.payrollprocessing.service.calculator.DeductionCalculator;
 import com.motorph.payrollprocessing.model.payroll.PayPeriod;
 import com.motorph.common.swing.validation.SelectionValidator;
 import com.motorph.usermanagement.model.Admin;
@@ -71,7 +67,7 @@ public class EmployeePayslip extends javax.swing.JFrame {
 
     private void initService() {
         try {
-            this.payPeriodService = ServiceFactory.createPayPeriodServicewService();
+            this.payPeriodService = ServiceFactory.createPayPeriodService();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Failed to load service: " + e.getMessage());
         }
@@ -668,8 +664,8 @@ public class EmployeePayslip extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonInformationActionPerformed
 
     private void jButtonRequestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRequestActionPerformed
-        Access.accessRequestCenter(user);
-        this.setVisible(false);
+//        Access.accessRequestCenter(user);
+//        this.setVisible(false);
     }//GEN-LAST:event_jButtonRequestActionPerformed
 
     private void jComboBoxPayPeriodActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxPayPeriodActionPerformed
@@ -681,10 +677,10 @@ public class EmployeePayslip extends javax.swing.JFrame {
         PayPeriod selectedPayPeriod = payPeriodService.searchByDateRange(dates[0], dates[1]).get();
         jLabelInputPayPeriod5.setText(DateUtil.format_ddo_MMM(selectedPayPeriod.getStartDate()) + " - " + DateUtil.format_ddo_MMM_yyyy(selectedPayPeriod.getEndDate()));
         
-        EmployeeWorkedHoursSummaryService attendanceService = ViewModelServiceFactory.createEmployeeWorkedHoursSummaryServiceService();
+        EmployeeWorkedHoursSummaryService attendanceService = ViewModelServiceFactory.createEmployeeWorkedHoursSummaryService();
         Employee employee = retrievalService.getEmployeeById(user.getEmployeeId());
         
-        PayslipService payslipService = ServiceFactory.createPayslipServicewService();
+        PayslipService payslipService = ServiceFactory.createPayslipService();
         Payslip viewPayslip = payslipService.getPayslipByPayPeriodAndEmployee(selectedPayPeriod.getPayPeriodId(), employee.getEmployeeId()).get();
         
         jTextFieldHoursWorked.setText(NumberFormatter.formatDecimal(viewPayslip.getPayableHours()));
@@ -719,7 +715,7 @@ public class EmployeePayslip extends javax.swing.JFrame {
         PayPeriod selectedPayPeriod = payPeriodService.searchByDateRange(dates[0], dates[1]).get();
         jLabelInputPayPeriod5.setText(DateUtil.format_ddo_MMM(selectedPayPeriod.getStartDate()) + " - " + DateUtil.format_ddo_MMM_yyyy(selectedPayPeriod.getEndDate()));
         
-        EmployeeWorkedHoursSummaryService attendanceService = ViewModelServiceFactory.createEmployeeWorkedHoursSummaryServiceService();
+        EmployeeWorkedHoursSummaryService attendanceService = ViewModelServiceFactory.createEmployeeWorkedHoursSummaryService();
         Employee employee = retrievalService.getEmployeeById(user.getEmployeeId());
         
         PayslipController controller = new PayslipController();
