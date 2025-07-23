@@ -73,17 +73,17 @@ public class LoginController {
             return LoginResult.success("Login successful");
             
         } catch (InvalidCredentialsException e) {
-            String errorMsg = "Invalid username or password. Please try again.";
+            String errorMsg = "<html>Invalid username or password.<br> Please try again.</html>";
             logger.warning(() -> "Failed login attempt for username: " + username + " - " + e.getMessage());
             return LoginResult.failure(errorMsg);
             
         } catch (DataAccessException e) {
-            String errorMsg = "Unable to connect to the system. Please try again later.";
+            String errorMsg = "<html>Unable to connect to the system.<br> Please try again later.</html>";
             logger.log(Level.SEVERE, "Database error during login for username: " + username, e);
             return LoginResult.failure(errorMsg);
             
         } catch (Exception e) {
-            String errorMsg = "An unexpected error occurred. Please contact support.";
+            String errorMsg = "<html>An unexpected error occurred.<br> Please contact support.</html>";
             logger.log(Level.SEVERE, "Unexpected error during login for username: " + username, e);
             return LoginResult.failure(errorMsg);
         }
