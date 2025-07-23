@@ -53,7 +53,7 @@ public class PayrollService {
         for (Employee employee : employeeService.getEmployeeRecords()) {
             
             // Retrieve payroll inputs from each Employee object
-            BigDecimal payableHours = BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(attendanceService.getFilteredDailyAttendance(employee, payPeriod)));
+            BigDecimal payableHours = new BigDecimal(0); //BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(attendanceService.getFilteredDailyAttendance(employee, payPeriod)));
             BigDecimal hourlyRate = employee.getHourlyRate();
             BigDecimal rice = employee.getRiceSubsidy();
             BigDecimal phone = employee.getPhoneAllowance();
@@ -109,7 +109,7 @@ public class PayrollService {
         
         for (Employee employee : employeeService.getEmployeeRecords()) {
             
-            List<DailyAttendance> filteredRecords = attendanceService.getFilteredDailyAttendance(employee, payPeriod);
+            List<DailyAttendance> filteredRecords = null; // attendanceService.getFilteredDailyAttendance(employee, payPeriod);
             
             double totalRegular = AttendanceCalculator.calculateRegularWorkedHours(filteredRecords); 
             double totalOvertime = AttendanceCalculator.calculateApprovedOverTimeHours(filteredRecords);
@@ -138,9 +138,9 @@ public class PayrollService {
         
         for (Employee employee : employeeService.getEmployeeRecords()) {
             
-            List<DailyAttendance> filteredRecords = attendanceService.getFilteredDailyAttendance(employee, payPeriod);
+//            List<DailyAttendance> filteredRecords = attendanceService.getFilteredDailyAttendance(employee, payPeriod);
             
-            BigDecimal payableHours = BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(filteredRecords));
+            BigDecimal payableHours = new BigDecimal(0); //BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(filteredRecords));
             BigDecimal baseSalary = SalaryCalculator.calculateBasicSalary(payableHours, employee.getHourlyRate());
             BigDecimal totalAllowance = AllowanceCalculator.calculateTotalAllowance(employee.getRiceSubsidy(),
                                                                                 employee.getPhoneAllowance(), 
@@ -174,9 +174,9 @@ public class PayrollService {
         
         for (Employee employee : employeeService.getEmployeeRecords()) {
             
-            List<DailyAttendance> filteredRecords = attendanceService.getFilteredDailyAttendance(employee, payPeriod);
+//            List<DailyAttendance> filteredRecords = attendanceService.getFilteredDailyAttendance(employee, payPeriod);
             
-            BigDecimal payableHours = BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(filteredRecords));
+            BigDecimal payableHours = new BigDecimal(0); //BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(filteredRecords));
             BigDecimal baseSalary = SalaryCalculator.calculateBasicSalary(payableHours, employee.getHourlyRate());
             BigDecimal totalAllowance = AllowanceCalculator.calculateTotalAllowance(employee.getRiceSubsidy(),
                                                                                 employee.getPhoneAllowance(), 
@@ -216,9 +216,9 @@ public class PayrollService {
         
         for (Employee employee : employeeService.getEmployeeRecords()) {
             
-            List<DailyAttendance> filteredRecords = attendanceService.getFilteredDailyAttendance(employee, payPeriod);
+//            List<DailyAttendance> filteredRecords = attendanceService.getFilteredDailyAttendance(employee, payPeriod);
             
-            BigDecimal payableHours = BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(filteredRecords));
+            BigDecimal payableHours = new BigDecimal(0); //BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(filteredRecords));
             BigDecimal baseSalary = SalaryCalculator.calculateBasicSalary(payableHours, employee.getHourlyRate());
             BigDecimal totalAllowance = AllowanceCalculator.calculateTotalAllowance(employee.getRiceSubsidy(),
                                                                                 employee.getPhoneAllowance(), 
