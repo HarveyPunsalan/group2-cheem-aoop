@@ -256,11 +256,9 @@ public class PayrollList extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(42, 42, 42)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabelPayrollCount)
-                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jLabelPayrollCount)
                             .addComponent(jButtonRunPayroll))
-                        .addGap(599, 599, 599)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButtonDownloadReport))
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -314,7 +312,7 @@ public class PayrollList extends javax.swing.JFrame {
         String fullText = (String) jTablePayrollList.getValueAt(rowIndex, 0);
         
         LocalDate[] dates = DateUtil.parse_LABEL_BiWeekly_MMM_ddo_ddo_to_MM_dd_yyyy(fullText, 2024);
-        PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodServicewService();
+        PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodService();
         
         PayPeriod selectedPayPeriod = payPeriodService.searchByDateRange(dates[0], dates[1]).get();
         
@@ -328,8 +326,8 @@ public class PayrollList extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton4AttendanceActionPerformed
 
     private void jButton3EmployeeRequestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3EmployeeRequestActionPerformed
-        Access.accessEmployeeRequests(this.admin);
-        this.setVisible(false);
+//        Access.accessEmployeeRequests(this.admin);
+//        this.setVisible(false);
     }//GEN-LAST:event_jButton3EmployeeRequestActionPerformed
 
     private void jButton4PayrollActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4PayrollActionPerformed
@@ -344,7 +342,7 @@ public class PayrollList extends javax.swing.JFrame {
         String fullText = (String) jTablePayrollList.getValueAt(rowIndex, 0);        
         LocalDate[] dates = DateUtil.parse_LABEL_BiWeekly_MMM_ddo_ddo_to_MM_dd_yyyy(fullText, 2024);
         
-        PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodServicewService();        
+        PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodService();        
         PayPeriod selectedPayPeriod = payPeriodService.searchByDateRange(dates[0], dates[1]).get();
         
         BiWeeklyPayrollViewModel selectedBiWeeklyPayroll = this.service.getBiWeeklyPayroll(selectedPayPeriod.getPayPeriodId()).get();
