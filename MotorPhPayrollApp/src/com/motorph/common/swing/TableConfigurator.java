@@ -137,5 +137,59 @@ public class TableConfigurator {
         table.setRowHeight(24);
         table.getTableHeader().setReorderingAllowed(false);
     }
+    
+    public static void configureDailyAttendanceTable(JTable table) {
+        TableColumnModel columnModel = table.getColumnModel();
+
+        int[] preferredWidths = {100, 100, 100, 100, 100, 100};
+        int[] alignments = {
+            SwingConstants.LEFT,  // Date
+            SwingConstants.LEFT,  // Time In
+            SwingConstants.LEFT,  // Time Out
+            SwingConstants.RIGHT,  // Hours Late
+            SwingConstants.RIGHT,  // Overtime
+            SwingConstants.RIGHT,  // Hours Worked
+        };
+
+        for (int i = 0; i < columnModel.getColumnCount(); i++) {
+            TableColumn column = columnModel.getColumn(i);
+            column.setPreferredWidth(preferredWidths[i]);
+
+            DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+            renderer.setHorizontalAlignment(alignments[i]);
+            column.setCellRenderer(renderer);
+        }
+
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+        table.setRowHeight(24);
+        table.getTableHeader().setReorderingAllowed(false);
+    }
+    
+    public static void configureBiWeeklyAttendanceTable(JTable table) {
+        TableColumnModel columnModel = table.getColumnModel();
+        
+        int[] preferredWidths = {70, 280, 70, 100, 100, 100};
+        int[] alignments = {
+            SwingConstants.LEFT,  // Employee ID
+            SwingConstants.LEFT,  // Employee Name
+            SwingConstants.LEFT,  // Employee Type
+            SwingConstants.RIGHT,  // Total Regular Hours
+            SwingConstants.RIGHT,  // Total Overtime
+            SwingConstants.RIGHT,  // Payable Hours
+        };
+
+        for (int i = 0; i < columnModel.getColumnCount(); i++) {
+            TableColumn column = columnModel.getColumn(i);
+            column.setPreferredWidth(preferredWidths[i]);
+
+            DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+            renderer.setHorizontalAlignment(alignments[i]);
+            column.setCellRenderer(renderer);
+        }
+
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+        table.setRowHeight(24);
+        table.getTableHeader().setReorderingAllowed(false);
+    }
 }
 
