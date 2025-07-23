@@ -31,14 +31,13 @@
                   <Component id="jScrollPane1" pref="878" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Component id="jButton1AddNewRecord" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="jButton1ViewEmployeeDetails" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                      <Component id="jButton1ViewAttendance" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                      <Component id="jButton1ViewAttendance" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
-                      <Component id="jButton1ViewEmployeeDetails" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="jButton2DeleteEmployeeRecord" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -53,15 +52,15 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Component id="jButton1AddNewRecord" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jButton1AddNewRecord" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jButton1ViewEmployeeDetails" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jButton1ViewAttendance" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jScrollPane1" min="-2" pref="528" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jButton1ViewEmployeeDetails" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButton2DeleteEmployeeRecord" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButton1ViewAttendance" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="jButton2DeleteEmployeeRecord" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
                   <Component id="jPanel1" max="32767" attributes="0"/>
