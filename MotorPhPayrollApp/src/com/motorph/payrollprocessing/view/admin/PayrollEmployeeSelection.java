@@ -58,7 +58,7 @@ public class PayrollEmployeeSelection extends javax.swing.JFrame {
 
     private void initService() {
         try {
-            this.service = ViewModelServiceFactory.createEmployeeWorkedHoursSummaryServiceService();
+            this.service = ViewModelServiceFactory.createEmployeeWorkedHoursSummaryService();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Failed to load service: " + e.getMessage());
         }
