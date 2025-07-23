@@ -165,10 +165,10 @@ public class EmployeeDeletionServiceTest {
         // Employment info
         employee.setEmploymentType("Full-time");
         employee.setEmploymentStatus("Active");
-        employee.setJobTitle("Software Developer");
-        employee.setDepartment("IT");
+        employee.setJobTitle("IT Operations and Systems");
+        employee.setDepartment("IT Operations and Systems");
         employee.setDateHired(new Date());
-        employee.setSupervisorId(1);
+        employee.setSupervisorId(10001);
         
         // Salary info
         employee.setSalaryGrade(4);
