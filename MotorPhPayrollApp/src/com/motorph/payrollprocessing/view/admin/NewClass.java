@@ -30,7 +30,7 @@ public class NewClass {
                 List.of(dates[0], dates[1]),
                 mapper
             ).get().getEndDate());
-        PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodServicewService();
+        PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodService();
     }
     
 }
