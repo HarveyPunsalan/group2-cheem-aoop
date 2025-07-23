@@ -5,8 +5,8 @@
 package com.motorph.usermanagement.model;
 
 import com.motorph.usermanagement.view.CompanyHomePage;
-import com.motorph.employeemanagement.view.admin.RequestCenter;
-import com.motorph.employeemanagement.view.selfservice.EmployeeRequests;
+import com.motorph.employeemanagement.view.selfservice.RequestCenter;
+import com.motorph.employeemanagement.view.admin.EmployeeRequests;
 import com.motorph.employeemanagement.view.selfservice.ProfilePage;
 import com.motorph.employeemanagement.view.admin.ViewEmployeeDetails;
 import com.motorph.employeemanagement.view.admin.EmployeeInformation;
@@ -130,7 +130,7 @@ public class Access {
         return dailyAttendanceRecord;
     }
     
-    // Admin views a specific employee's DTR (by Employee object)
+        // Admin views a specific employee's DTR (by Employee object)
     public static JFrame accessDTR(Admin admin, Employee employee) {
         if (admin == null || employee == null) {
             logger.warning("Attempted to access DTR with null admin or employee reference.");
@@ -138,18 +138,6 @@ public class Access {
         }
         logger.info(() -> "Opening DTR for employee: " + employee.getEmployeeId() + " by admin: " + admin.getUsername());
         AttendanceDailyRecord dailyAttendanceRecord = new AttendanceDailyRecord(admin, employee);
-        dailyAttendanceRecord.setVisible(true);
-        return dailyAttendanceRecord;
-    }
-    
-    // Employee views their own DTR
-    public static JFrame accessDTR(Employee employee) {
-        if (employee == null) {
-            logger.warning("Attempted to access DTR with null employee reference.");
-            return null;
-        }
-        logger.info(() -> "Opening DTR for employee: " + employee.getEmployeeId());
-        AttendanceDailyRecord dailyAttendanceRecord = new AttendanceDailyRecord(employee);
         dailyAttendanceRecord.setVisible(true);
         return dailyAttendanceRecord;
     }
