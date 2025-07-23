@@ -35,8 +35,8 @@ public class PayslipResultMapper {
             
             // Compensation structure    
             .monthlyRate(resultSet.getDouble("monthly_rate"))
-            .dailyRate(resultSet.getDouble("daily_rate"))
-            .daysWorked(resultSet.getInt("days_worked"))
+            .dailyRate(resultSet.getDouble("hourly_rate"))
+            .daysWorked(resultSet.getInt("payable_hours"))
             .overtime(resultSet.getDouble("overtime"))
             
             // Allowances    
