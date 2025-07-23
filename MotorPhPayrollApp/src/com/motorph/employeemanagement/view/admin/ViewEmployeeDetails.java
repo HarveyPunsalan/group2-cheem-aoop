@@ -1091,8 +1091,8 @@ public class ViewEmployeeDetails extends javax.swing.JFrame {
     }//GEN-LAST:event_jDateChooserBirthdayMouseClicked
 
     private void jButton3EmployeeRequestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3EmployeeRequestActionPerformed
-        Access.accessEmployeeRequests((Admin) this.user);
-        this.setVisible(false);
+//        Access.accessEmployeeRequests((Admin) this.user);
+//        this.setVisible(false);
     }//GEN-LAST:event_jButton3EmployeeRequestActionPerformed
 
     private void jDateChooserDateHiredMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jDateChooserDateHiredMouseClicked
