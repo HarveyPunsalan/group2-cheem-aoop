@@ -26,11 +26,7 @@ import org.junit.runners.Suite;
  * Runs all controller, service, exporter, and util test classes.
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-    // Controller tests
-    PayslipControllerTest.class,
-    PayrollBiWeeklySummaryControllerTest.class,
-
+@Suite.SuiteClasses({    
     // Exporter tests
     PdfReportExporterTest.class,
 
@@ -43,7 +39,11 @@ import org.junit.runners.Suite;
     // Utility tests
     PDFExportHelperTest.class,
     ReportFileUtilsTest.class,
-    ReportParameterBuilderTest.class
+    ReportParameterBuilderTest.class,
+        
+    // Controller tests
+    PayslipControllerTest.class,
+    PayrollBiWeeklySummaryControllerTest.class
 })
 public class FullReportModuleTestSuite {
     // No code needed — this is purely annotation-driven
