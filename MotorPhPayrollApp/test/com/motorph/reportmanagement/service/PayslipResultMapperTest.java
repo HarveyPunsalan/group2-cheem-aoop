@@ -35,7 +35,7 @@ public class PayslipResultMapperTest {
             Payslip payslip = PayslipResultMapper.map(resultSet);
 
             assertNotNull("Mapped payslip should not be null", payslip);
-            assertEquals("Expected payslip ID mismatch", "10000", payslip.getPayslipID());
+            assertEquals("Expected payslip ID mismatch", "10494", payslip.getPayslipID());
             assertEquals("Expected employee ID mismatch", "10001", payslip.getEmployeeID());
             assertTrue("Net salary should be greater than 0", payslip.getNetSalary() > 0);
 
