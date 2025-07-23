@@ -5,66 +5,86 @@
 package com.motorph.attendancemanagement.service;
 
 import com.motorph.attendancemanagement.model.Leave;
+import org.junit.*;
+
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
-import junit.framework.TestCase;
 
-public class LeaveServiceTest extends TestCase {
+import static org.junit.Assert.*;
+
+public class LeaveServiceTest {
 
     private static LeaveService leaveService;
-    private static String testLeaveId = null;
+    private Leave leave;
 
-    @Override
-    protected void setUp() throws Exception {
+    @BeforeClass
+    public static void setUpClass() {
         leaveService = new LeaveService();
+    }
 
-        // Generate a unique leave ID using UUID
-        String generatedLeaveId = "TEST-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    @Before
+    public void setUp() {
+        leave = new Leave();
+        leave.setEmployeeId(1); // make sure this employee ID exists in your database
+        leave.setLeaveType("Vacation");
+        leave.setStartDate(LocalDate.of(2025, 7, 25));
+        leave.setEndDate(LocalDate.of(2025, 7, 27));
+        leave.setTotalDays(3.0);
+    }
 
-        Leave testLeave = new Leave();
-        testLeave.setLeaveID(generatedLeaveId);      // Unique ID
-        testLeave.setEmployeeId(10001);              // Must match existing Employee in DB
-        testLeave.setLeaveType("Sick Leave");
-        testLeave.setStartDate(LocalDate.of(2025, 8, 1));
-        testLeave.setEndDate(LocalDate.of(2025, 8, 3));
-        testLeave.setTotalDays(3.0);
-        testLeave.setRequestId(1);                   // Must match existing Request ID in DB
+    @Test
+    public void testCreateLeave() {
+        boolean result = leaveService.createLeave(leave);
+        assertTrue("Leave should be created", result);
+        assertTrue("Leave ID should be set after insert", leave.getLeaveRequestId() > 0);
+    }
 
-        boolean isCreated = leaveService.createLeave(testLeave);
-        assertTrue("Initial test leave should be created", isCreated);
+    @Test
+    public void testGetLeaveById() {
+        leaveService.createLeave(leave);
+        assertTrue("Leave ID should be set after insert", leave.getLeaveRequestId() > 0);
 
-        // Confirm leave is present and fetch leave ID for later tests
+        int id = leave.getLeaveRequestId();
+        Leave retrieved = leaveService.getLeaveById(id);
+
+        assertNotNull("Retrieved leave should not be null", retrieved);
+        assertEquals("Leave type should match", leave.getLeaveType(), retrieved.getLeaveType());
+        assertEquals("Total days should match", leave.getTotalDays(), retrieved.getTotalDays(), 0.01);
+    }
+
+    @Test
+    public void testGetAllLeaves() {
+        leaveService.createLeave(leave);
         List<Leave> leaves = leaveService.getAllLeaves();
-        for (Leave l : leaves) {
-            if (l.getLeaveID().equals(generatedLeaveId)) {
-                testLeaveId = l.getLeaveID();
-                break;
-            }
-        }
-
-        assertNotNull("Test leave ID should be set after creation", testLeaveId);
-        assertFalse("Test leave ID should not be empty", testLeaveId.isEmpty());
+        assertNotNull("Leave list should not be null", leaves);
+        assertTrue("Leave list should contain at least one entry", leaves.size() > 0);
     }
 
+    @Test
     public void testUpdateLeave() {
-        Leave leaveToUpdate = leaveService.getLeaveById(testLeaveId);
-        assertNotNull("Leave to update should exist", leaveToUpdate);
+        leaveService.createLeave(leave);
+        assertTrue("Leave ID should be set", leave.getLeaveRequestId() > 0);
 
-        leaveToUpdate.setLeaveType("Updated Sick Leave");
+        leave.setLeaveType("Sick Leave");
+        leave.setTotalDays(2.0);
 
-        boolean isUpdated = leaveService.updateLeave(leaveToUpdate);
-        assertTrue("Leave should be updated", isUpdated);
+        boolean result = leaveService.updateLeave(leave);
+        assertTrue("Leave should be updated", result);
 
-        Leave updatedLeave = leaveService.getLeaveById(testLeaveId);
-        assertEquals("Leave type should be updated correctly", "Updated Sick Leave", updatedLeave.getLeaveType());
+        Leave updated = leaveService.getLeaveById(leave.getLeaveRequestId());
+        assertEquals("Updated leave type should match", "Sick Leave", updated.getLeaveType());
+        assertEquals("Updated total days should match", 2.0, updated.getTotalDays(), 0.01);
     }
 
+    @Test
     public void testDeleteLeave() {
-        boolean isDeleted = leaveService.deleteLeave(testLeaveId);
-        assertTrue("Leave should be deleted", isDeleted);
+        leaveService.createLeave(leave);
+        assertTrue("Leave ID should be set", leave.getLeaveRequestId() > 0);
 
-        Leave deletedLeave = leaveService.getLeaveById(testLeaveId);
-        assertNull("Deleted leave should no longer exist in the database", deletedLeave);
+        boolean result = leaveService.deleteLeave(leave.getLeaveRequestId());
+        assertTrue("Leave should be deleted", result);
+
+        Leave deleted = leaveService.getLeaveById(leave.getLeaveRequestId());
+        assertNull("Deleted leave should not be found", deleted);
     }
 }
