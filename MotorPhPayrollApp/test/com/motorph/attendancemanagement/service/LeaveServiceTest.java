@@ -25,7 +25,7 @@ public class LeaveServiceTest {
     @Before
     public void setUp() {
         leave = new Leave();
-        leave.setEmployeeId(1); // make sure this employee ID exists in your database
+        leave.setEmployeeId(10001); // make sure this employee ID exists in your database
         leave.setLeaveType("Vacation");
         leave.setStartDate(LocalDate.of(2025, 7, 25));
         leave.setEndDate(LocalDate.of(2025, 7, 27));
