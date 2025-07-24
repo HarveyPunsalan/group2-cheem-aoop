@@ -4,14 +4,13 @@
  */
 package com.motorph.employeemanagement.view.admin;
 
+import com.motorph.common.swing.validation.SelectionValidator;
 import com.motorph.database.connection.DatabaseService;
 import com.motorph.employeemanagement.model.Employee;
 import com.motorph.employeemanagement.service.EmployeeRetrievalService;
 import com.motorph.employeemanagement.service.EmployeeDeletionService;
 import com.motorph.usermanagement.model.*;
 import com.motorph.database.execution.SQLExecutor;
-import com.motorph.employeemanagement.service.EmployeeCreationService;
-import com.motorph.employeemanagement.service.EmployeeUpdateService;
 import java.sql.Connection;
 import java.util.*;
 import javax.swing.JOptionPane;
@@ -378,10 +377,8 @@ public class EmployeeInformation extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1AddNewRecordActionPerformed
     
     private void jButton1ViewEmployeeDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ViewEmployeeDetailsActionPerformed
-        // Check if a row is selected; abort if none is selected
-        if (!isSelectRecord()) {
-            return;
-        }
+        // Check if a row is selected; abort if none is selected       
+        if (SelectionValidator.isRowSelected(jTable1EmployeeList, "Please select 1 Employee")) return;
         
         try {
         // Get the index of the selected row in the JTable
@@ -412,9 +409,7 @@ public class EmployeeInformation extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton6LogOutActionPerformed
 
     private void jButton2DeleteEmployeeRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2DeleteEmployeeRecordActionPerformed
-         if (!isSelectRecord()) { // Check if a record is selected in the JTable
-            return; // If no selection, exit the method (prevent further execution)
-        }
+        if (SelectionValidator.isRowSelected(jTable1EmployeeList, "Please select 1 Employee")) return;
 
         // Show a confirmation dialog to prevent accidental deletion
         int result = JOptionPane.showConfirmDialog(
@@ -453,9 +448,7 @@ public class EmployeeInformation extends javax.swing.JFrame {
 
     private void jButton1ViewAttendanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ViewAttendanceActionPerformed
         // Ensure a record is selected before proceeding
-        if (!isSelectRecord()) {
-            return;
-        }
+        if (SelectionValidator.isRowSelected(jTable1EmployeeList, "Please select 1 Employee")) return;
         
         int rowIndex = jTable1EmployeeList.getSelectedRow(); // Get selected row index
 
