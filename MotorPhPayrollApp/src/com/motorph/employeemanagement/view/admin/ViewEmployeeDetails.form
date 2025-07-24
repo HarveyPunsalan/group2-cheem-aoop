@@ -33,86 +33,75 @@
               <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jLabel5EditEmployeeDetails" alignment="0" min="-2" pref="261" max="-2" attributes="0"/>
-                  <Component id="jLabel6PEmail" min="-2" pref="111" max="-2" attributes="0"/>
-                  <Component id="jLabel6PhoneNumber" alignment="0" min="-2" pref="99" max="-2" attributes="0"/>
-                  <Component id="jLabel2FirstName" alignment="0" min="-2" pref="76" max="-2" attributes="0"/>
-                  <Component id="jLabel3Birthday" alignment="0" min="-2" pref="88" max="-2" attributes="0"/>
                   <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jLabel4Municipality" min="-2" pref="79" max="-2" attributes="0"/>
+                          <Component id="jLabel15EmployementType" alignment="0" min="-2" pref="122" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jLabel16EmployementStatus" alignment="1" min="-2" pref="134" max="-2" attributes="0"/>
+                              <Component id="jLabel4Province" min="-2" pref="79" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="jLabel4PostalCode" min="-2" pref="79" max="-2" attributes="0"/>
+                          <Component id="jLabel4Country" min="-2" pref="79" max="-2" attributes="0"/>
+                          <Component id="jLabel4AddressType" min="-2" pref="79" max="-2" attributes="0"/>
+                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                              <Component id="jLabel4Street" alignment="0" max="32767" attributes="0"/>
+                              <Component id="jLabel4Barangay" alignment="0" pref="79" max="32767" attributes="0"/>
+                          </Group>
+                          <Component id="jLabel6PhoneNumber" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel3Birthday" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
+                          <Component id="jLabel1LastName" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
+                          <Component id="jLabel2FirstName" alignment="0" min="-2" pref="71" max="-2" attributes="0"/>
+                          <Component id="jLabel6PEmail" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
+                          <Component id="jLabel4HouseNo" min="-2" pref="80" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="152" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="jDateChooserBirthday" min="-2" pref="200" max="-2" attributes="0"/>
-                                  <Component id="jTextField5PhoneNumber" alignment="1" min="-2" pref="200" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                          <Component id="jLabel1LastName" alignment="0" min="-2" pref="76" max="-2" attributes="0"/>
-                          <Component id="jLabel4HouseNo" alignment="0" min="-2" pref="79" max="-2" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabel4Street" min="-2" pref="79" max="-2" attributes="0"/>
-                                  <Component id="jLabel4Barangay" min="-2" pref="79" max="-2" attributes="0"/>
-                                  <Component id="jLabel4Municipality" min="-2" pref="79" max="-2" attributes="0"/>
-                                  <Component id="jLabel15EmployementType" alignment="0" min="-2" pref="122" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jLabel16EmployementStatus" alignment="1" min="-2" pref="134" max="-2" attributes="0"/>
-                                      <Component id="jLabel4Province" min="-2" pref="79" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Component id="jLabel4PostalCode" min="-2" pref="79" max="-2" attributes="0"/>
-                                  <Component id="jLabel4Country" min="-2" pref="79" max="-2" attributes="0"/>
-                                  <Component id="jLabel4AddressType" min="-2" pref="79" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="jTextField2FirstName" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="jTextField10AddressType" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="jTextField16PostalCode" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="jTextField15Province" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="jTextField13Municipality" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="jTextField8Barangay" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="jTextField7Street" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="jTextField6Email" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="jTextField5HouseNo" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="jTextField10Country" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="jTextField10EmployementType" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="jTextField4EmployementStatus" alignment="1" pref="202" max="32767" attributes="0"/>
-                                  <Component id="jTextField1LastName" alignment="1" max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
+                          <Component id="jTextField5PhoneNumber" min="-2" pref="202" max="-2" attributes="0"/>
+                          <Component id="jTextField2FirstName" alignment="0" min="-2" pref="202" max="-2" attributes="0"/>
+                          <Component id="jTextField10AddressType" alignment="0" min="-2" pref="202" max="-2" attributes="0"/>
+                          <Component id="jTextField16PostalCode" alignment="0" min="-2" pref="202" max="-2" attributes="0"/>
+                          <Component id="jTextField15Province" alignment="0" min="-2" pref="202" max="-2" attributes="0"/>
+                          <Component id="jTextField13Municipality" alignment="0" min="-2" pref="202" max="-2" attributes="0"/>
+                          <Component id="jTextField8Barangay" alignment="0" min="-2" pref="202" max="-2" attributes="0"/>
+                          <Component id="jTextField7Street" alignment="0" min="-2" pref="202" max="-2" attributes="0"/>
+                          <Component id="jTextField6Email" alignment="0" min="-2" pref="202" max="-2" attributes="0"/>
+                          <Component id="jTextField10Country" alignment="0" min="-2" pref="202" max="-2" attributes="0"/>
+                          <Component id="jTextField10EmployementType" alignment="0" min="-2" pref="202" max="-2" attributes="0"/>
+                          <Component id="jTextField4EmployementStatus" alignment="1" min="-2" pref="202" max="-2" attributes="0"/>
+                          <Component id="jTextField1LastName" alignment="1" min="-2" pref="202" max="-2" attributes="0"/>
+                          <Component id="jDateChooserBirthday" alignment="1" min="-2" pref="202" max="-2" attributes="0"/>
+                          <Component id="jTextField5HouseNo" alignment="1" min="-2" pref="202" max="-2" attributes="0"/>
                       </Group>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
-                              <EmptySpace min="-2" pref="77" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabel11BasicSalary" alignment="0" min="-2" pref="71" max="-2" attributes="0"/>
-                                  <Component id="jLabel19GrossSemi" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel20HourlyRate" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel11SalaryGrade" alignment="0" min="-2" pref="71" max="-2" attributes="0"/>
-                                  <Group type="103" alignment="0" groupAlignment="1" attributes="0">
-                                      <Component id="jLabel14PhoneAllowance" min="-2" pref="100" max="-2" attributes="0"/>
-                                      <Component id="jLabel17ClothingAllowance" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
-                                      <Component id="jLabel12RiceSubsidy" min="-2" pref="108" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Component id="jLabel11DateHired" alignment="0" min="-2" pref="71" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="74" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabel8Philhealth" min="-2" pref="134" max="-2" attributes="0"/>
-                                  <Component id="jLabel7SSS" min="-2" pref="146" max="-2" attributes="0"/>
-                                  <Component id="jLabel13Pagibig" alignment="0" min="-2" pref="134" max="-2" attributes="0"/>
-                                  <Component id="jLabel9TIN" alignment="0" min="-2" pref="134" max="-2" attributes="0"/>
-                                  <Component id="jLabel10JobTitle" alignment="0" min="-2" pref="98" max="-2" attributes="0"/>
-                                  <Component id="jLabelSupervisorId" alignment="0" min="-2" pref="76" max="-2" attributes="0"/>
-                                  <Component id="jLabel11Department" alignment="0" min="-2" pref="71" max="-2" attributes="0"/>
+                                  <Component id="jLabel14PhoneAllowance" min="-2" pref="100" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="jLabel10JobTitle" alignment="0" max="32767" attributes="0"/>
+                                      <Component id="jLabel9TIN" alignment="0" max="32767" attributes="0"/>
+                                      <Component id="jLabel13Pagibig" alignment="0" max="32767" attributes="0"/>
+                                      <Component id="jLabel8Philhealth" alignment="0" max="32767" attributes="0"/>
+                                      <Component id="jLabel7SSS" alignment="0" max="32767" attributes="0"/>
+                                      <Component id="jLabelSupervisorId" alignment="0" pref="80" max="32767" attributes="0"/>
+                                      <Component id="jLabel11Department" alignment="0" max="32767" attributes="0"/>
+                                      <Component id="jLabel11DateHired" max="32767" attributes="0"/>
+                                      <Component id="jLabel11SalaryGrade" max="32767" attributes="0"/>
+                                      <Component id="jLabel11BasicSalary" max="32767" attributes="0"/>
+                                      <Component id="jLabel12RiceSubsidy" max="32767" attributes="0"/>
+                                  </Group>
+                                  <Component id="jLabel17ClothingAllowance" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel20HourlyRate" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
+                              <EmptySpace min="-2" pref="51" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jLabel19GrossSemi" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jTextField4Pagibig" min="-2" pref="202" max="-2" attributes="0"/>
                           <Component id="jTextField4Department" min="-2" pref="202" max="-2" attributes="0"/>
@@ -120,21 +109,21 @@
                           <Component id="jTextField4SupervisorId" min="-2" pref="202" max="-2" attributes="0"/>
                           <Component id="jTextFieldPhilhealth" min="-2" pref="202" max="-2" attributes="0"/>
                           <Component id="jTextField4TIN" min="-2" pref="202" max="-2" attributes="0"/>
-                          <Component id="jTextField4JobTitle" min="-2" pref="202" max="-2" attributes="0"/>
-                          <Component id="jDateChooserDateHired" min="-2" pref="200" max="-2" attributes="0"/>
+                          <Component id="jDateChooserDateHired" min="-2" pref="202" max="-2" attributes="0"/>
                           <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
                               <Group type="102" attributes="0">
                                   <EmptySpace min="-2" pref="94" max="-2" attributes="0"/>
-                                  <Component id="jButton2SaveChanges" pref="106" max="32767" attributes="0"/>
+                                  <Component id="jButton2SaveChanges" max="32767" attributes="0"/>
                               </Group>
                               <Component id="jTextField18HourlyRate" alignment="0" max="32767" attributes="0"/>
                               <Component id="jTextField17GrossSemi" alignment="0" max="32767" attributes="0"/>
                               <Component id="jTextField9ClothingAllowance" alignment="0" max="32767" attributes="0"/>
                               <Component id="jTextField14PhoneAllowance" alignment="0" max="32767" attributes="0"/>
                               <Component id="jTextField12RiceSubsidy" alignment="0" max="32767" attributes="0"/>
-                              <Component id="jTextField11BasicSalary" alignment="0" max="32767" attributes="0"/>
-                              <Component id="jTextField11SalaryGrade" alignment="0" max="32767" attributes="0"/>
+                              <Component id="jTextField11BasicSalary" alignment="0" min="-2" pref="202" max="-2" attributes="0"/>
+                              <Component id="jTextField11SalaryGrade" alignment="0" min="-2" pref="202" max="-2" attributes="0"/>
                           </Group>
+                          <Component id="jTextField4JobTitle" min="-2" pref="202" max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -157,61 +146,77 @@
                       <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel2FirstName" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jTextField2FirstName" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
+                          <Component id="jTextField2FirstName" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jTextField4SSS" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel7SSS" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jLabel1LastName" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jTextFieldPhilhealth" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jTextField1LastName" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel8Philhealth" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jLabel3Birthday" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="103" alignment="1" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel13Pagibig" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jTextField4Pagibig" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="jDateChooserBirthday" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jLabel6PhoneNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jTextField4TIN" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jTextField5PhoneNumber" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel9TIN" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jLabel6PEmail" min="-2" max="-2" attributes="0"/>
+                          <Component id="jTextField6Email" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="jTextField4JobTitle" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel10JobTitle" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jLabel1LastName" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jTextField1LastName" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jTextFieldPhilhealth" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel8Philhealth" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="1" attributes="0">
-                                      <Component id="jDateChooserBirthday" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel3Birthday" min="-2" max="-2" attributes="0"/>
-                                  </Group>
+                                  <Component id="jLabel4HouseNo" min="-2" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="jTextField4Pagibig" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel13Pagibig" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jTextField5HouseNo" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabelSupervisorId" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jTextField5PhoneNumber" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel6PhoneNumber" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jTextField4TIN" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel9TIN" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jTextField6Email" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel6PEmail" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jTextField5HouseNo" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel4HouseNo" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jTextField7Street" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel4Street" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jLabel4Street" min="-2" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="jTextField7Street" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel11Department" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jTextField8Barangay" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel4Barangay" min="-2" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="jTextField8Barangay" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel11DateHired" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jTextField13Municipality" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel4Municipality" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jLabel4Municipality" min="-2" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="jTextField13Municipality" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel11SalaryGrade" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
@@ -219,6 +224,7 @@
                                       <Group type="103" groupAlignment="3" attributes="0">
                                           <Component id="jTextField15Province" alignment="3" min="-2" max="-2" attributes="0"/>
                                           <Component id="jLabel4Province" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jLabel11BasicSalary" alignment="3" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="3" attributes="0">
@@ -249,37 +255,16 @@
                               </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="143" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jTextField4JobTitle" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel10JobTitle" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="jTextField4SupervisorId" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jTextField4SupervisorId" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabelSupervisorId" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="jTextField4Department" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jTextField4Department" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel11Department" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="jDateChooserDateHired" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="jLabel11DateHired" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jDateChooserDateHired" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jTextField11SalaryGrade" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel11SalaryGrade" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jTextField11BasicSalary" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel11BasicSalary" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace pref="44" max="32767" attributes="0"/>
+                              <Component id="jTextField11SalaryGrade" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="jTextField11BasicSalary" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace pref="52" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="jTextField12RiceSubsidy" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel12RiceSubsidy" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -295,9 +280,9 @@
                                   <Component id="jLabel17ClothingAllowance" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabel19GrossSemi" alignment="1" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jTextField17GrossSemi" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextField17GrossSemi" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel19GrossSemi" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
@@ -700,6 +685,9 @@
     <Component class="com.toedter.calendar.JDateChooser" name="jDateChooserBirthday">
       <Properties>
         <Property name="dateFormatString" type="java.lang.String" value="M/d/yyyy"/>
+        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[64, 22]"/>
+        </Property>
       </Properties>
       <Events>
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jDateChooserBirthdayMouseClicked"/>
