@@ -278,7 +278,7 @@ CREATE TABLE `employee_address` (
   CONSTRAINT `fk_address_employee` FOREIGN KEY (`employee_id`) REFERENCES `employee_personal_information` (`employee_id`) ON DELETE CASCADE,
   CONSTRAINT `fk_address_type` FOREIGN KEY (`address_type`) REFERENCES `address_type` (`address_type_id`),
   CONSTRAINT `chk_postal_code_format` CHECK (regexp_like(`postal_code`,_utf8mb4'^[0-9]{4}$'))
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -290,6 +290,24 @@ LOCK TABLES `employee_address` WRITE;
 INSERT INTO `employee_address` VALUES (1,10001,NULL,'Valero Carpark Building Valero Street',NULL,'Makati',NULL,'1227','Philippines',1),(2,10002,NULL,'San Antonio De Padua 2, Block 1 Lot 8 and 2',NULL,'Dasmarinas','Cavite',NULL,'Philippines',1),(3,10003,'402','4th Floor Jiao Building Timog Avenue Cor. Quezon Avenue',NULL,'Quezon',NULL,'1100','Philippines',1),(4,10004,'460','Solanda Street',NULL,'Intramuros','Manila','1000','Philippines',1),(5,10005,NULL,'National Highway',NULL,'Gingoog','Misamis Occidental',NULL,'Philippines',1),(6,10006,'17/85','Stracke Via Suite 042','Poblacion','Las Pinas','Dinagat Islands','4783','Philippines',1),(7,10007,'99','Strosin Hills','Poblacion','Bislig','Tawi-Tawi','5340','Philippines',1),(8,10008,'12A/33','Upton Isle Apt. 420',NULL,'Roxas City','Surigao del Norte','1814','Philippines',1),(9,10009,'90A','Dibbert Terrace Apt. 190',NULL,'San Lorenzo','Davao del Norte','6056','Philippines',1),(10,10010,'284','T. Morato corner, Scout Rallos Street',NULL,'Quezon',NULL,NULL,'Philippines',1),(11,10011,'93/54','Shanahan Alley Apt. 183',NULL,'Santo Tomas','Masbate','1572','Philippines',1),(12,10012,'49','Springs Apt. 266','Poblacion','Taguig','Occidental Mindoro','3200','Philippines',1),(13,10013,'42/25','Sawayn Stream',NULL,'Ubay','Zamboanga del Norte','1208','Philippines',1),(14,10014,'37/46','Kulas Roads',NULL,'Maragondon','Quirino','0962','Philippines',1),(15,10015,'22A/52','Lubowitz Meadows',NULL,'Pililla','Zambales','4895','Philippines',1),(16,10016,'90','O\'Keefe Spur Apt. 379',NULL,'Catigbian','Sulu','2772','Philippines',1),(17,10017,'89A','Armstrong Trace',NULL,'Compostela','Maguindanao','7874','Philippines',1),(18,10018,'8','Grant Drive Suite 406','Poblacion','Iloilo City','La Union','9186','Philippines',1),(19,10019,'93A/21','Berge Points',NULL,'Tapaz','Quezon','2180','Philippines',1),(20,10020,'65','Murphy Center Suite 094','Poblacion','Palayan','Quirino','5636','Philippines',1),(21,10021,'47A/94','Larkin Plaza Apt. 179','Poblacion','Caloocan','Quirino','2751','Philippines',1),(22,10022,'06A','Gulgowski Extensions',NULL,'Bongabon','Zamboanga del Sur','6085','Philippines',1),(23,10023,'99A','Padberg Spring','Poblacion','Mabalacat','Lanao del Sur','3959','Philippines',1),(24,10024,'80A/48','Ledner Ridges','Poblacion','Kabankalan','Marinduque','8870','Philippines',1),(25,10025,'96/48','Watsica Flats Suite 734','Poblacion','Malolos','Ifugao','1844','Philippines',1),(26,10026,'58A','Wilderman Walks','Poblacion','Digos','Davao del Sur','5822','Philippines',1),(27,10027,'60','Goyette Valley Suite 219','Poblacion','Tabuk','Lanao del Sur','3159','Philippines',1),(28,10028,'66/77','Mann Views',NULL,'Luisiana','Dinagat Islands','1263','Philippines',1),(29,10029,'72/70','Stamm Spurs',NULL,'Bustos','Iloilo','4550','Philippines',1),(30,10030,'50A/83','Bahringer Oval Suite 145',NULL,'Kiamba','Nueva Ecija','7688','Philippines',1),(31,10031,'95','Cremin Junction',NULL,'Surallah','Cotabato','2809','Philippines',1),(32,10032,NULL,'Hi-way','Yati','Liloan','Cebu','6002','Philippines',1),(33,10033,NULL,'Bulala',NULL,'Camalaniugan','Cagayan','3510','Philippines',1),(34,10034,NULL,'Agapita Building',NULL,NULL,'Manila',NULL,'Philippines',1);
 /*!40000 ALTER TABLE `employee_address` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `employee_daily_summary`
+--
+
+DROP TABLE IF EXISTS `employee_daily_summary`;
+/*!50001 DROP VIEW IF EXISTS `employee_daily_summary`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `employee_daily_summary` AS SELECT 
+ 1 AS `employee_id`,
+ 1 AS `full_name`,
+ 1 AS `date`,
+ 1 AS `login`,
+ 1 AS `logout`,
+ 1 AS `late_hours`,
+ 1 AS `worked_hours`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `employee_default_allowance`
@@ -376,7 +394,7 @@ CREATE TABLE `employee_employment_information` (
   CONSTRAINT `fk_employment_employee` FOREIGN KEY (`employee_id`) REFERENCES `employee_personal_information` (`employee_id`) ON DELETE CASCADE,
   CONSTRAINT `fk_employment_job` FOREIGN KEY (`job_id`) REFERENCES `job` (`job_id`),
   CONSTRAINT `fk_employment_salary` FOREIGN KEY (`salary_id`) REFERENCES `salary` (`salary_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10034 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10040 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -447,7 +465,7 @@ CREATE TABLE `employee_government_information` (
   CONSTRAINT `chk_philhealth_format` CHECK (regexp_like(`philhealth_number`,_utf8mb4'^[0-9]{12}$')),
   CONSTRAINT `chk_sss_number_format` CHECK (regexp_like(`sss_number`,_utf8mb4'^[0-9]{10}$')),
   CONSTRAINT `chk_tin_format` CHECK (regexp_like(`tax_identification_number`,_utf8mb4'^[0-9]{12}$'))
-) ENGINE=InnoDB AUTO_INCREMENT=10034 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10048 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -481,7 +499,7 @@ CREATE TABLE `employee_leave` (
   CONSTRAINT `fk_leave_employee` FOREIGN KEY (`employee_id`) REFERENCES `employee_personal_information` (`employee_id`),
   CONSTRAINT `fk_leave_request` FOREIGN KEY (`request_id`) REFERENCES `request` (`request_id`) ON DELETE CASCADE,
   CONSTRAINT `chk_total_days_non_negative` CHECK ((`total_days` >= 0))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -490,6 +508,7 @@ CREATE TABLE `employee_leave` (
 
 LOCK TABLES `employee_leave` WRITE;
 /*!40000 ALTER TABLE `employee_leave` DISABLE KEYS */;
+INSERT INTO `employee_leave` VALUES (1,10001,'Vacation','2025-07-25','2025-07-27',3.00,NULL),(2,10001,'Vacation','2025-07-25','2025-07-27',3.00,NULL),(3,10001,'Vacation','2025-07-25','2025-07-27',3.00,NULL),(4,10001,'Vacation','2025-07-25','2025-07-27',3.00,NULL),(5,10001,'Vacation','2025-07-25','2025-07-27',3.00,NULL),(6,10001,'Vacation','2025-07-25','2025-07-27',3.00,NULL),(7,10001,'Vacation','2025-07-25','2025-07-27',3.00,NULL),(8,10001,'Vacation','2025-07-25','2025-07-27',3.00,NULL),(9,10001,'Vacation','2025-07-25','2025-07-27',3.00,NULL),(10,10001,'Vacation','2025-07-25','2025-07-27',3.00,NULL),(11,10001,'Vacation','2025-07-25','2025-07-27',3.00,NULL),(12,10001,'Vacation','2025-07-25','2025-07-27',3.00,NULL),(13,10001,'Vacation','2025-07-25','2025-07-27',3.00,NULL),(14,10001,'Vacation','2025-07-25','2025-07-27',3.00,NULL),(15,10001,'Vacation','2025-07-25','2025-07-27',3.00,NULL),(17,10001,'Vacation','2025-07-25','2025-07-27',3.00,NULL),(18,10001,'Sick Leave','2025-07-25','2025-07-27',2.00,NULL),(19,10001,'Vacation','2025-07-25','2025-07-27',3.00,NULL),(20,10001,'Vacation','2025-07-25','2025-07-27',3.00,NULL),(22,10001,'Vacation','2025-07-25','2025-07-27',3.00,NULL),(23,10001,'Sick Leave','2025-07-25','2025-07-27',2.00,NULL),(24,10001,'Vacation','2025-07-25','2025-07-27',3.00,NULL),(25,10001,'Vacation','2025-07-25','2025-07-27',3.00,NULL);
 /*!40000 ALTER TABLE `employee_leave` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -510,7 +529,7 @@ CREATE TABLE `employee_personal_information` (
   PRIMARY KEY (`employee_id`),
   UNIQUE KEY `uq_employee_email` (`email`),
   CONSTRAINT `chk_personal_phone_numeric` CHECK (regexp_like(`phone_number`,_utf8mb4'^[0-9]+$'))
-) ENGINE=InnoDB AUTO_INCREMENT=10037 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10058 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -519,7 +538,7 @@ CREATE TABLE `employee_personal_information` (
 
 LOCK TABLES `employee_personal_information` WRITE;
 /*!40000 ALTER TABLE `employee_personal_information` DISABLE KEYS */;
-INSERT INTO `employee_personal_information` VALUES (10001,'Manuel III','Garcia','1983-10-11','09171234567','mgarcia@motorph.com'),(10002,'Antonio','Lim','1988-06-19','09282341234','alim@motorph.com'),(10003,'Bianca Sofia','Aquino','1989-08-04','09393456789','baquino@motorph.com'),(10004,'Isabella','Reyes','1994-06-16','09454567890','ireyes@motorph.com'),(10005,'Eduard','Hernandez','1989-09-23','09565678901','ehernandez@motorph.com'),(10006,'Andrea Mae','Villanueva','1988-02-14','09676789012','avillanueva@motorph.com'),(10007,'Brad','San Jose','1996-03-15','09787890123','bsanjose@motorph.com'),(10008,'Alice','Romualdez','1992-05-14','09998901234','aromualdez@motorph.com'),(10009,'Rosie','Atienza','1948-09-24','09159012345','ratienza@motorph.com'),(10010,'Roderick','Alvaro','1988-03-30','09230123456','ralvaro@motorph.com'),(10011,'Anthony','Salcedo','1993-09-14','09301234567','asalcedo@motorph.com'),(10012,'Josie','Lopez','1987-01-14','09472345678','jlopez@motorph.com'),(10013,'Martha','Farala','1942-01-11','09583456789','mfarala@motorph.com'),(10014,'Leila','Martinez','1970-07-11','09634567890','lmartinez@motorph.com'),(10015,'Fredrick','Romualdez','1985-03-10','09755678901','fromualdez@motorph.com'),(10016,'Christian','Mata','1987-10-21','09755678902','cmata@motorph.com'),(10017,'Selena','De Leon','1987-10-21','09187890123','sdeleon@motorph.com'),(10018,'Allison','San Jose','1975-02-20','09298901234','asanjose@motorph.com'),(10019,'Cydney','Rosario','1986-06-24','09369012345','crosario@motorph.com'),(10020,'Mark','Bautista','1996-10-06','09480123456','mbautista@motorph.com'),(10021,'Darlene','Lazaro','1991-02-12','09591234567','dlazaro@motorph.com'),(10022,'Kolby','Delos Santos','1985-11-25','09642345678','kdelossantos@motorph.com'),(10023,'Vella','Santos','1980-02-26','09733456789','vsantos@motorph.com'),(10024,'Tomas','Del Rosario','1983-12-31','09924567890','tdelrosario@motorph.com'),(10025,'Jacklyn','Tolentino','1978-12-18','09165678901','jtolentino@motorph.com'),(10026,'Percival','Gutierrez','1984-05-19','09276789012','pgutierrez@motorph.com'),(10027,'Garfield','Manalaysay','1970-12-18','09387890123','gmanalaysay@motorph.com'),(10028,'Lizeth','Villegas','1986-08-28','09498901234','lvillegas@motorph.com'),(10029,'Carol','Ramos','1981-12-12','09559012345','cramos@motorph.com'),(10030,'Emelia','Maceda','1978-08-20','09680123456','emaceda@motorph.com'),(10031,'Delia','Aguilar','1973-04-14','09741234567','daguilar@motorph.com'),(10032,'John Rafael','Castro','1989-01-27','09932345678','jcastro@motorph.com'),(10033,'Carlos Ian','Martinez','1992-02-09','09193456789','cmartinez@motorph.com'),(10034,'Beatriz','Santos','1990-11-16','09254567890','bsantos@motorph.com');
+INSERT INTO `employee_personal_information` VALUES (10001,'Manuel III','Garcia','1983-10-11','09171234567','mgarcia@motorph.com'),(10002,'Antonio','Lim','1988-06-19','09282341234','alim@motorph.com'),(10003,'Bianca Sofia','Aquino','1989-08-04','09393456789','baquino@motorph.com'),(10004,'Isabella','Reyes','1994-06-16','09454567890','ireyes@motorph.com'),(10005,'Eduard','Hernandez','1989-09-23','09565678901','ehernandez@motorph.com'),(10006,'Andrea Mae','Villanueva','1988-02-14','09676789012','avillanueva@motorph.com'),(10007,'Brad','San Jose','1996-03-15','09787890123','bsanjose@motorph.com'),(10008,'Alice','Romualdez','1992-05-14','09998901234','aromualdez@motorph.com'),(10009,'Rosie','Atienza','1948-09-24','09159012345','ratienza@motorph.com'),(10010,'Roderick','Alvaro','1988-03-30','09230123456','ralvaro@motorph.com'),(10011,'Anthony','Salcedo','1993-09-14','09301234567','asalcedo@motorph.com'),(10012,'Josie','Lopez','1987-01-14','09472345678','jlopez@motorph.com'),(10013,'Martha','Farala','1942-01-11','09583456789','mfarala@motorph.com'),(10014,'Leila','Martinez','1970-07-11','09634567890','lmartinez@motorph.com'),(10015,'Fredrick','Romualdez','1985-03-10','09755678901','fromualdez@motorph.com'),(10016,'Christian','Mata','1987-10-21','09755678902','cmata@motorph.com'),(10017,'Selena','De Leon','1987-10-21','09187890123','sdeleon@motorph.com'),(10018,'Allison','San Jose','1975-02-20','09298901234','asanjose@motorph.com'),(10019,'Cydney','Rosario','1986-06-24','09369012345','crosario@motorph.com'),(10020,'Mark','Bautista','1996-10-06','09480123456','mbautista@motorph.com'),(10021,'Darlene','Lazaro','1991-02-12','09591234567','dlazaro@motorph.com'),(10022,'Kolby','Delos Santos','1985-11-25','09642345678','kdelossantos@motorph.com'),(10023,'Vella','Santos','1980-02-26','09733456789','vsantos@motorph.com'),(10024,'Tomas','Del Rosario','1983-12-31','09924567890','tdelrosario@motorph.com'),(10025,'Jacklyn','Tolentino','1978-12-18','09165678901','jtolentino@motorph.com'),(10026,'Percival','Gutierrez','1984-05-19','09276789012','pgutierrez@motorph.com'),(10027,'Garfield','Manalaysay','1970-12-18','09387890123','gmanalaysay@motorph.com'),(10028,'Lizeth','Villegas','1986-08-28','09498901234','lvillegas@motorph.com'),(10029,'Carol','Ramos','1981-12-12','09559012345','cramos@motorph.com'),(10030,'Emelia','Maceda','1978-08-20','09680123456','emaceda@motorph.com'),(10031,'Delia','Aguilar','1973-04-14','09741234567','daguilar@motorph.com'),(10032,'John Rafael','Castro','1989-01-27','09932345678','jcastro@motorph.com'),(10033,'Carlos Ian','Martinez','1992-02-09','09193456789','cmartinez@motorph.com'),(10034,'Beatriz','Santos','1990-11-16','09254567890','bsantos@motorph.com'),(10038,'John','Doe','2025-07-23','09123456789','john.doe@email.com'),(10055,'test','test','2025-07-01','12345678901','test');
 /*!40000 ALTER TABLE `employee_personal_information` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -818,7 +837,7 @@ CREATE TABLE `request` (
   KEY `fk_processed_by` (`processed_by`),
   CONSTRAINT `fk_processed_by` FOREIGN KEY (`processed_by`) REFERENCES `employee_personal_information` (`employee_id`),
   CONSTRAINT `fk_request_employee` FOREIGN KEY (`employee_id`) REFERENCES `employee_personal_information` (`employee_id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10015 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -827,6 +846,7 @@ CREATE TABLE `request` (
 
 LOCK TABLES `request` WRITE;
 /*!40000 ALTER TABLE `request` DISABLE KEYS */;
+INSERT INTO `request` VALUES (10010,10001,'2025-07-12','Test Request','APPROVED','2025-07-12 00:35:07',10001,'2025-07-17',NULL);
 /*!40000 ALTER TABLE `request` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -876,7 +896,7 @@ CREATE TABLE `salary` (
   CONSTRAINT `chk_basic_salary_positive` CHECK ((`basic_salary` > 0)),
   CONSTRAINT `chk_gross_semi_monthly_rate_positive` CHECK ((`gross_semi_monthly_rate` > 0)),
   CONSTRAINT `chk_hourly_rate_positive` CHECK ((`hourly_rate` > 0))
-) ENGINE=InnoDB AUTO_INCREMENT=10012 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10018 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -885,7 +905,7 @@ CREATE TABLE `salary` (
 
 LOCK TABLES `salary` WRITE;
 /*!40000 ALTER TABLE `salary` DISABLE KEYS */;
-INSERT INTO `salary` VALUES (10000,5,90000.00,45000.00,535.71),(10001,5,60000.00,30000.00,357.14),(10002,3,52670.00,26335.00,313.51),(10003,3,50825.00,25413.00,302.53),(10004,3,53500.00,26750.00,318.45),(10005,2,42975.00,21488.00,255.80),(10006,2,38475.00,19238.00,229.02),(10007,2,41850.00,20925.00,249.11),(10008,1,22500.00,11250.00,133.93),(10009,1,24000.00,12000.00,142.86),(10010,1,23250.00,116625.00,138.39),(10011,1,24750.00,12375.00,147.32);
+INSERT INTO `salary` VALUES (10000,5,90000.00,45000.00,535.71),(10001,5,60000.00,30000.00,357.14),(10002,3,52670.00,26335.00,313.51),(10003,3,50825.00,25413.00,302.53),(10004,3,53500.00,26750.00,318.45),(10005,2,42975.00,21488.00,255.80),(10006,2,38475.00,19238.00,229.02),(10007,2,41850.00,20925.00,249.11),(10008,1,22500.00,11250.00,133.93),(10009,1,24000.00,12000.00,142.86),(10010,1,23250.00,116625.00,138.39),(10011,1,24750.00,12375.00,147.32),(10013,5,30000.00,15000.00,187.50),(10014,4,25000.00,12500.00,156.25),(10015,5,30000.00,15000.00,187.50),(10016,4,25000.00,12500.00,156.25),(10017,1,30000.00,15000.00,187.50);
 /*!40000 ALTER TABLE `salary` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -908,7 +928,7 @@ CREATE TABLE `supervisor_assignment` (
   CONSTRAINT `fk_supervisor_employee` FOREIGN KEY (`employee_id`) REFERENCES `employee_personal_information` (`employee_id`) ON DELETE CASCADE,
   CONSTRAINT `fk_supervisor_supervisor` FOREIGN KEY (`supervisor_id`) REFERENCES `employee_personal_information` (`employee_id`) ON DELETE SET NULL,
   CONSTRAINT `chk_supervision_period` CHECK ((`end_date` > `start_date`))
-) ENGINE=InnoDB AUTO_INCREMENT=1033 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1039 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -951,7 +971,7 @@ CREATE TABLE `system_user` (
 
 LOCK TABLES `system_user` WRITE;
 /*!40000 ALTER TABLE `system_user` DISABLE KEYS */;
-INSERT INTO `system_user` VALUES (1,'manuel.garcia','$2a$12$poyU63kc60LOv0qyBPrgH.jX5PixC3fEwog56SX0rEHOlOgxsSiP6',10001,1,'2025-06-03 13:05:05','2025-07-12 04:17:33',1),(2,'antonio.lim','$2a$12$HRU4gcJ40nCRqQ7KBeQv6eAF3ItceYr91z4.6lMkT9gT55l15BjOa',10002,1,'2025-06-03 13:05:05','2025-07-07 12:24:31',1),(3,'bianca.aquino','password123',10003,1,'2025-06-03 13:05:05',NULL,1),(4,'isabella.reyes','password123',10004,1,'2025-06-03 13:05:05',NULL,1),(5,'eduard.hernandez','password123',10005,4,'2025-06-03 13:05:05',NULL,1),(6,'andrea.villanueva','$2a$12$blma95JApux1CCW3gcskPulEfHxfNc4VHxxYytkTFBHTgJQD2ydmG',10006,2,'2025-06-03 13:05:05','2025-07-07 13:39:24',1),(7,'brad.sanjose','password123',10007,4,'2025-06-03 13:05:05',NULL,1),(8,'roderick.alvaro','password123',10010,4,'2025-06-03 13:05:05',NULL,1),(9,'anthony.salcedo','$2a$12$xy3GQZkVJCQcOUMfkfZXjuRgvPDfVqglpkzHoQJmYeQUWU8Lj8r1S',10011,3,'2025-06-03 13:05:05','2025-07-01 11:17:10',1),(10,'josie.lopez','password123',10012,4,'2025-06-03 13:05:05',NULL,1),(11,'christian.mata','password123',10016,4,'2025-06-03 13:05:05',NULL,1),(12,'selena.deleon','$2a$12$ifQLS/Bw4wUsOlqRcCDtNuJGA8wu577H9Zz81MrvUXWhLjboiH.t6',10017,4,'2025-06-03 13:05:05','2025-07-01 11:17:35',1),(13,'alice.romualdez','$2a$12$srIiFHaSjV47VDvlAPM2D.M85epPGOjL5lgwUOJlZ96nigUFZX8Cy',10008,5,'2025-06-03 13:05:05','2025-07-01 11:12:01',1),(14,'rosie.atienza','password123',10009,5,'2025-06-03 13:05:05',NULL,1),(15,'martha.farala','$2y$10$D9eVRbS2Hv.3u9MWmH4sQOIA2b8OYa9DkOrglikAnK0hqa7DaPzfi',10013,5,'2025-06-03 13:05:05',NULL,1),(16,'leila.martinez','$2y$10$D9eVRbS2Hv.3u9MWmH4sQOIA2b8OYa9DkOrglikAnK0hqa7DaPzfi',10014,5,'2025-06-03 13:05:05',NULL,1),(17,'allison.sanjose','$2y$10$D9eVRbS2Hv.3u9MWmH4sQOIA2b8OYa9DkOrglikAnK0hqa7DaPzfi',10018,5,'2025-06-03 13:05:05',NULL,1);
+INSERT INTO `system_user` VALUES (1,'manuel.garcia','$2a$12$poyU63kc60LOv0qyBPrgH.jX5PixC3fEwog56SX0rEHOlOgxsSiP6',10001,1,'2025-06-03 13:05:05','2025-07-24 05:47:18',1),(2,'antonio.lim','$2a$12$HRU4gcJ40nCRqQ7KBeQv6eAF3ItceYr91z4.6lMkT9gT55l15BjOa',10002,1,'2025-06-03 13:05:05','2025-07-24 03:10:51',1),(3,'bianca.aquino','password123',10003,1,'2025-06-03 13:05:05',NULL,1),(4,'isabella.reyes','password123',10004,1,'2025-06-03 13:05:05',NULL,1),(5,'eduard.hernandez','password123',10005,4,'2025-06-03 13:05:05',NULL,1),(6,'andrea.villanueva','$2a$12$blma95JApux1CCW3gcskPulEfHxfNc4VHxxYytkTFBHTgJQD2ydmG',10006,2,'2025-06-03 13:05:05','2025-07-07 13:39:24',1),(7,'brad.sanjose','password123',10007,4,'2025-06-03 13:05:05',NULL,1),(8,'roderick.alvaro','password123',10010,4,'2025-06-03 13:05:05',NULL,1),(9,'anthony.salcedo','$2a$12$xy3GQZkVJCQcOUMfkfZXjuRgvPDfVqglpkzHoQJmYeQUWU8Lj8r1S',10011,3,'2025-06-03 13:05:05','2025-07-01 11:17:10',1),(10,'josie.lopez','password123',10012,4,'2025-06-03 13:05:05',NULL,1),(11,'christian.mata','password123',10016,4,'2025-06-03 13:05:05',NULL,1),(12,'selena.deleon','$2a$12$ifQLS/Bw4wUsOlqRcCDtNuJGA8wu577H9Zz81MrvUXWhLjboiH.t6',10017,4,'2025-06-03 13:05:05','2025-07-01 11:17:35',1),(13,'alice.romualdez','$2a$12$srIiFHaSjV47VDvlAPM2D.M85epPGOjL5lgwUOJlZ96nigUFZX8Cy',10008,5,'2025-06-03 13:05:05','2025-07-01 11:12:01',1),(14,'rosie.atienza','password123',10009,5,'2025-06-03 13:05:05',NULL,1),(15,'martha.farala','$2y$10$D9eVRbS2Hv.3u9MWmH4sQOIA2b8OYa9DkOrglikAnK0hqa7DaPzfi',10013,5,'2025-06-03 13:05:05',NULL,1),(16,'leila.martinez','$2y$10$D9eVRbS2Hv.3u9MWmH4sQOIA2b8OYa9DkOrglikAnK0hqa7DaPzfi',10014,5,'2025-06-03 13:05:05',NULL,1),(17,'allison.sanjose','$2y$10$D9eVRbS2Hv.3u9MWmH4sQOIA2b8OYa9DkOrglikAnK0hqa7DaPzfi',10018,5,'2025-06-03 13:05:05',NULL,1);
 /*!40000 ALTER TABLE `system_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1787,6 +1807,41 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_attendance_by_payperiod` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_attendance_by_payperiod`(
+    IN input_employee_id INT,
+    IN input_pay_period_id INT
+)
+BEGIN
+    SELECT 
+        dtr.dtr_id,
+        dtr.employee_id,
+        dtr.date,
+        dtr.login,
+        dtr.logout,
+        dtr.late_hours,
+        dtr.overtime_hours,
+        dtr.worked_hours
+    FROM daily_time_record dtr
+    JOIN pay_period pp 
+        ON dtr.date BETWEEN pp.start_date AND pp.end_date
+    WHERE dtr.employee_id = input_employee_id
+      AND pp.pay_period_id = input_pay_period_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Final view structure for view `biweekly_deduction_chart`
@@ -1802,6 +1857,24 @@ DELIMITER ;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `biweekly_deduction_chart` AS select `government_deduction_chart`.`gov_deduction_type_id` AS `gov_deduction_type_id`,round(((`government_deduction_chart`.`minimum_range` * 12) / 26),2) AS `biweekly_min_range`,round(((`government_deduction_chart`.`maximum_range` * 12) / 26),2) AS `biweekly_max_range`,`government_deduction_chart`.`fixed_amount` AS `fixed_amount`,round(((`government_deduction_chart`.`fixed_amount` * 12) / 26),2) AS `biweekly_fixed_amount`,`government_deduction_chart`.`employee_deduction_rate` AS `employee_deduction_rate`,round(((`government_deduction_chart`.`employee_deduction_rate` * 12) / 26),6) AS `biweekly_employee_deduction_rate`,`government_deduction_chart`.`employer_contribution_share` AS `employer_contribution_share`,round(((`government_deduction_chart`.`employer_contribution_share` * 12) / 26),6) AS `biweekly_employer_contribution_share`,`government_deduction_chart`.`has_contribution_cap` AS `has_contribution_cap`,`government_deduction_chart`.`min_contribution` AS `min_contribution`,round(((`government_deduction_chart`.`min_contribution` * 12) / 26),2) AS `biweekly_min_contribution`,`government_deduction_chart`.`max_contribution` AS `max_contribution`,round(((`government_deduction_chart`.`max_contribution` * 12) / 26),2) AS `biweekly_max_contribution`,`government_deduction_chart`.`effective_at` AS `effective_at`,`government_deduction_chart`.`notes` AS `notes` from `government_deduction_chart` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `employee_daily_summary`
+--
+
+/*!50001 DROP VIEW IF EXISTS `employee_daily_summary`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `employee_daily_summary` AS select `e`.`employee_id` AS `employee_id`,concat(`e`.`first_name`,' ',`e`.`last_name`) AS `full_name`,`dtr`.`date` AS `date`,`dtr`.`login` AS `login`,`dtr`.`logout` AS `logout`,`dtr`.`late_hours` AS `late_hours`,`dtr`.`worked_hours` AS `worked_hours` from (`employee_personal_information` `e` join `daily_time_record` `dtr` on((`e`.`employee_id` = `dtr`.`employee_id`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -1923,4 +1996,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-07-12 12:20:45
+-- Dump completed on 2025-07-24 14:03:13
