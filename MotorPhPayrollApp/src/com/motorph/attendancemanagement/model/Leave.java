@@ -5,16 +5,17 @@
 package com.motorph.attendancemanagement.model;
 
 import java.time.LocalDate;
+import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Leave {
-
     private int leaveRequestId;
     private int employeeId;
     private String leaveType;
     private LocalDate startDate;
     private LocalDate endDate;
     private double totalDays;
-
+  
     public Leave() {}
 
     public Leave(int leaveRequestId, int employeeId, String leaveType, LocalDate startDate,

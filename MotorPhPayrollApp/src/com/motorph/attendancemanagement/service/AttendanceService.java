@@ -78,7 +78,6 @@ public class AttendanceService {
             stmt.setDouble(6, attendance.getHoursLate());
             stmt.setDouble(7, attendance.getHoursOvertime());
             stmt.setDouble(8, attendance.getHoursWorked());
-
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {

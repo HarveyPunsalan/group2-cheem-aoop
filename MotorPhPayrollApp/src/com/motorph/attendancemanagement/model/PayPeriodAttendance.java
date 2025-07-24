@@ -43,6 +43,7 @@ public class PayPeriodAttendance {
             this.employee = emp;
 
             PayPeriodService payPeriodService = ServiceFactory.createPayPeriodService();
+
             this.payPeriod = payPeriodService.searchByDateRange(data[2], data[3]).orElse(null);
 
             this.totalWorkedHours = Double.parseDouble(data[4]);

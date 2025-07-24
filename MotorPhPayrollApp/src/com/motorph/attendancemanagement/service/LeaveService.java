@@ -18,7 +18,7 @@ public class LeaveService {
     public LeaveService() {
         this.conn = DatabaseService.connectToMotorPH();
     }
-
+  
     public boolean createLeave(Leave leave) {
         String sql = "INSERT INTO employee_leave (employee_id, leave_type, start_date, end_date, total_days) " +
                      "VALUES (?, ?, ?, ?, ?)";
@@ -42,7 +42,7 @@ public class LeaveService {
         }
         return false;
     }
-
+  
     public List<Leave> getAllLeaves() {
         List<Leave> leaves = new ArrayList<>();
         String sql = "SELECT * FROM employee_leave";
@@ -63,7 +63,7 @@ public class LeaveService {
         }
         return leaves;
     }
-
+  
     public Leave getLeaveById(int leaveRequestId) {
         String sql = "SELECT * FROM employee_leave WHERE leave_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
