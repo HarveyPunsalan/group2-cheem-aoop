@@ -8,7 +8,6 @@ import com.motorph.attendancemanagement.model.Leave;
 import com.motorph.database.connection.DatabaseService;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +50,7 @@ public class LeaveService {
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Leave leave = new Leave();
-                leave.setLeaveRequestId(rs.getInt("leave_request_id"));
+                leave.setLeaveRequestId(rs.getInt("leave_id"));
                 leave.setEmployeeId(rs.getInt("employee_id"));
                 leave.setLeaveType(rs.getString("leave_type"));
                 leave.setStartDate(rs.getDate("start_date").toLocalDate());
@@ -66,13 +65,13 @@ public class LeaveService {
     }
 
     public Leave getLeaveById(int leaveRequestId) {
-        String sql = "SELECT * FROM employee_leave WHERE leave_request_id = ?";
+        String sql = "SELECT * FROM employee_leave WHERE leave_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, leaveRequestId);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     Leave leave = new Leave();
-                    leave.setLeaveRequestId(rs.getInt("leave_request_id"));
+                    leave.setLeaveRequestId(rs.getInt("leave_id"));
                     leave.setEmployeeId(rs.getInt("employee_id"));
                     leave.setLeaveType(rs.getString("leave_type"));
                     leave.setStartDate(rs.getDate("start_date").toLocalDate());
@@ -89,7 +88,7 @@ public class LeaveService {
 
     public boolean updateLeave(Leave leave) {
         String sql = "UPDATE employee_leave SET employee_id = ?, leave_type = ?, start_date = ?, end_date = ?, " +
-                     "total_days = ? WHERE leave_request_id = ?";
+                     "total_days = ? WHERE leave_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, leave.getEmployeeId());
             stmt.setString(2, leave.getLeaveType());
@@ -105,7 +104,7 @@ public class LeaveService {
     }
 
     public boolean deleteLeave(int leaveRequestId) {
-        String sql = "DELETE FROM employee_leave WHERE leave_request_id = ?";
+        String sql = "DELETE FROM employee_leave WHERE leave_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, leaveRequestId);
             return stmt.executeUpdate() > 0;
