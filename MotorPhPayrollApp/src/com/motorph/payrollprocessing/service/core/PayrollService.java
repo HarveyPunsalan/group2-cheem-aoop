@@ -12,15 +12,21 @@ import com.motorph.payrollprocessing.service.processor.PayrollCalculator;
 import com.motorph.payrollprocessing.model.payroll.PayrollRecord;
 import com.motorph.payrollprocessing.model.payroll.PayPeriod;
 import com.motorph.employeemanagement.model.Employee;
-import com.motorph.employeemanagement.service.csvversion.EmployeeService;
+//import com.motorph.employeemanagement.service.csvversion.EmployeeService;
 import com.motorph.attendancemanagement.service.AttendanceService;
 import com.motorph.attendancemanagement.service.AttendanceCalculator;
 import com.motorph.attendancemanagement.model.DailyAttendance;
-import CSVFileManager.CsvFile;
+import com.motorph.database.connection.DatabaseService;
+import com.motorph.database.execution.SQLExecutor;
+import com.motorph.employeemanagement.service.EmployeeRetrievalService;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.table.DefaultTableModel;
 
@@ -33,12 +39,15 @@ public class PayrollService {
     private static final DateTimeFormatter formatterDate2  = DateTimeFormatter.ofPattern("MM-dd-yyyy");
     private static DecimalFormat decimalFormat = new DecimalFormat("0.00");
     private List<PayPeriod> payPeriodList;
-    private EmployeeService employeeService;
+//    private EmployeeService employeeService;
+    private final Connection connection = DatabaseService.connectToMotorPH();
+    private final EmployeeRetrievalService retrievalService;
     private AttendanceService attendanceService;
 
     public PayrollService() {
 //        this.payPeriodList = CsvFile.PAYPERIOD.readFile(PayPeriod::new);
-        this.employeeService = new EmployeeService();
+//        this.employeeService = new EmployeeService();
+        this.retrievalService = new EmployeeRetrievalService(new SQLExecutor(connection));
         this.attendanceService = new AttendanceService();
     }
        
@@ -50,18 +59,22 @@ public class PayrollService {
      */
     public List<PayrollRecord> generatePayrollRecord(PayPeriod payPeriod) {
         List<PayrollRecord> payrollRecords = new ArrayList<>();
-        for (Employee employee : employeeService.getEmployeeRecords()) {
-            
-            // Retrieve payroll inputs from each Employee object
-            BigDecimal payableHours = new BigDecimal(0); //BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(attendanceService.getFilteredDailyAttendance(employee, payPeriod)));
-            BigDecimal hourlyRate = employee.getHourlyRate();
-            BigDecimal rice = employee.getRiceSubsidy();
-            BigDecimal phone = employee.getPhoneAllowance();
-            BigDecimal clothing = employee.getClothingAllowance();
-
-            // Calculate the payroll record for the employee using the PayrollCalculator
-            PayrollRecord record = PayrollCalculator.calculatePayrollRecord(payableHours, hourlyRate, rice, phone, clothing);
-            payrollRecords.add(record);
+        try {
+            for (Employee employee : this.retrievalService.getActiveEmployees()) {
+                
+                // Retrieve payroll inputs from each Employee object
+                BigDecimal payableHours = new BigDecimal(0); //BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(attendanceService.getFilteredDailyAttendance(employee, payPeriod)));
+                BigDecimal hourlyRate = employee.getHourlyRate();
+                BigDecimal rice = employee.getRiceSubsidy();
+                BigDecimal phone = employee.getPhoneAllowance();
+                BigDecimal clothing = employee.getClothingAllowance();
+                
+                // Calculate the payroll record for the employee using the PayrollCalculator
+                PayrollRecord record = PayrollCalculator.calculatePayrollRecord(payableHours, hourlyRate, rice, phone, clothing);
+                payrollRecords.add(record);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PayrollService.class.getName()).log(Level.SEVERE, null, ex);
         }
         return payrollRecords;
     }
@@ -99,34 +112,38 @@ public class PayrollService {
     }
     
     public DefaultTableModel getEmployeeSelectionTableModel(PayPeriod payPeriod) {
-        // Define column headers
-        String[] columnNames = {
-            "Employee ID", "Employee Name", "Employee Type",
-            "Total Regular Hours", "Total Overtime"
-        };
-
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-        
-        for (Employee employee : employeeService.getEmployeeRecords()) {
-            
-            List<DailyAttendance> filteredRecords = null; // attendanceService.getFilteredDailyAttendance(employee, payPeriod);
-            
-            double totalRegular = AttendanceCalculator.calculateRegularWorkedHours(filteredRecords); 
-            double totalOvertime = AttendanceCalculator.calculateApprovedOverTimeHours(filteredRecords);
-            
-            // Construct a row using the aggregated values.
-            Object[] row = {
-                employee.getEmployeeId(),
-                employee.getFirstName() + " " + employee.getLastName(),
-                employee.getEmploymentStatus(),
-                totalRegular,
-                totalOvertime,
+            // Define column headers
+            String[] columnNames = {
+                "Employee ID", "Employee Name", "Employee Type",
+                "Total Regular Hours", "Total Overtime"
             };
             
-            model.addRow(row);
+            DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+            
+        try {
+            for (Employee employee : this.retrievalService.getActiveEmployees()) {
+                
+                List<DailyAttendance> filteredRecords = null; // attendanceService.getFilteredDailyAttendance(employee, payPeriod);
+                
+                double totalRegular = AttendanceCalculator.calculateRegularWorkedHours(filteredRecords);
+                double totalOvertime = AttendanceCalculator.calculateApprovedOverTimeHours(filteredRecords);
+                
+                // Construct a row using the aggregated values.
+                Object[] row = {
+                    employee.getEmployeeId(),
+                    employee.getFirstName() + " " + employee.getLastName(),
+                    employee.getEmploymentStatus(),
+                    totalRegular,
+                    totalOvertime,
+                };
+                
+                model.addRow(row);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PayrollService.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        return model;
+            
+            return model;
     }
     
     public DefaultTableModel getPayrollEmployeeEarningsTableModel(PayPeriod payPeriod) {
@@ -136,30 +153,34 @@ public class PayrollService {
 
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
         
-        for (Employee employee : employeeService.getEmployeeRecords()) {
-            
-//            List<DailyAttendance> filteredRecords = attendanceService.getFilteredDailyAttendance(employee, payPeriod);
-            
-            BigDecimal payableHours = new BigDecimal(0); //BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(filteredRecords));
-            BigDecimal baseSalary = SalaryCalculator.calculateBasicSalary(payableHours, employee.getHourlyRate());
-            BigDecimal totalAllowance = AllowanceCalculator.calculateTotalAllowance(employee.getRiceSubsidy(),
-                                                                                employee.getPhoneAllowance(), 
-                                                                                employee.getClothingAllowance());
-            BigDecimal grossSalary = SalaryCalculator.calculateGrossSalary(baseSalary, totalAllowance);
-            
-            // Construct a row using the aggregated values.
-            Object[] row = {
-                employee.getEmployeeId(),
-                employee.getFirstName() + " " + employee.getLastName(),
-                payableHours,
-                baseSalary,
-                employee.getRiceSubsidy(),
-                employee.getPhoneAllowance(),
-                employee.getClothingAllowance(),
-                grossSalary,
-            };
-            
-            model.addRow(row);
+        try {
+            for (Employee employee : this.retrievalService.getActiveEmployees()) {
+
+                //            List<DailyAttendance> filteredRecords = attendanceService.getFilteredDailyAttendance(employee, payPeriod);
+
+                BigDecimal payableHours = new BigDecimal(0); //BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(filteredRecords));
+                BigDecimal baseSalary = SalaryCalculator.calculateBasicSalary(payableHours, employee.getHourlyRate());
+                BigDecimal totalAllowance = AllowanceCalculator.calculateTotalAllowance(employee.getRiceSubsidy(),
+                        employee.getPhoneAllowance(),
+                        employee.getClothingAllowance());
+                BigDecimal grossSalary = SalaryCalculator.calculateGrossSalary(baseSalary, totalAllowance);
+
+                // Construct a row using the aggregated values.
+                Object[] row = {
+                    employee.getEmployeeId(),
+                    employee.getFirstName() + " " + employee.getLastName(),
+                    payableHours,
+                    baseSalary,
+                    employee.getRiceSubsidy(),
+                    employee.getPhoneAllowance(),
+                    employee.getClothingAllowance(),
+                    grossSalary,
+                };
+
+                model.addRow(row);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PayrollService.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return model;
@@ -172,36 +193,40 @@ public class PayrollService {
 
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
         
-        for (Employee employee : employeeService.getEmployeeRecords()) {
-            
-//            List<DailyAttendance> filteredRecords = attendanceService.getFilteredDailyAttendance(employee, payPeriod);
-            
-            BigDecimal payableHours = new BigDecimal(0); //BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(filteredRecords));
-            BigDecimal baseSalary = SalaryCalculator.calculateBasicSalary(payableHours, employee.getHourlyRate());
-            BigDecimal totalAllowance = AllowanceCalculator.calculateTotalAllowance(employee.getRiceSubsidy(),
-                                                                                employee.getPhoneAllowance(), 
-                                                                                employee.getClothingAllowance());
-            BigDecimal grossSalary = SalaryCalculator.calculateGrossSalary(baseSalary, totalAllowance);
-            BigDecimal sss = DeductionCalculator.calculateSSS(grossSalary);
-            BigDecimal philhealth = DeductionCalculator.calculatePhilHealth(grossSalary);            
-            BigDecimal pagibig = DeductionCalculator.calculatePagIbig(grossSalary);
-            BigDecimal govermentContribution = DeductionCalculator.calculateGovernmentContribution(sss, philhealth, pagibig);
-            BigDecimal tax = TaxCalculator.calculateWithHoldingTax(grossSalary, govermentContribution);
-            BigDecimal totalDeduction = DeductionCalculator.calculateTotalDeductions(govermentContribution, tax);
-            
-            
-            // Construct a row using the aggregated values.
-            Object[] row = {
-                employee.getEmployeeId(),
-                employee.getFirstName() + " " + employee.getLastName(),
-                sss,
-                philhealth,
-                pagibig,
-                tax,
-                totalDeduction,
-            };
-            
-            model.addRow(row);
+        try {
+            for (Employee employee : this.retrievalService.getActiveEmployees()) {
+
+                //            List<DailyAttendance> filteredRecords = attendanceService.getFilteredDailyAttendance(employee, payPeriod);
+
+                BigDecimal payableHours = new BigDecimal(0); //BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(filteredRecords));
+                BigDecimal baseSalary = SalaryCalculator.calculateBasicSalary(payableHours, employee.getHourlyRate());
+                BigDecimal totalAllowance = AllowanceCalculator.calculateTotalAllowance(employee.getRiceSubsidy(),
+                        employee.getPhoneAllowance(),
+                        employee.getClothingAllowance());
+                BigDecimal grossSalary = SalaryCalculator.calculateGrossSalary(baseSalary, totalAllowance);
+                BigDecimal sss = DeductionCalculator.calculateSSS(grossSalary);
+                BigDecimal philhealth = DeductionCalculator.calculatePhilHealth(grossSalary);
+                BigDecimal pagibig = DeductionCalculator.calculatePagIbig(grossSalary);
+                BigDecimal govermentContribution = DeductionCalculator.calculateGovernmentContribution(sss, philhealth, pagibig);
+                BigDecimal tax = TaxCalculator.calculateWithHoldingTax(grossSalary, govermentContribution);
+                BigDecimal totalDeduction = DeductionCalculator.calculateTotalDeductions(govermentContribution, tax);
+
+
+                // Construct a row using the aggregated values.
+                Object[] row = {
+                    employee.getEmployeeId(),
+                    employee.getFirstName() + " " + employee.getLastName(),
+                    sss,
+                    philhealth,
+                    pagibig,
+                    tax,
+                    totalDeduction,
+                };
+
+                model.addRow(row);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PayrollService.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return model;
@@ -214,37 +239,41 @@ public class PayrollService {
 
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
         
-        for (Employee employee : employeeService.getEmployeeRecords()) {
-            
-//            List<DailyAttendance> filteredRecords = attendanceService.getFilteredDailyAttendance(employee, payPeriod);
-            
-            BigDecimal payableHours = new BigDecimal(0); //BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(filteredRecords));
-            BigDecimal baseSalary = SalaryCalculator.calculateBasicSalary(payableHours, employee.getHourlyRate());
-            BigDecimal totalAllowance = AllowanceCalculator.calculateTotalAllowance(employee.getRiceSubsidy(),
-                                                                                employee.getPhoneAllowance(), 
-                                                                                employee.getClothingAllowance());
-            BigDecimal grossSalary = SalaryCalculator.calculateGrossSalary(baseSalary, totalAllowance);
-            BigDecimal sss = DeductionCalculator.calculateSSS(grossSalary);
-            BigDecimal philhealth = DeductionCalculator.calculatePhilHealth(grossSalary);            
-            BigDecimal pagibig = DeductionCalculator.calculatePagIbig(grossSalary);
-            BigDecimal govermentContribution = DeductionCalculator.calculateGovernmentContribution(sss, philhealth, pagibig);
-            BigDecimal tax = TaxCalculator.calculateWithHoldingTax(grossSalary, govermentContribution);
-            BigDecimal totalDeduction = DeductionCalculator.calculateTotalDeductions(govermentContribution, tax);
-            BigDecimal netSalary = SalaryCalculator.calculateNetSalary(grossSalary, totalDeduction, tax);
-            
-            
-            // Construct a row using the aggregated values.
-            Object[] row = {
-                employee.getEmployeeId(),
-                employee.getFirstName() + " " + employee.getLastName(),
-                payableHours,
-                baseSalary,
-                grossSalary,
-                totalDeduction,
-                totalDeduction,
-            };
-            
-            model.addRow(row);
+        try {
+            for (Employee employee : this.retrievalService.getActiveEmployees()) {
+
+                //            List<DailyAttendance> filteredRecords = attendanceService.getFilteredDailyAttendance(employee, payPeriod);
+
+                BigDecimal payableHours = new BigDecimal(0); //BigDecimal.valueOf(AttendanceCalculator.calculatePayableHours(filteredRecords));
+                BigDecimal baseSalary = SalaryCalculator.calculateBasicSalary(payableHours, employee.getHourlyRate());
+                BigDecimal totalAllowance = AllowanceCalculator.calculateTotalAllowance(employee.getRiceSubsidy(),
+                        employee.getPhoneAllowance(),
+                        employee.getClothingAllowance());
+                BigDecimal grossSalary = SalaryCalculator.calculateGrossSalary(baseSalary, totalAllowance);
+                BigDecimal sss = DeductionCalculator.calculateSSS(grossSalary);
+                BigDecimal philhealth = DeductionCalculator.calculatePhilHealth(grossSalary);
+                BigDecimal pagibig = DeductionCalculator.calculatePagIbig(grossSalary);
+                BigDecimal govermentContribution = DeductionCalculator.calculateGovernmentContribution(sss, philhealth, pagibig);
+                BigDecimal tax = TaxCalculator.calculateWithHoldingTax(grossSalary, govermentContribution);
+                BigDecimal totalDeduction = DeductionCalculator.calculateTotalDeductions(govermentContribution, tax);
+                BigDecimal netSalary = SalaryCalculator.calculateNetSalary(grossSalary, totalDeduction, tax);
+
+
+                // Construct a row using the aggregated values.
+                Object[] row = {
+                    employee.getEmployeeId(),
+                    employee.getFirstName() + " " + employee.getLastName(),
+                    payableHours,
+                    baseSalary,
+                    grossSalary,
+                    totalDeduction,
+                    totalDeduction,
+                };
+
+                model.addRow(row);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PayrollService.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return model;
