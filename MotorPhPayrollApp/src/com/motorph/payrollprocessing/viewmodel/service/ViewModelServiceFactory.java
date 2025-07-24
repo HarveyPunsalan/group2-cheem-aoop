@@ -26,7 +26,7 @@ public class ViewModelServiceFactory {
         return new BiWeeklyPayrollViewService(dao);
     }
     
-    public static EmployeeWorkedHoursSummaryService createEmployeeWorkedHoursSummaryServiceService() {
+    public static EmployeeWorkedHoursSummaryService createEmployeeWorkedHoursSummaryService() {
         SQLExecutor executor = ExecutorProvider.getExecutor();
         EmployeeWorkedHoursSummaryMapper mapper = new EmployeeWorkedHoursSummaryMapper();
         EmployeeWorkedHoursSummaryDAO dao = new EmployeeWorkedHoursSummaryDAO(executor, mapper);

@@ -262,9 +262,9 @@ public class CompanyHomePage extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton4AttendanceActionPerformed
 
     private void jButton3EmployeeRequestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3EmployeeRequestActionPerformed
-        if (controller != null) {
-            controller.handleEmployeeRequest(admin, this);
-        }
+//        if (controller != null) {
+//            controller.handleEmployeeRequest(admin, this);
+//        }
     }//GEN-LAST:event_jButton3EmployeeRequestActionPerformed
 
     /**

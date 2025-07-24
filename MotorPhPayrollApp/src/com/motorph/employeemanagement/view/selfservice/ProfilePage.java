@@ -896,8 +896,8 @@ public class ProfilePage extends javax.swing.JFrame {
     }//GEN-LAST:event_jTabbedPanelInformationStateChanged
 
     private void jButtonRequestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRequestActionPerformed
-        Access.accessRequestCenter(user);
-        this.setVisible(false);
+//        Access.accessRequestCenter(user);
+//        this.setVisible(false);
     }//GEN-LAST:event_jButtonRequestActionPerformed
 
     private void jButton3AdminPortalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3AdminPortalActionPerformed

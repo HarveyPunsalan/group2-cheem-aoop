@@ -17,14 +17,14 @@ import com.motorph.payrollprocessing.mapper.payrollmapper.PayslipMapper;
  */
 public class ServiceFactory {
     
-    public static PayPeriodService createPayPeriodServicewService() {
+    public static PayPeriodService createPayPeriodService() {
         SQLExecutor executor = ExecutorProvider.getExecutor();
         PayPeriodMapper mapper = new PayPeriodMapper();
         PayPeriodDAO dao = new PayPeriodDAO(executor, mapper);
         return new PayPeriodService(dao);
     }
     
-    public static PayslipService createPayslipServicewService() {
+    public static PayslipService createPayslipService() {
         SQLExecutor executor = ExecutorProvider.getExecutor();
         PayslipMapper mapper = new PayslipMapper();
         PayslipDAO dao = new PayslipDAO(executor, mapper);

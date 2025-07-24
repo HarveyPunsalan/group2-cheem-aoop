@@ -11,34 +11,45 @@ import com.motorph.payrollprocessing.model.payroll.PayPeriod;
 import com.motorph.attendancemanagement.service.AttendanceService;
 import com.motorph.attendancemanagement.service.AttendanceCalculator;
 import com.motorph.attendancemanagement.model.DailyAttendance;
+import com.motorph.attendancemanagement.tablemodel.DailyAttendanceTableModel;
+import com.motorph.common.swing.TableConfigurator;
 import com.motorph.usermanagement.model.Admin;
 import com.motorph.usermanagement.model.NonAdmin;
 import com.motorph.usermanagement.model.User;
 import com.motorph.usermanagement.model.Access;
 import com.motorph.common.ui.renderer.PromptComboBoxRenderer;
+import com.motorph.database.connection.DatabaseService;
+import com.motorph.database.execution.SQLExecutor;
+import com.motorph.employeemanagement.model.Employee;
+import com.motorph.employeemanagement.service.EmployeeRetrievalService;
 import com.motorph.payrollprocessing.service.core.PayPeriodService;
 import com.motorph.payrollprocessing.service.core.ServiceFactory;
 import java.util.List;
+import javax.swing.JOptionPane;
 /**
  *
  * @author Charm
  */
 public class EmployeeAttendance extends javax.swing.JFrame {
-    User user;
-    String[] defaultResults = {"0", "0", "0"};
-    PayrollService payrollService = new PayrollService();
+    User user;    
+    private PayPeriodService payPeriodService;
+    private AttendanceService attendanceService;
+    private boolean initializing = true;
     
     /**
      * Creates new form AddNewRecord
      */
     public EmployeeAttendance() {
         initComponents();
-        
-
     }
     
     public EmployeeAttendance(User user) {        
         initComponents();
+        initService();
+        
+        initializing = true;
+        setupPayPeriodComboBox();
+        initializing = false;
         this.user = user;
         user.addLogoutListener(this);
         
@@ -46,18 +57,37 @@ public class EmployeeAttendance extends javax.swing.JFrame {
                 jButton3AdminPortal.setVisible(false);
         }
         
+        String[] defaultResults = {"0", "0", "0"};
         setResultFields(defaultResults);
-        jComboBoxAttendancePeriod.setModel(payrollService.getComboBoxModel());
-        jComboBoxAttendancePeriod.setRenderer(new PromptComboBoxRenderer("Select Pay Period") );
-        jComboBoxAttendancePeriod.setSelectedIndex(-1);
     }
     
-    public void setResultFields(String[] results) {
+    private void setResultFields(String[] results) {
         jLabelTotalHoursResult.setText(results[0]);
         jLabelRegularResult.setText(results[1]);
         jLabelOvertimeResult.setText(results[2]);
     }
     
+    private void initService() {
+        try {
+            this.payPeriodService = ServiceFactory.createPayPeriodService();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Failed to load service: " + e.getMessage());
+        }
+    }
+    
+    private void setupPayPeriodComboBox() {
+        jComboBoxAttendancePeriod.setModel(payPeriodService.getPayPeriodComboBoxModel("MM-dd-yyyy"));
+        jComboBoxAttendancePeriod.setRenderer(new PromptComboBoxRenderer("Select Pay Period") );
+        jComboBoxAttendancePeriod.setSelectedIndex(-1);
+    }
+    
+    private void loadTable(Employee employee, PayPeriod selectedPayPeriod) {
+        List<DailyAttendance> dailyAttendanceList = this.attendanceService.getAttendanceRecordsByPayPeriod(employee, selectedPayPeriod);
+        DailyAttendanceTableModel tableModel = new DailyAttendanceTableModel(dailyAttendanceList);
+        
+        jTableDailyAttendanceList.setModel(tableModel);
+        TableConfigurator.configureBiWeeklyPayrollTable(jTableDailyAttendanceList);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -358,8 +388,8 @@ public class EmployeeAttendance extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonInformationActionPerformed
 
     private void jButtonRequestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRequestActionPerformed
-        Access.accessRequestCenter(user);
-        this.setVisible(false);
+//        Access.accessRequestCenter(user);
+//        this.setVisible(false);
     }//GEN-LAST:event_jButtonRequestActionPerformed
 
     private void jComboBoxAttendancePeriodActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxAttendancePeriodActionPerformed
@@ -371,16 +401,18 @@ public class EmployeeAttendance extends javax.swing.JFrame {
         String startDate = dates[0];
         String endDate = dates[1];
 
-        PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodServicewService();
+        PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodService();
         
         PayPeriod selectedPayPeriod = payPeriodService.searchByDateRange(dates[0], dates[1]).get();
 
         AttendanceService dtrManager = new AttendanceService();
-        EmployeeService employeeService = new EmployeeService();
         
-        jTableDailyAttendanceList.setModel(dtrManager.getAttendanceTableModel(employeeService.getEmployeeInformation(this.user.getEmployeeId()), selectedPayPeriod));
+        EmployeeRetrievalService retrievalService = new EmployeeRetrievalService(new SQLExecutor(DatabaseService.connectToMotorPH()));
+        Employee userEmployee = retrievalService.getEmployeeById(this.user.getEmployeeId());
+        
+        loadTable(userEmployee, selectedPayPeriod);
 
-        List<DailyAttendance> employeeAttendance = dtrManager.getFilteredDailyAttendance(employeeService.getEmployeeInformation(this.user.getEmployeeId()), selectedPayPeriod);
+        List<DailyAttendance> employeeAttendance = this.attendanceService.getAttendanceRecordsByPayPeriod(userEmployee, selectedPayPeriod);
 
         double payableHours = AttendanceCalculator.calculatePayableHours(employeeAttendance);
         double regularHours = AttendanceCalculator.calculateRegularWorkedHours(employeeAttendance);

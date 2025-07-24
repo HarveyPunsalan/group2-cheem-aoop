@@ -10,15 +10,23 @@ import com.motorph.employeemanagement.service.csvversion.EmployeeService;
 import com.motorph.attendancemanagement.service.AttendanceService;
 import com.motorph.attendancemanagement.service.AttendanceCalculator;
 import com.motorph.attendancemanagement.model.DailyAttendance;
+import com.motorph.attendancemanagement.tablemodel.DailyAttendanceTableModel;
+import com.motorph.common.swing.TableConfigurator;
+import com.motorph.common.swing.validation.SelectionValidator;
 import com.motorph.usermanagement.model.Admin;
 import com.motorph.usermanagement.model.User;
 import com.motorph.usermanagement.model.Access;
 import com.motorph.payrollprocessing.model.payroll.PayPeriod;
 import com.motorph.payrollprocessing.service.core.PayrollService;
 import com.motorph.common.ui.renderer.PromptComboBoxRenderer;
+import com.motorph.common.util.DateUtil;
+import com.motorph.database.connection.DatabaseService;
+import com.motorph.database.execution.SQLExecutor;
+import com.motorph.employeemanagement.service.EmployeeRetrievalService;
 import com.motorph.payrollprocessing.service.core.PayPeriodService;
 import com.motorph.payrollprocessing.service.core.ServiceFactory;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -26,10 +34,16 @@ import java.util.List;
  */
 public class AttendanceDailyRecord extends javax.swing.JFrame {
     EmployeeService employeeService = new EmployeeService();
-    Employee employee, employeeID;
+    Employee employee;
     PayrollService payPeriodList = new PayrollService();
     User user;
     String[] defaultResults = {"0", "0", "0"};
+    
+    private PayPeriodService payPeriodService;
+    private AttendanceService attendanceService;
+    private EmployeeRetrievalService retrievalService;
+    private boolean initializing = true;
+    private int employeeID;
     
     /**
      * Creates new form AttendanceRecord
@@ -42,49 +56,42 @@ public class AttendanceDailyRecord extends javax.swing.JFrame {
    
     }
     
-    public AttendanceDailyRecord(Employee employee) {
-        initComponents();
-        this.employeeID = employeeService.getEmployeeInformation(employee.getEmployeeId());
-        jComboBoxAttendancePeriod.setModel(payPeriodList.getComboBoxModel());
-        jComboBoxAttendancePeriod.setRenderer(new PromptComboBoxRenderer("Select Pay Period") );
-        jComboBoxAttendancePeriod.setSelectedIndex(-1);
-        
-        jLabelEmployeeName.setText(employee.getFirstName() + " " + employee.getLastName());        
-        setResultFields(defaultResults);
-   
-    }
-    
     public AttendanceDailyRecord(Admin admin, Employee employee) {
         initComponents();
-        this.employeeID = employeeService.getEmployeeInformation(employee.getEmployeeId());
+        initService();
+        
+        initializing = true;
+        setupPayPeriodComboBox();
+        initializing = false;
+        
         this.user = admin;
+        this.employee = employee;
         admin.addLogoutListener(this);
-        
-        jComboBoxAttendancePeriod.setModel(payPeriodList.getComboBoxModel());
-        jComboBoxAttendancePeriod.setRenderer(new PromptComboBoxRenderer("Select Pay Period") );
-        jComboBoxAttendancePeriod.setSelectedIndex(-1);
-        
+                
         jLabelEmployeeName.setText(employee.getFirstName() + " " + employee.getLastName());
-        setResultFields(defaultResults);
+        
+        setResultFields(defaultResults); 
     }
     
-    public AttendanceDailyRecord(Admin admin, int employeeID, PayPeriod selectedPayPeriod) {
+    public AttendanceDailyRecord(Admin admin, int employeeId, PayPeriod selectedPayPeriod) {
         initComponents();
-        this.employeeID = employeeService.getEmployeeInformation(employeeID);
-        this.employee = employeeService.getEmployeeInformation(employeeID);
+        initService();
+        
+        initializing = true;
+        setupPayPeriodComboBox();
+        initializing = false;
+        
+        this.retrievalService = new EmployeeRetrievalService(new SQLExecutor(DatabaseService.connectToMotorPH()));
+        this.employee = retrievalService.getEmployeeById(employeeId);
         this.user = admin;
         admin.addLogoutListener(this);
-        
-        jComboBoxAttendancePeriod.setModel(payPeriodList.getComboBoxModel());
-        jComboBoxAttendancePeriod.setRenderer(new PromptComboBoxRenderer("Select Pay Period") );
-        jComboBoxAttendancePeriod.setSelectedIndex(-1);
-        
+                
         jLabelEmployeeName.setText(employee.getFirstName() + " " + employee.getLastName());
+        jComboBoxAttendancePeriod.setSelectedItem(DateUtil.formatDate(selectedPayPeriod.getStartDate()) + " : " + DateUtil.formatDate(selectedPayPeriod.getEndDate()));
+                
+        loadTable(selectedPayPeriod);
         
-        AttendanceService dtrManager = new AttendanceService();
-        jTableDailyAttendanceList.setModel(dtrManager.getAttendanceTableModel(employee, selectedPayPeriod));
-        
-        List<DailyAttendance> employeeAttendance = dtrManager.getFilteredDailyAttendance(employee, selectedPayPeriod);
+        List<DailyAttendance> employeeAttendance = this.attendanceService.getAttendanceRecordsByPayPeriod(this.employee, selectedPayPeriod);
         
         double payableHours = AttendanceCalculator.calculatePayableHours(employeeAttendance);
         double regularHours = AttendanceCalculator.calculateRegularWorkedHours(employeeAttendance);
@@ -92,6 +99,29 @@ public class AttendanceDailyRecord extends javax.swing.JFrame {
         
         String[] results = {String.valueOf(payableHours),String.valueOf(regularHours),String.valueOf(overtime)};
         setResultFields(results); 
+    }
+    
+    private void initService() {
+        try {
+            this.attendanceService = new AttendanceService();
+            this.payPeriodService = ServiceFactory.createPayPeriodService();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Failed to load service: " + e.getMessage());
+        }
+    }
+    
+    private void setupPayPeriodComboBox() {
+        jComboBoxAttendancePeriod.setModel(payPeriodService.getPayPeriodComboBoxModel("MM-dd-yyyy"));
+        jComboBoxAttendancePeriod.setRenderer(new PromptComboBoxRenderer("Select Pay Period") );
+        jComboBoxAttendancePeriod.setSelectedIndex(-1);
+    }
+    
+    private void loadTable(PayPeriod selectedPayPeriod) {
+        List<DailyAttendance> dailyAttendanceList = this.attendanceService.getAttendanceRecordsByPayPeriod(this.employee, selectedPayPeriod);
+        DailyAttendanceTableModel tableModel = new DailyAttendanceTableModel(dailyAttendanceList);
+        
+        jTableDailyAttendanceList.setModel(tableModel);
+        TableConfigurator.configureDailyAttendanceTable(jTableDailyAttendanceList);
     }
 
     /**
@@ -234,7 +264,7 @@ public class AttendanceDailyRecord extends javax.swing.JFrame {
                 .addComponent(jButton4Payroll)
                 .addGap(30, 30, 30)
                 .addComponent(jButton4Attendance)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 285, Short.MAX_VALUE)
                 .addComponent(jButton6LogOut)
                 .addContainerGap())
         );
@@ -281,7 +311,7 @@ public class AttendanceDailyRecord extends javax.swing.JFrame {
 
         jLabelTotalHours.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabelTotalHours.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelTotalHours.setText("Total Hours");
+        jLabelTotalHours.setText("Payable Hours");
 
         jLabelTotalHoursResult.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabelTotalHoursResult.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -289,7 +319,7 @@ public class AttendanceDailyRecord extends javax.swing.JFrame {
 
         jLabelRegular.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabelRegular.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelRegular.setText("Regular");
+        jLabelRegular.setText("Regular Hours");
 
         jLabelRegularResult.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabelRegularResult.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -352,8 +382,8 @@ public class AttendanceDailyRecord extends javax.swing.JFrame {
                             .addComponent(jLabelRegularResult)
                             .addComponent(jLabelOvertimeResult))
                         .addGap(18, 18, 18)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 143, Short.MAX_VALUE))))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
 
         pack();
@@ -365,22 +395,20 @@ public class AttendanceDailyRecord extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton6LogOutActionPerformed
 
     private void jComboBoxAttendancePeriodActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxAttendancePeriodActionPerformed
-        if (jComboBoxAttendancePeriod.getSelectedIndex() < 0 || jComboBoxAttendancePeriod.getSelectedItem() == null) {
-            return;
-        }
+        if (initializing) return;
+        if (SelectionValidator.isItemSelected(jComboBoxAttendancePeriod, "Please select 1 Pay Period")) return;
         
         String[] dates = jComboBoxAttendancePeriod.getSelectedItem().toString().split(" : ");
         String startDate = dates[0];
         String endDate = dates[1];
         
-        PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodServicewService();
+        PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodService();
         
         PayPeriod selectedPayPeriod = payPeriodService.searchByDateRange(dates[0], dates[1]).get();
         
-        AttendanceService dtrManager = new AttendanceService();
-        jTableDailyAttendanceList.setModel(dtrManager.getAttendanceTableModel(employeeID, selectedPayPeriod));
+        loadTable(selectedPayPeriod);
         
-        List<DailyAttendance> employeeAttendance = dtrManager.getFilteredDailyAttendance(employeeID, selectedPayPeriod);
+        List<DailyAttendance> employeeAttendance = this.attendanceService.getAttendanceRecordsByPayPeriod(this.employee, selectedPayPeriod);
         
         double payableHours = AttendanceCalculator.calculatePayableHours(employeeAttendance);
         double regularHours = AttendanceCalculator.calculateRegularWorkedHours(employeeAttendance);
@@ -412,8 +440,8 @@ public class AttendanceDailyRecord extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton4AttendanceActionPerformed
 
     private void jButton3EmployeeRequestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3EmployeeRequestActionPerformed
-        Access.accessEmployeeRequests((Admin) this.user);
-        this.setVisible(false);
+//        Access.accessEmployeeRequests((Admin) this.user);
+//        this.setVisible(false);
     }//GEN-LAST:event_jButton3EmployeeRequestActionPerformed
 
     /**

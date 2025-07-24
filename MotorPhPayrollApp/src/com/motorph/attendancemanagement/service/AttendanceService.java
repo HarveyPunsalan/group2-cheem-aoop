@@ -7,6 +7,7 @@ package com.motorph.attendancemanagement.service;
 import com.motorph.attendancemanagement.model.DailyAttendance;
 import com.motorph.employeemanagement.model.Employee;
 import com.motorph.database.connection.DatabaseService;
+import com.motorph.payrollprocessing.model.payroll.PayPeriod;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -38,6 +39,28 @@ public class AttendanceService {
         }
         return attendanceList;
     }
+    
+    public List<DailyAttendance> getAttendanceRecordsByPayPeriod(Employee employee, PayPeriod payPeriod) {
+        List<DailyAttendance> attendanceList = new ArrayList<>();
+        String sql = "CALL get_attendance_by_payperiod(?, ?)";
+
+        try (Connection conn = DatabaseService.connectToMotorPH();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, employee.getEmployeeId());
+            stmt.setInt(2, payPeriod.getPayPeriodId());
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    DailyAttendance attendance = mapResultSetToAttendance(rs, employee);
+                    attendanceList.add(attendance);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return attendanceList;
+    }
 
     // Create a new attendance record
     public boolean createAttendance(DailyAttendance attendance) {
@@ -55,7 +78,6 @@ public class AttendanceService {
             stmt.setDouble(6, attendance.getHoursLate());
             stmt.setDouble(7, attendance.getHoursOvertime());
             stmt.setDouble(8, attendance.getHoursWorked());
-
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
@@ -128,10 +150,10 @@ public class AttendanceService {
 
     // Helper: maps ResultSet row to DailyAttendance object
     private DailyAttendance mapResultSetToAttendance(ResultSet rs, Employee employee) throws SQLException {
-        String attendanceId = rs.getString("attendance_id");
+        String attendanceId = rs.getString("dtr_id");
         LocalDate date = rs.getDate("date").toLocalDate();
-        LocalTime timeIn = rs.getTime("time_in").toLocalTime();
-        LocalTime timeOut = rs.getTime("time_out").toLocalTime();
+        LocalTime timeIn = rs.getTime("login").toLocalTime();
+        LocalTime timeOut = rs.getTime("logout").toLocalTime();
         double lateHours = rs.getDouble("late_hours");
         double overtimeHours = rs.getDouble("overtime_hours");
         double workedHours = rs.getDouble("worked_hours");

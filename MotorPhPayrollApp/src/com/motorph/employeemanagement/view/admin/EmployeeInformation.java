@@ -10,6 +10,8 @@ import com.motorph.employeemanagement.service.EmployeeRetrievalService;
 import com.motorph.employeemanagement.service.EmployeeDeletionService;
 import com.motorph.usermanagement.model.*;
 import com.motorph.database.execution.SQLExecutor;
+import com.motorph.employeemanagement.service.EmployeeCreationService;
+import com.motorph.employeemanagement.service.EmployeeUpdateService;
 import java.sql.Connection;
 import java.util.*;
 import javax.swing.JOptionPane;
@@ -335,13 +337,12 @@ public class EmployeeInformation extends javax.swing.JFrame {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 878, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton1AddNewRecord)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1ViewEmployeeDetails)
+                        .addGap(27, 27, 27)
+                        .addComponent(jButton1ViewAttendance))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton1ViewAttendance)
-                        .addGap(59, 59, 59)
-                        .addComponent(jButton1ViewEmployeeDetails)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton2DeleteEmployeeRecord)))
                 .addContainerGap())
         );
@@ -352,14 +353,14 @@ public class EmployeeInformation extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1AddNewRecord)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton1AddNewRecord)
+                            .addComponent(jButton1ViewEmployeeDetails)
+                            .addComponent(jButton1ViewAttendance))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 528, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton1ViewEmployeeDetails)
-                            .addComponent(jButton2DeleteEmployeeRecord)
-                            .addComponent(jButton1ViewAttendance))
+                        .addComponent(jButton2DeleteEmployeeRecord)
                         .addContainerGap())
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
@@ -451,7 +452,7 @@ public class EmployeeInformation extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2DeleteEmployeeRecordActionPerformed
 
     private void jButton1ViewAttendanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ViewAttendanceActionPerformed
-        /* Ensure a record is selected before proceeding
+        // Ensure a record is selected before proceeding
         if (!isSelectRecord()) {
             return;
         }
@@ -460,18 +461,15 @@ public class EmployeeInformation extends javax.swing.JFrame {
 
         // Extract all employee details from the table
         String employeeId = jTable1EmployeeList.getValueAt(rowIndex, 0).toString();
-        String lastName = jTable1EmployeeList.getValueAt(rowIndex, 1).toString();
-        String firstName = jTable1EmployeeList.getValueAt(rowIndex, 2).toString();        
-        String birthday = jTable1EmployeeList.getValueAt(rowIndex, 3).toString();
-        String phoneNumber = jTable1EmployeeList.getValueAt(rowIndex, 5).toString();
-        String email = jTable1EmployeeList.getValueAt(rowIndex, 6).toString();
+        
+        EmployeeRetrievalService retrievalService = new EmployeeRetrievalService(new SQLExecutor(connection));
 
         // Create an Employee object with all details
-        Employee selectedEmployee = new Employee(employeeId, firstName, lastName, birthday, phoneNumber, email);
+        Employee selectedEmployee = retrievalService.getEmployeeById(Integer.parseInt(employeeId));
         
 //        Access.accessDTR(this.admin, selectedEmployee);
-        Access.accessDTR(selectedEmployee);
-        this.setVisible(false); // Hide the current frame*/
+        Access.accessDTR(this.admin, selectedEmployee);
+        this.setVisible(false); // Hide the current frame
     }//GEN-LAST:event_jButton1ViewAttendanceActionPerformed
 
     private void jButton3SelfServicePortalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3SelfServicePortalActionPerformed
@@ -490,8 +488,8 @@ public class EmployeeInformation extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton4AttendanceActionPerformed
 
     private void jButton3EmployeeRequestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3EmployeeRequestActionPerformed
-        Access.accessEmployeeRequests(this.admin);
-        this.setVisible(false);
+//        Access.accessEmployeeRequests(this.admin);
+//        this.setVisible(false);
     }//GEN-LAST:event_jButton3EmployeeRequestActionPerformed
 
     /**

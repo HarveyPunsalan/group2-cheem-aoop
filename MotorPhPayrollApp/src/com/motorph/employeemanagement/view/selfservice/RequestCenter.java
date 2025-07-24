@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.motorph.employeemanagement.view.admin;
+package com.motorph.employeemanagement.view.selfservice;
 
 import com.motorph.payrollprocessing.service.core.PayrollService;
 import com.motorph.payrollprocessing.model.payroll.PayPeriod;
@@ -62,7 +62,7 @@ public class RequestCenter extends javax.swing.JFrame {
         jTextField4OvertimeEnd.setText("0");
         jTextField1TotalOvertime.setText("0");
         
-        jComboBoxLeaveType.setModel(leaveTypeList.getLeaveTypeComboBoxModel());        
+//        jComboBoxLeaveType.setModel(leaveTypeList.getLeaveTypeComboBoxModel());        
         jComboBoxLeaveType.setRenderer(new PromptComboBoxRenderer("Select Leave Type") );
         jComboBoxLeaveType.setSelectedIndex(-1);
         jTextFieldTotalDays.setText("0");
@@ -88,7 +88,7 @@ public class RequestCenter extends javax.swing.JFrame {
         jTextField4OvertimeEnd.setText("0");
         jTextField1TotalOvertime.setText("0");
         
-        jComboBoxLeaveType.setModel(leaveTypeList.getLeaveTypeComboBoxModel());        
+//        jComboBoxLeaveType.setModel(leaveTypeList.getLeaveTypeComboBoxModel());        
         jComboBoxLeaveType.setRenderer(new PromptComboBoxRenderer("Select Leave Type") );
         jComboBoxLeaveType.setSelectedIndex(-1);        
         jTextFieldTotalDays.setText("0");
@@ -537,35 +537,36 @@ public class RequestCenter extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton6LogOutActionPerformed
 
     private void jButton1SubmitOvertimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1SubmitOvertimeActionPerformed
-        String errors = validateOvertimeFields();
-        if (!errors.isEmpty()) {
-            JOptionPane.showMessageDialog(null, errors, "Validation Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+//        String errors = validateOvertimeFields();
+//        if (!errors.isEmpty()) {
+//            JOptionPane.showMessageDialog(null, errors, "Validation Error", JOptionPane.ERROR_MESSAGE);
+//            return;
+//        }
+//        
+//        String[] overtimeData = {String.valueOf(user.getEmployeeID()),
+//                                jComboBoxOvertimeDate.getSelectedItem().toString(),
+//                                jTextField5OvertimeStart.getText(),
+//                                jTextField4OvertimeEnd.getText(),
+//                                jTextField1TotalOvertime.getText()
+//                                };
+//        Overtime newOvertime = new Overtime(overtimeData);
+//        
+//        String[] requestData = {newOvertime.getID(),String.valueOf(user.getEmployeeID()),LocalDate.now().toString(), ""};     
+//        Request newRequest = new Request(requestData);
+//        
+//        EntityManager request = new EntityManager(EntityType.REQUEST);
+//        EntityManager overtime = new EntityManager(EntityType.OVERTIME);
+//        
+//        try {
+//            request.addEntityRecord(newRequest);
+//            overtime.addEntityRecord(newOvertime);
+//        } catch (Exception ex) {
+//            Logger.getLogger(RequestCenter.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        
+//        JOptionPane.showMessageDialog(null, "Successfully Requested"); // Confirmation message   
+//        clearOvertimeFields();
         
-        String[] overtimeData = {String.valueOf(user.getEmployeeID()),
-                                jComboBoxOvertimeDate.getSelectedItem().toString(),
-                                jTextField5OvertimeStart.getText(),
-                                jTextField4OvertimeEnd.getText(),
-                                jTextField1TotalOvertime.getText()
-                                };
-        Overtime newOvertime = new Overtime(overtimeData);
-        
-        String[] requestData = {newOvertime.getID(),String.valueOf(user.getEmployeeID()),LocalDate.now().toString(), ""};     
-        Request newRequest = new Request(requestData);
-        
-        EntityManager request = new EntityManager(EntityType.REQUEST);
-        EntityManager overtime = new EntityManager(EntityType.OVERTIME);
-        
-        try {
-            request.addEntityRecord(newRequest);
-            overtime.addEntityRecord(newOvertime);
-        } catch (Exception ex) {
-            Logger.getLogger(RequestCenter.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        JOptionPane.showMessageDialog(null, "Successfully Requested"); // Confirmation message   
-        clearOvertimeFields();
 //        // 1. Date validation
 //        Date overtimeDate = jDateChooser1Overtime.getDate();
 //        if (overtimeDate == null) {
@@ -742,36 +743,37 @@ public class RequestCenter extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1CalculateDaysActionPerformed
 
     private void jButton1SubmitLeaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1SubmitLeaveActionPerformed
-        String errors = validateLeaveFields();
-        if (!errors.isEmpty()) {
-            JOptionPane.showMessageDialog(null, errors, "Validation Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+//        String errors = validateLeaveFields();
+//        if (!errors.isEmpty()) {
+//            JOptionPane.showMessageDialog(null, errors, "Validation Error", JOptionPane.ERROR_MESSAGE);
+//            return;
+//        }
+//        
+//        EntityManager request = new EntityManager(EntityType.REQUEST);
+//        EntityManager leave = new EntityManager(EntityType.LEAVE);
+//        
+//        String[] LeaveData = {String.valueOf(user.getEmployeeID()),
+//                                ((JTextField)jDateChooser1StartDate.getDateEditor().getUiComponent()).getText(),
+//                                ((JTextField)jDateChooser2EndDate.getDateEditor().getUiComponent()).getText(),
+//                                jComboBoxLeaveType.getSelectedItem().toString(),
+//                                jTextFieldTotalDays.getText(),
+//                                };
+//        Leave newLeave = new Leave(LeaveData);
+//        
+//        String[] requestData = {newLeave.getID(), String.valueOf(user.getEmployeeID()), LocalDate.now().toString(), jTextArea1Notes.getText()};      
+//        Request newRequest = new Request(requestData);
+//        
+//        
+//        try {
+//            request.addEntityRecord(newRequest);
+//            leave.addEntityRecord(newLeave);
+//        } catch (Exception ex) {
+//            Logger.getLogger(RequestCenter.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        
+//        JOptionPane.showMessageDialog(null, "Successfully Requested"); // Confirmation message  
+//        clearLeaveFields();
         
-        EntityManager request = new EntityManager(EntityType.REQUEST);
-        EntityManager leave = new EntityManager(EntityType.LEAVE);
-        
-        String[] LeaveData = {String.valueOf(user.getEmployeeID()),
-                                ((JTextField)jDateChooser1StartDate.getDateEditor().getUiComponent()).getText(),
-                                ((JTextField)jDateChooser2EndDate.getDateEditor().getUiComponent()).getText(),
-                                jComboBoxLeaveType.getSelectedItem().toString(),
-                                jTextFieldTotalDays.getText(),
-                                };
-        Leave newLeave = new Leave(LeaveData);
-        
-        String[] requestData = {newLeave.getID(), String.valueOf(user.getEmployeeID()), LocalDate.now().toString(), jTextArea1Notes.getText()};      
-        Request newRequest = new Request(requestData);
-        
-        
-        try {
-            request.addEntityRecord(newRequest);
-            leave.addEntityRecord(newLeave);
-        } catch (Exception ex) {
-            Logger.getLogger(RequestCenter.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        JOptionPane.showMessageDialog(null, "Successfully Requested"); // Confirmation message  
-        clearLeaveFields();
 //        // 1. Get the start date and end date 
 //        Date startDate = jDateChooser1StartDate.getDate();
 //        Date endDate = jDateChooser2EndDate.getDate();
@@ -844,7 +846,7 @@ public class RequestCenter extends javax.swing.JFrame {
         String startDate = dates[0];
         String endDate = dates[1];
         
-        PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodServicewService();
+        PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodService();
         
         PayPeriod selectedPayPeriod = payPeriodService.searchByDateRange(dates[0], dates[1]).get();
         
@@ -863,7 +865,7 @@ public class RequestCenter extends javax.swing.JFrame {
         
         LocalDate selectedDate = LocalDate.parse((String) jComboBoxOvertimeDate.getSelectedItem(), formatterDate);
         
-        DailyAttendance userAttendance = dtrManager.getEmployeeDailyAttendance(new Employee(), selectedDate);
+//        DailyAttendance userAttendance = dtrManager.getEmployeeDailyAttendance(new Employee(), selectedDate);
 //        Overtime userOvertime = new Overtime(userAttendance);
 //        jTextField5OvertimeStart.setText(userOvertime.getStartTime().toString());
 //        jTextField4OvertimeEnd.setText(userOvertime.getEndTime().toString());
