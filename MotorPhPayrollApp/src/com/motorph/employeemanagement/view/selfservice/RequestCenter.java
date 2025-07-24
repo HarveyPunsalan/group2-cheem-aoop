@@ -8,8 +8,6 @@ import com.motorph.payrollprocessing.service.core.PayrollService;
 import com.motorph.payrollprocessing.model.payroll.PayPeriod;
 import com.motorph.common.util.validation.ComponentsValidator;
 import com.motorph.employeemanagement.model.Employee;
-import Class.EntityManagement.EntityManager;
-import Class.EntityManagement.EntityType;
 import com.motorph.common.ui.renderer.PromptComboBoxRenderer;
 import com.motorph.attendancemanagement.service.AttendanceService;
 import com.motorph.attendancemanagement.model.DailyAttendance;
