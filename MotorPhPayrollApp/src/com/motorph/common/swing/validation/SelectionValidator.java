@@ -16,9 +16,9 @@ public class SelectionValidator {
     public static boolean isRowSelected(JTable table, String message) {
         if (table.getSelectedRowCount() != 1) {
             JOptionPane.showMessageDialog(null, message, "Validation", JOptionPane.WARNING_MESSAGE);
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     public static boolean isItemSelected(JComboBox<?> comboBox, String message) {
