@@ -6,7 +6,6 @@ package com.motorph.attendancemanagement.view.admin;
 
 import com.motorph.employeemanagement.view.admin.EmployeeInformation;
 import com.motorph.employeemanagement.model.Employee;
-import com.motorph.employeemanagement.service.csvversion.EmployeeService;
 import com.motorph.attendancemanagement.service.AttendanceService;
 import com.motorph.attendancemanagement.service.AttendanceCalculator;
 import com.motorph.attendancemanagement.model.DailyAttendance;
@@ -32,8 +31,7 @@ import javax.swing.JOptionPane;
  *
  * @author Charm
  */
-public class AttendanceDailyRecord extends javax.swing.JFrame {
-    EmployeeService employeeService = new EmployeeService();
+public class AttendanceDailyRecord extends javax.swing.JFrame {;
     Employee employee;
     PayrollService payPeriodList = new PayrollService();
     User user;
