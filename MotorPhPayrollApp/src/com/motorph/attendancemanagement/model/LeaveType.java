@@ -4,7 +4,7 @@
  */
 package com.motorph.attendancemanagement.model;
 
-import Class.IDManagement.Identifiable;
+import com.motorph.common.model.Identifiable;
 
 /**
  * Represents a type of leave with metadata including name, description,
