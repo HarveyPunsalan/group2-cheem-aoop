@@ -5,14 +5,13 @@
 package com.motorph.attendancemanagement.view.selfservice;
 
 import com.motorph.usermanagement.view.LoginPage;
-import com.motorph.employeemanagement.service.csvversion.EmployeeService;
-import com.motorph.payrollprocessing.service.core.PayrollService;
 import com.motorph.payrollprocessing.model.payroll.PayPeriod;
 import com.motorph.attendancemanagement.service.AttendanceService;
 import com.motorph.attendancemanagement.service.AttendanceCalculator;
 import com.motorph.attendancemanagement.model.DailyAttendance;
 import com.motorph.attendancemanagement.tablemodel.DailyAttendanceTableModel;
 import com.motorph.common.swing.TableConfigurator;
+import com.motorph.common.swing.validation.SelectionValidator;
 import com.motorph.usermanagement.model.Admin;
 import com.motorph.usermanagement.model.NonAdmin;
 import com.motorph.usermanagement.model.User;
@@ -69,6 +68,7 @@ public class EmployeeAttendance extends javax.swing.JFrame {
     
     private void initService() {
         try {
+            this.attendanceService = new AttendanceService();
             this.payPeriodService = ServiceFactory.createPayPeriodService();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Failed to load service: " + e.getMessage());
@@ -86,7 +86,7 @@ public class EmployeeAttendance extends javax.swing.JFrame {
         DailyAttendanceTableModel tableModel = new DailyAttendanceTableModel(dailyAttendanceList);
         
         jTableDailyAttendanceList.setModel(tableModel);
-        TableConfigurator.configureBiWeeklyPayrollTable(jTableDailyAttendanceList);
+        TableConfigurator.configureDailyAttendanceTable(jTableDailyAttendanceList);
     }
 
     /**
@@ -393,19 +393,22 @@ public class EmployeeAttendance extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonRequestActionPerformed
 
     private void jComboBoxAttendancePeriodActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxAttendancePeriodActionPerformed
-        if (jComboBoxAttendancePeriod.getSelectedIndex() < 0 || jComboBoxAttendancePeriod.getSelectedItem() == null) {
-            return;
-        }
+//        if (jComboBoxAttendancePeriod.getSelectedIndex() < 0 || jComboBoxAttendancePeriod.getSelectedItem() == null) {
+//            return;
+//        }
+
+        if (initializing) return;
+        if (SelectionValidator.isItemSelected(jComboBoxAttendancePeriod, "Please select 1 Pay Period")) return;
 
         String[] dates = jComboBoxAttendancePeriod.getSelectedItem().toString().split(" : ");
-        String startDate = dates[0];
-        String endDate = dates[1];
-
-        PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodService();
+//        String startDate = dates[0];
+//        String endDate = dates[1];
+//
+//        PayPeriodService payPeriodService  = ServiceFactory.createPayPeriodService();
         
         PayPeriod selectedPayPeriod = payPeriodService.searchByDateRange(dates[0], dates[1]).get();
 
-        AttendanceService dtrManager = new AttendanceService();
+//        AttendanceService dtrManager = new AttendanceService();
         
         EmployeeRetrievalService retrievalService = new EmployeeRetrievalService(new SQLExecutor(DatabaseService.connectToMotorPH()));
         Employee userEmployee = retrievalService.getEmployeeById(this.user.getEmployeeId());
