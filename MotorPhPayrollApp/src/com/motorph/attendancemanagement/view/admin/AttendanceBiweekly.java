@@ -5,7 +5,6 @@
 package com.motorph.attendancemanagement.view.admin;
 import com.motorph.payrollprocessing.service.core.PayrollService;
 import com.motorph.payrollprocessing.model.payroll.PayPeriod;
-import com.motorph.attendancemanagement.service.AttendanceService;
 import com.motorph.attendancemanagement.tablemodel.BiWeeklyAttendanceTableModel;
 import com.motorph.common.swing.TableConfigurator;
 import com.motorph.common.swing.validation.SelectionValidator;
