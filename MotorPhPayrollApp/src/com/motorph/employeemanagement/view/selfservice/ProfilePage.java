@@ -1024,9 +1024,9 @@ public class ProfilePage extends javax.swing.JFrame {
     private void jButtonInformationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInformationActionPerformed
         // TODO add your handling code here:
         // Open the Employee Information page (ProfilePage)
-        ProfilePage profilePage = new ProfilePage(user); 
-        profilePage.setVisible(true);
-        this.dispose(); // Close current window
+//        ProfilePage profilePage = new ProfilePage(user); 
+//        profilePage.setVisible(true);
+//        this.dispose(); // Close current window
     }//GEN-LAST:event_jButtonInformationActionPerformed
 //
 //    /**
